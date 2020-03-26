@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,22 +34,29 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getUsers() {
+    public User createUser(User newUser) {
+        return newUser;
+    }
+
+    public List<User> getUsers(){
         return this.userRepository.findAll();
     }
 
-    public User createUser(User newUser) {
-        newUser.setToken(UUID.randomUUID().toString());
-        newUser.setStatus(UserStatus.OFFLINE);
+    public User getUser(long id){
+        User identifiedUser = userRepository.findById(id);
+        return identifiedUser;
+    }
 
-        checkIfUserExists(newUser);
+    public void updateUser(long id, User user){
 
-        // saves the given entity but data is only persisted in the database once flush() is called
-        newUser = userRepository.save(newUser);
-        userRepository.flush();
+    }
 
-        log.debug("Created Information for User: {}", newUser);
-        return newUser;
+    public void logUserIn(String token){
+
+    }
+
+    public void logUserOut(long id){
+
     }
 
     /**
@@ -66,6 +74,5 @@ public class UserService {
         if (userByUsername != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
         }
-
     }
 }

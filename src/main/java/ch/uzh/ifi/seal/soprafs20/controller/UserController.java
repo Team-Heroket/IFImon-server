@@ -32,8 +32,12 @@ public class UserController {
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public UserPostDTO createUser(@RequestBody UserPostDTO userPostDTO) {
-        return userPostDTO;
+    public void createUser(@RequestBody UserPostDTO userPostDTO, @RequestHeader("Token") String token) {
+        // convert API user to internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+
+        // create user
+        User createdUser = userService.createUser(userInput);
     }
 
 
@@ -42,9 +46,18 @@ public class UserController {
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public UserGetDTO getUserlist(@RequestBody UserGetDTO userGetDTO) {
-        return userGetDTO;
+    public List<UserGetDTO> getUserlist(@RequestHeader("Token") String token) {
+        // fetch all users in the internal representation
+        List<User> users = userService.getUsers();
+        List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
+        // convert each user to the API representation
+        for (User user : users) {
+            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+        }
+        return userGetDTOs;
     }
+
 
 
     /**     #3      **/
@@ -52,9 +65,14 @@ public class UserController {
     @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String getUserById(@PathVariable String userId) {
-        String test = "test";
-        return test;
+    public UserGetDTO getUserById(@PathVariable String userId, @RequestHeader("Token") String token) {
+        //convert string input to long
+        long IDnumber = Long.parseLong(userId);
+
+        //call userservice to get user by id
+        User foundUser = userService.getUser(IDnumber);
+
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
     }
 
 
@@ -63,8 +81,13 @@ public class UserController {
     @PutMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void updateUser(@PathVariable String userId) {
+    public void updateUser(@PathVariable String userId, @RequestBody UserPutDTO userPutDTO,  @RequestHeader("Token") String token) {
+        //convert string input to long
+        long IDnumber = Long.parseLong(userId);
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
+        //update user by id in the userservice
+        userService.updateUser(IDnumber, userInput);
     }
 
 
@@ -73,9 +96,19 @@ public class UserController {
     @PutMapping("/login")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String userLogin() {
-        String test = "test";
-        return test;
+    public String userLogin(@RequestBody UserPutDTO userPutDTO, @RequestHeader("Token") String token) {
+        // convert API user to internal representation
+        User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+        String tokenNr = userInput.getToken();
+
+        //check credentials
+        //code here
+
+        //log in user
+        userService.logUserIn(tokenNr);
+
+        // convert internal representation of user back to API
+        return tokenNr;
     }
 
 
@@ -84,7 +117,7 @@ public class UserController {
     @PutMapping("/logout")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String userLogout() {
+    public String userLogout(@RequestHeader("Token") String token) {
         String test = "test";
         return test;
     }
@@ -95,7 +128,7 @@ public class UserController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String createLobby() {
+    public String createLobby(@RequestHeader("Token") String token) {
         String test = "test";
         return test;
     }
@@ -106,7 +139,7 @@ public class UserController {
     @PutMapping("/games/{gameToken}/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void lobbyOperation(@PathVariable String gameToken) {
+    public void lobbyOperation(@PathVariable String gameToken, @RequestHeader("Token") String token ) {
 
     }
 
@@ -116,7 +149,7 @@ public class UserController {
     @PutMapping("/games/{gameToken}/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void startGame(@PathVariable String gameToken) {
+    public void startGame(@PathVariable String gameToken, @RequestHeader("Token") String token) {
 
     }
 
@@ -127,7 +160,7 @@ public class UserController {
     @GetMapping("/games/{gameToken}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String getGameState(@PathVariable String gameToken) {
+    public String getGameState(@PathVariable String gameToken, @RequestHeader("Token") String token) {
         String test = "test";
         return test;
     }
@@ -138,7 +171,7 @@ public class UserController {
     @PutMapping("/games/{gameToken}/categories")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void selectAttribute(@PathVariable String gameToken) {
+    public void selectAttribute(@PathVariable String gameToken, @RequestHeader("Token") String token) {
 
     }
 
@@ -148,7 +181,7 @@ public class UserController {
     @PutMapping("/games/{gameToken}/berries")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public void berryUpgrade(@PathVariable String gameToken) {
+    public void berryUpgrade(@PathVariable String gameToken, @RequestHeader("Token") String token) {
 
     }
 
@@ -158,7 +191,7 @@ public class UserController {
     @GetMapping("/cards")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String getCardList() {
+    public String getCardList(@RequestHeader("Token") String token) {
         String test = "test";
         return test;
     }
@@ -170,7 +203,7 @@ public class UserController {
     @GetMapping("/cards/{pokemonId}")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String getCard(@PathVariable String pokemonId) {
+    public String getCard(@PathVariable String pokemonId, @RequestHeader("Token") String token) {
         String test = "test";
         return test;
     }
