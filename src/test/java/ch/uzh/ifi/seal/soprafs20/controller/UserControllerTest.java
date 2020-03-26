@@ -41,7 +41,7 @@ public class UserControllerTest {
 
     @MockBean
     private UserService userService;
-
+/**
     @Test
     public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
         // given
@@ -102,6 +102,7 @@ public class UserControllerTest {
      * @param object
      * @return string
      */
+
     private String asJsonString(final Object object) {
         try {
             return new ObjectMapper().writeValueAsString(object);
