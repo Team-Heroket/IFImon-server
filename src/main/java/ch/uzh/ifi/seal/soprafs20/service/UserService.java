@@ -42,20 +42,21 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public User getUser(long id){
-        User identifiedUser = userRepository.findById(id);
+    public User getUser(String id){
+        User identifiedUser = new User();
+        identifiedUser.setToken(id);
         return identifiedUser;
     }
 
-    public void updateUser(long id, User user){
+    public void updateUser(String id, User user){
 
     }
 
-    public void logUserIn(String token){
+    public void logUserIn(String token, User user){
 
     }
 
-    public void logUserOut(long id){
+    public void logUserOut(String token){
 
     }
 

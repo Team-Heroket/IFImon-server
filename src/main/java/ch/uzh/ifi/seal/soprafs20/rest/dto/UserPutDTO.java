@@ -4,17 +4,11 @@ import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 
 public class UserPutDTO {
 
-    private String name;
-
     private String username;
 
-    public String getName() {
-        return name;
-    }
+    private String password;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String token;
 
     public String getUsername() {
         return username;
@@ -22,5 +16,21 @@ public class UserPutDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String input) {
+        this.password = input;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String input) {
+        this.token = input;
     }
 }

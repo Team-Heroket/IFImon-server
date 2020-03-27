@@ -22,13 +22,11 @@ public class User implements Serializable {
     @GeneratedValue
     private Long id;
 
+    //add " unique = false" in parameters to make usernames unique
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String token;
 
     @Column(nullable = false)
@@ -40,14 +38,6 @@ public class User implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUsername() {

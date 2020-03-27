@@ -6,6 +6,8 @@ import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,14 +65,12 @@ public class UserController {
     /**     #3      **/
     /** This request returns a User object corresponding to the input id **/
     @GetMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO getUserById(@PathVariable String userId, @RequestHeader("Token") String token) {
-        //convert string input to long
-        long IDnumber = Long.parseLong(userId);
+    public UserGetDTO getUserByToken(@PathVariable String userId, @RequestHeader("Token") String token) {
 
-        //call userservice to get user by id
-        User foundUser = userService.getUser(IDnumber);
+        //call userservice to get user by token
+        User foundUser = userService.getUser(userId);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
     }
@@ -79,22 +79,22 @@ public class UserController {
     /**     #4      **/
     /** This request updates a User **/
     @PutMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void updateUser(@PathVariable String userId, @RequestBody UserPutDTO userPutDTO,  @RequestHeader("Token") String token) {
-        //convert string input to long
-        long IDnumber = Long.parseLong(userId);
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
         //update user by id in the userservice
-        userService.updateUser(IDnumber, userInput);
+        userService.updateUser(userId, userInput);
+
+        // CHANGE USERSERVICE AND BACK END CLASSDIAGRAM HERE
     }
 
 
     /**     #5      **/
     /** This request logs in a user if the credentials are correct **/
     @PutMapping("/login")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public String userLogin(@RequestBody UserPutDTO userPutDTO, @RequestHeader("Token") String token) {
         // convert API user to internal representation
@@ -102,10 +102,10 @@ public class UserController {
         String tokenNr = userInput.getToken();
 
         //check credentials
-        //code here
+        //CODE HERE
 
         //log in user
-        userService.logUserIn(tokenNr);
+        userService.logUserIn(tokenNr, userInput);
 
         // convert internal representation of user back to API
         return tokenNr;
@@ -115,11 +115,10 @@ public class UserController {
     /**     #6      **/
     /** This request logs  out a user **/
     @PutMapping("/logout")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String userLogout(@RequestHeader("Token") String token) {
-        String test = "test";
-        return test;
+    public void userLogout(@RequestHeader("Token") String token) {
+        userService.logUserOut(token);
     }
 
 
@@ -129,8 +128,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public String createLobby(@RequestHeader("Token") String token) {
-        String test = "test";
-        return test;
+
+
+
+        return "asdf";
     }
 
 
@@ -144,10 +145,10 @@ public class UserController {
     }
 
 
-    /**     #10      **/
+    /**     #9      **/
     /** This request starts a game from an existing lobby according to the gameToken **/
-    @PutMapping("/games/{gameToken}/users")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PutMapping("/games/{gameToken}")
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void startGame(@PathVariable String gameToken, @RequestHeader("Token") String token) {
 
@@ -155,7 +156,7 @@ public class UserController {
 
 
 
-    /**     #11     **/
+    /**     #10     **/
     /** This request returns the current state of a running game **/
     @GetMapping("/games/{gameToken}")
     @ResponseStatus(HttpStatus.CREATED)
@@ -166,8 +167,8 @@ public class UserController {
     }
 
 
-    /**     #12     **/
-    /** This request returns the current state of a running game **/
+    /**     #11     **/
+    /** This request lets the user, whose turn it is, select a category for battle **/
     @PutMapping("/games/{gameToken}/categories")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -176,8 +177,8 @@ public class UserController {
     }
 
 
-    /**     #13     **/
-    /** This request lets the user, whose turn it is, select a category for battle **/
+    /**     #12     **/
+    /** This request lets a card evolve **/
     @PutMapping("/games/{gameToken}/berries")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -185,7 +186,7 @@ public class UserController {
 
     }
 
-    /**     #14     **/
+    /**     #13     **/
     /** This request returns a map with all Pokémon IDs and Sprite urls **/
 
     @GetMapping("/cards")
@@ -197,7 +198,7 @@ public class UserController {
     }
 
 
-    /**     #15     **/
+    /**     #14     **/
     /** This request returns a complete pkm-card **/
 
     @GetMapping("/cards/{pokemonId}")
