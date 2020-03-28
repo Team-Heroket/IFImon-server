@@ -1,31 +1,66 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
+import ch.uzh.ifi.seal.soprafs20.entity.Tables;
+
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
+import ch.uzh.ifi.seal.soprafs20.service.CardService;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
+import ch.uzh.ifi.seal.soprafs20.service.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * User Controller
- * This class is responsible for handling all REST request that are related to the user.
- * The controller will receive the request and delegate the execution to the UserService and finally return the result.
- */
+enum mode{
+    Social(0), Quick(1), Single(2);
+
+    private int mode;
+
+    mode(int Stat){
+        this.mode = Stat;
+    }
+
+    public int getMode(){
+        return mode;
+    }
+}
+
+enum category{
+    HP(0), ATK(1), Wheight(2);
+
+    private int mode;
+
+    category(int Stat){
+        this.mode = Stat;
+    }
+
+    public int getCategory(){
+        return mode;
+    }
+}
+
+
 @RestController
 public class UserController {
 
     private final UserService userService;
 
-    UserController(UserService userService) {
+    private final GameService gameService;
+
+    private final CardService cardService;
+
+
+    UserController(UserService userService, GameService gameService, CardService cardService) {
         this.userService = userService;
+        this.gameService = gameService;
+        this.cardService = cardService;
     }
 
 
@@ -127,21 +162,25 @@ public class UserController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String createLobby(@RequestHeader("Token") String token) {
+    public String createLobby(String gameName, Enum mode, @RequestHeader("Token") String token) {
 
+        //creates a game with the given gamemode and gamename
+        String newGameToken = gameService.createGame(gameName,mode);
 
-
-        return "asdf";
+        return newGameToken;
     }
 
 
     /**     #8      **/
     /** This request let's a user join or leave a lobby or kick another player from the lobby **/
     @PutMapping("/games/{gameToken}/users")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void lobbyOperation(@PathVariable String gameToken, @RequestHeader("Token") String token ) {
+    public void lobbyOperation(@PathVariable String gameToken, String userName, Integer action, @RequestHeader("Token") String token ) {
 
+        //calls service corresponding to the input integer
+        //Note using action in if else statements causes nullpointer exceptions
+        gameService.addUser(userName,gameToken);
     }
 
 
@@ -150,8 +189,9 @@ public class UserController {
     @PutMapping("/games/{gameToken}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void startGame(@PathVariable String gameToken, @RequestHeader("Token") String token) {
-
+    public void startGame(@PathVariable String gameToken, Integer amount, @RequestHeader("Token") String token) {
+        //sets amount of npcs and starts the game
+        gameService.setNPCAmount(amount, gameToken);
     }
 
 
@@ -159,11 +199,15 @@ public class UserController {
     /**     #10     **/
     /** This request returns the current state of a running game **/
     @GetMapping("/games/{gameToken}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getGameState(@PathVariable String gameToken, @RequestHeader("Token") String token) {
-        String test = "test";
-        return test;
+    public TableGetDTO getGameState(@PathVariable String gameToken, @RequestHeader("Token") String token) {
+
+        //gets gamestate as a table object
+        Tables table = gameService.getGame(gameToken);
+
+        //convert to correct API format to return
+        return DTOMapper.INSTANCE.convertEntityToTableGetDTO(table);
     }
 
 
@@ -172,7 +216,10 @@ public class UserController {
     @PutMapping("/games/{gameToken}/categories")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void selectAttribute(@PathVariable String gameToken, @RequestHeader("Token") String token) {
+    public void selectAttribute(@PathVariable String gameToken, Enum category, @RequestHeader("Token") String token) {
+
+        //call gameservice method for selecting a category
+        gameService.selectCategory(category, gameToken);
 
     }
 
@@ -180,21 +227,26 @@ public class UserController {
     /**     #12     **/
     /** This request lets a card evolve **/
     @PutMapping("/games/{gameToken}/berries")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void berryUpgrade(@PathVariable String gameToken, @RequestHeader("Token") String token) {
+    public void berryUpgrade(@PathVariable String gameToken, Integer amount, String userName, @RequestHeader("Token") String token) {
 
+        //call gameservice method for berry usage
+        gameService.userBerries(amount, userName);
     }
 
     /**     #13     **/
     /** This request returns a map with all Pokémon IDs and Sprite urls **/
 
     @GetMapping("/cards")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getCardList(@RequestHeader("Token") String token) {
-        String test = "test";
-        return test;
+    public Map<Long,String> getCardList(@RequestHeader("Token") String token) {
+
+        //get a map with all ids and urls of the cards
+        Map<Long,String> map = cardService.getCards();
+
+        return map;
     }
 
 
@@ -202,10 +254,16 @@ public class UserController {
     /** This request returns a complete pkm-card **/
 
     @GetMapping("/cards/{pokemonId}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String getCard(@PathVariable String pokemonId, @RequestHeader("Token") String token) {
-        String test = "test";
-        return test;
+    public CardGetDTO getCard(@PathVariable String pokemonId, @RequestHeader("Token") String token) {
+
+        //convert pathvaraible to long
+        long cardId = Long.parseLong(pokemonId);
+
+        //get card from service
+        Card card = cardService.getCard(cardId);
+
+        return DTOMapper.INSTANCE.convertEntityToCardGetDTO(card);
     }
 }

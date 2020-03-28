@@ -1,6 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Tables;
+
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.slf4j.Logger;
@@ -34,33 +36,35 @@ public class GameService {
         this.gameRepository = gameRepository;
     }
 
-    public void createGame(Enum mode){
+    public String createGame(String gameName, Enum mode){
+        return "testToken";
+    }
+
+    public void addUser(String userName, String gameToken){
 
     }
 
-    public void addUser(String userName){
+    public void removeUser(String userName, String gameToken){
 
     }
 
-    public void removeUser(String userName){
+    public void setNPCAmount(Integer amount, String gameToken){
 
     }
 
-    public void setNPCAmount(int amount){
-
+    public Tables getGame(String gameToken){
+        Tables table = new Tables();
+        return table;
     }
 
-    public void getGame(String token){
-
-    }
-
-    public void selectCategory(Enum category){
+    public void selectCategory(Enum category, String gameToken){
         //class diagram has mispelled name
     }
 
-    public void userBerries(int amount, String userName){
+    public void userBerries(Integer amount, String userName){
 
     }
+
 
     //CODE Methods
 
