@@ -121,8 +121,6 @@ public class UserController {
 
         //update user by id in the userservice
         userService.updateUser(userId, userInput);
-
-        // CHANGE USERSERVICE AND BACK END CLASSDIAGRAM HERE
     }
 
 
@@ -178,9 +176,21 @@ public class UserController {
     @ResponseBody
     public void lobbyOperation(@PathVariable String gameToken, String userName, Integer action, @RequestHeader("Token") String token ) {
 
-        //calls service corresponding to the input integer
-        //Note using action in if else statements causes nullpointer exceptions
         gameService.addUser(userName,gameToken);
+
+        /**
+        long value = action;
+
+        if(value==0){
+            gameService.addUser(userName,gameToken);
+        }
+        else if(value==1){
+            // for leaving, the own username was inputted
+            gameService.removeUser(userName,gameToken);
+        }
+        else if(value==2){
+            gameService.addUser(userName,gameToken);
+        }**/
     }
 
 

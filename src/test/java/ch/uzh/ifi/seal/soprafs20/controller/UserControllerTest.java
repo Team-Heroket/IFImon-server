@@ -57,7 +57,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -202,7 +204,10 @@ public class UserControllerTest {
 
         // then
         mockMvc.perform(getRequest)
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.username", is(user.getUsername())))
+            .andExpect(jsonPath("$.token", is(user.getToken())));
+
     }
 
     @Test
@@ -247,7 +252,11 @@ public class UserControllerTest {
         // then
         mockMvc.perform(putRequest)
                 .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(jsonPath("$").value("123"));
+
+
+
+
     }
 
     @Test
@@ -281,13 +290,14 @@ public class UserControllerTest {
 
         // then
         mockMvc.perform(postRequest)
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$").value("newGameToken"));
     }
 
     @Test
     public void Test_lobbyOperation() throws Exception {
         // given
-        int action= 2;
+        long action= 2;
         String userName = "newUsername";
 
         // when/then -> do the request + validate the result
@@ -335,7 +345,8 @@ public class UserControllerTest {
 
         // then
         mockMvc.perform(getRequest)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.timer").value(123));
     }
 
 
@@ -380,7 +391,7 @@ public class UserControllerTest {
 
         //given
         Map<Long,String> testMap = new HashMap<Long,String>();
-
+        testMap.put(101L,"testMon");
 
         // this mocks the UserService -> we define above what the gameService should return when getUsers() is called
         given(cardService.getCards()).willReturn(testMap);
@@ -392,6 +403,7 @@ public class UserControllerTest {
         // then
         mockMvc.perform(getRequest)
                 .andExpect(status().isOk());
+        //how to test returned HashMap
     }
 
     @Test
@@ -411,7 +423,8 @@ public class UserControllerTest {
 
         // then
         mockMvc.perform(getRequest)
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("firstCard"));
     }
 
 
