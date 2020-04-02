@@ -1,8 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Tables;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.objects.Board;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.CardService;
@@ -84,10 +84,10 @@ public class GameController {
     public TableGetDTO getGameState(@PathVariable String gameToken, @RequestHeader("Token") String token) {
 
         //gets gamestate as a table object
-        Tables table = gameService.getGame(gameToken);
+        Board board = gameService.getGame(gameToken);
 
         //convert to correct API format to return
-        return DTOMapper.INSTANCE.convertEntityToTableGetDTO(table);
+        return DTOMapper.INSTANCE.convertEntityToTableGetDTO(board);
     }
 
 

@@ -44,7 +44,8 @@ public class Card implements Serializable {
     }
 
     public Map<Category,Integer> getCategories() { return categories; }
-    public void setCategories(Map<Category,Integer>) {
+
+    public void setCategories(Map<Category,Integer> categories) {
         this.categories = categories;
     }
 

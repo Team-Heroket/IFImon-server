@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.objects.Board;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +45,9 @@ public class GameService {
 
     }
 
-    public Tables getGame(String gameToken){
-        Tables table = new Tables();
-        return table;
+    public Board getGame(String gameToken){
+        Board board = new Board();
+        return board;
     }
 
     public void selectCategory(Enum category, String gameToken){

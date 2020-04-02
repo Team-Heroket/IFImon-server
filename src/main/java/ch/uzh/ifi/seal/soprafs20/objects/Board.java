@@ -18,7 +18,7 @@ public class Board {
     public Player getTurnPlayer(){ return turnPlayer; }
     public void setTurnPlayer(Player turnPlayer){ this.turnPlayer=turnPlayer;}
 
-    public Category getchosenCategory(){ return chosenCategory;}
+    public Category getChosenCategory(){ return chosenCategory;}
     public void setChosenCategory(Category chosenCategory){ this.chosenCategory=chosenCategory;}
 
     public Long getTimer(){return timer;}

@@ -4,7 +4,6 @@ public class UserGetDTO {
 
     private String token;
     private String username;
-    private UserStatus status;
 
     public String getToken() {
         return token;
@@ -18,13 +17,5 @@ public class UserGetDTO {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public UserStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(UserStatus status) {
-        this.status = status;
     }
 }
