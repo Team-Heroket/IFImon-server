@@ -154,7 +154,6 @@ public class UserControllerTest {
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
                 .content(asJsonString(userPostDTO));
 
         // then
@@ -246,7 +245,6 @@ public class UserControllerTest {
         // when
         MockHttpServletRequestBuilder putRequest = put("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
                 .content(asJsonString(userPutDTO));
 
         // then
