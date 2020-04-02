@@ -46,8 +46,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private int avatarId;
 
-    @Column(nullable = false)
-    private Statistics statistics;
+    //@Column(nullable = false)
+    //private Statistics statistics;
 
     @Column(nullable = false)
     private String creationDate;
@@ -92,12 +92,14 @@ public class User implements Serializable {
         this.avatarId = avatarId;
     }
 
+    /*
     public Statistics getStatistics() {
         return statistics;
     }
     public void getStatistics(Statistics statistics) {
         this.statistics = statistics;
     }
+     */
 
     public String getCreationDate() {
         return creationDate;
