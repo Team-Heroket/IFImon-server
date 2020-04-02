@@ -68,7 +68,7 @@ public class UserService {
 
     }
 
-    public String logUserIn(User user){
+    public User logUserIn(User user){
         //find the user in the data base
         User loggingUser = userRepository.findByUsername(user.getUsername());
 
@@ -86,7 +86,7 @@ public class UserService {
         loggingUser.setOnline(true);
         //loggingUser = userRepository.save(loggingUser);
 
-        return loggingUser.getToken();
+        return loggingUser;
     }
 
     public void logUserOut(String userToken){

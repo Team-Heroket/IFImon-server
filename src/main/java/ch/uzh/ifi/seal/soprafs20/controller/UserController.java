@@ -45,7 +45,7 @@ public class UserController {
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public List<UserGetDTO> getUserlist(@RequestHeader("Token") String token) {
+    public List<UserGetDTO> getUserList(@RequestHeader("Token") String token) {
         // fetch all users in the internal representation
         List<User> users = userService.getUsers();
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
@@ -95,17 +95,11 @@ public class UserController {
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
-
-        //check credentials
-        //CODE HERE
-
-        //log in user
-
-        String tokenNr = userService.logUserIn(userInput);
+        User loggedInUser = userService.logUserIn(userInput);
 
         // convert internal representation of user back to API
         // TODO: Maybe write a DTO for that
-        return "{\"Token\": \"" + tokenNr + "\"}";
+        return "{\"Id\": " + loggedInUser.getId() + ", \"Token\": \"" + loggedInUser.getToken() + "\"}";
     }
 
 
