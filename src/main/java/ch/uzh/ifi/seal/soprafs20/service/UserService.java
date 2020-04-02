@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +36,18 @@ public class UserService {
     }
 
     public User createUser(User newUser) {
+        newUser.setOnline(true);
+
+        checkIfUserExists(newUser);
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDateTime now = LocalDateTime.now();
+        newUser.setCreationDate(pattern.format(now));
+
+        // saves the given entity but data is only persisted in the database once flush() is called
+        newUser = userRepository.save(newUser);
+        userRepository.flush();
+
+        log.debug("Created Information for User: {}", newUser);
         return newUser;
     }
 
@@ -45,16 +61,54 @@ public class UserService {
         return identifiedUser;
     }
 
+
+
     public void updateUser(String id, User user){
 
     }
 
-    public void logUserIn(String token, User user){
+    public String logUserIn(User user){
+        //find the user in the data base
+        User loggingUser = userRepository.findByUsername(user.getUsername());
 
+        //check password of the found user
+        if(!(user.getPassword().equals(loggingUser.getPassword()))){
+            throw new SopraServiceException(String.format("Wrong Password!"));
+        }
+
+        //set user online and create new token
+        loggingUser.setToken(UUID.randomUUID().toString());
+        loggingUser.setOnline(true);
+        loggingUser = userRepository.save(loggingUser);
+
+        return loggingUser.getToken();
     }
 
-    public void logUserOut(String token){
+    public void logUserOut(String userToken){
+        //get user, who wants to log out
+        User departingUser = userRepository.findByToken(userToken);
 
+        //set user offline and set his token to NULL
+        departingUser.setToken(null);
+        departingUser.setOnline(false);
+        departingUser = userRepository.save(departingUser);
+    }
+
+    public boolean checkCurrentToken(User userInput, String tokenInput){
+        //get the user x from the data base
+        User departingUser = userRepository.findByUsername(userInput.getUsername());
+        //extract the user's x token
+        String originalToken = departingUser.getToken();
+
+        //checks if token is null
+        if(tokenInput==null){
+            throw new SopraServiceException(String.format("Unauthorized Access!"));
+        }
+        //checks if the header token is identical to the correct user token
+        if(originalToken.equals(tokenInput)){
+            return true;
+        }
+        throw new SopraServiceException(String.format("Unauthorized Access!"));
     }
 
     /**
