@@ -102,10 +102,11 @@ public class UserController {
         //CODE HERE
 
         //log in user
-        userService.logUserIn(tokenNr, userInput);
+        userService.logUserIn(userInput);
 
         // convert internal representation of user back to API
-        return tokenNr;
+        // TODO: Maybe write a DTO for that
+        return "{\"Token\": \"" + tokenNr + "\"}";
     }
 
 
