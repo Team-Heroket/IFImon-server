@@ -109,8 +109,10 @@ public class User implements Serializable {
     public boolean getOnline() {
         return online;
     }
-    public void setUsername(boolean online) {
+    public void setOnline(boolean online) {
         this.online = online;
     }
+
+
 
 }
