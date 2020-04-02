@@ -1,6 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
+import ch.uzh.ifi.seal.soprafs20.objects.Statistics;
 
 import javax.persistence.*;
 import java.io.Serializable;

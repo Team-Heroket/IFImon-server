@@ -13,8 +13,13 @@ import ch.uzh.ifi.seal.soprafs20.constant.Element;
 @Table(name = "CARD")
 public class Card implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue
+    private Long id;
+
     @Column(nullable = false)
-    private int id;
+    private int pokemonId;
 
     @Column(nullable = false)
     private Map<Category,Integer> categories;
@@ -38,9 +43,9 @@ public class Card implements Serializable {
 
 
 
-    public int getId() { return id; }
-    public void setId(int id) {
-        this.id = id;
+    public int getId() { return pokemonId; }
+    public void setId(int pokemonId) {
+        this.pokemonId = pokemonId;
     }
 
     public Map<Category,Integer> getCategories() { return categories; }
