@@ -94,13 +94,14 @@ public class UserController {
     public String userLogin(@RequestBody UserPutDTO userPutDTO) {
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
-        String tokenNr = userInput.getToken();
+
 
         //check credentials
         //CODE HERE
 
         //log in user
-        userService.logUserIn(userInput);
+
+        String tokenNr = userService.logUserIn(userInput);
 
         // convert internal representation of user back to API
         // TODO: Maybe write a DTO for that
