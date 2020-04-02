@@ -81,16 +81,19 @@ public class UserService {
         //set user online and create new token
         loggingUser.setToken(UUID.randomUUID().toString());
         loggingUser.setOnline(true);
+        loggingUser = userRepository.save(loggingUser);
+
         return loggingUser.getToken();
     }
 
-    public void logUserOut(User userInput){
+    public void logUserOut(String userToken){
         //get user, who wants to log out
-        User departingUser = userRepository.findByUsername(userInput.getUsername());
+        User departingUser = userRepository.findByToken(userToken);
 
         //set user offline and set his token to NULL
         departingUser.setToken(null);
         departingUser.setOnline(false);
+        departingUser = userRepository.save(departingUser);
     }
 
     public boolean checkCurrentToken(User userInput, String tokenInput){
