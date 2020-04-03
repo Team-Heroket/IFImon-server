@@ -93,13 +93,20 @@ public class UserService {
         }
 
         //check if optional object is empty
-        User changingUser = optionalUser.get();
-        if (changingUser==null){
+        if (optionalUser.isEmpty()){
             throw new SopraServiceException(String.format("Updating user not found"));
         }
+        User changingUser = optionalUser.get();
+
+        //change username
+        changingUser.setUsername(user.getUsername());
+
+        //change password
+        changingUser.setPassword(user.getPassword());
+
         //change profile picture
         changingUser.setAvatarId(user.getAvatarId());
-        changingUser = userRepository.save(changingUser);
+        userRepository.save(changingUser);
     }
 
     public User logUserIn(User user){

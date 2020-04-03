@@ -76,7 +76,7 @@ public class UserController {
     /*     #4      **/
     /** This request updates a User **/
     @PutMapping("/users/{userId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void updateUser(@PathVariable("userId") long userId, @RequestBody UserPutDTO userPutDTO,  @RequestHeader("Token") String token) {
         // Takes changes from Body
