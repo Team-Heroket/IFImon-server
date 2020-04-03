@@ -138,10 +138,15 @@ public class UserService {
     }
 
     public boolean compareHeaderWithUser(User userInput, String tokenInput){
-        //get the user x from the data base
-        User departingUser = userRepository.findByUsername(userInput.getUsername());
+        //check if optional object is empty
+        Optional<User> optionalUser = this.userRepository.findById(userInput.getId());
+        if (optionalUser.isEmpty()) {
+            throw new SopraServiceException("This user does not exist.");
+        }
+
+        User chosenUser = optionalUser.get();
         //extract the user's x token
-        String originalToken = departingUser.getToken();
+        String originalToken = chosenUser.getToken();
 
         //checks if token is null
         if(tokenInput==null){
