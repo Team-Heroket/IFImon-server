@@ -78,13 +78,18 @@ public class UserController {
     @PutMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void updateUser(@PathVariable("userId") String userId, @RequestBody UserPutDTO userPutDTO,  @RequestHeader("Token") String token) {
+    public void updateUser(@PathVariable("userId") long userId, @RequestBody UserPutDTO userPutDTO,  @RequestHeader("Token") String token) {
+        // Takes changes from Body
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
+        // Merges userId from path into the user
+        userInput.setId(userId);
+
         //check if authorized
         if(userService.compareHeaderWithUser(userInput, token)){
             //update user
             userService.updateUser(userInput);
         }
+
     }
 
 
