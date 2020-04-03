@@ -37,9 +37,13 @@ public class UserService {
     }
 
     public User createUser(User newUser) {
+        //set user object online
         newUser.setOnline(true);
 
+        //check for duplicate usernames
         checkIfUserExists(newUser);
+
+        //set creation date on user object
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDateTime now = LocalDateTime.now();
         newUser.setCreationDate(pattern.format(now));
@@ -52,20 +56,37 @@ public class UserService {
         return newUser;
     }
 
-    public List<User> getUsers(){
+    public List<User> getUsers(String tokenInput){
+        //checks if a valid user is requesting
+        if(tokenInput==null){
+            throw new SopraServiceException(String.format("Bad request"));
+        }
         return this.userRepository.findAll();
     }
 
-    public User getUser(String id){
-        User identifiedUser = new User();
-        identifiedUser.setToken(id);
-        return identifiedUser;
+    public User getUser(String tokenInput){
+        //check if token is null
+        if(tokenInput==null){
+            throw new SopraServiceException(String.format("Bad request"));
+        }
+
+        //find the user with the given token
+        User foundUser = userRepository.findByToken(tokenInput);
+        if (foundUser==null){
+            throw new SopraServiceException(String.format("User not found"));
+        }
+        return foundUser;
     }
 
+    public void updateUser(User user){
+        User changingUser = userRepository.findByUsername((user.getUsername()));
 
-
-    public void updateUser(String id, User user){
-
+        if (changingUser==null){
+            throw new SopraServiceException(String.format("Updating user not found"));
+        }
+        //change profile picture
+        changingUser.setAvatarId(user.getAvatarId());
+        changingUser = userRepository.save(changingUser);
     }
 
     public User logUserIn(User user){
@@ -78,7 +99,7 @@ public class UserService {
 
         //check password of the found user
         if(!(user.getPassword().equals(loggingUser.getPassword()))){
-            throw new SopraServiceException(String.format("Wrong Password!"));
+            throw new SopraServiceException(String.format("Wrong password"));
         }
 
         //set user online and create new token
@@ -90,6 +111,10 @@ public class UserService {
     }
 
     public void logUserOut(String userToken){
+        //checks if token is null
+        if(userToken==null){
+            throw new SopraServiceException(String.format("Bad request"));
+        }
         //get user, who wants to log out
         User departingUser = userRepository.findByToken(userToken);
 
@@ -99,7 +124,7 @@ public class UserService {
         departingUser = userRepository.save(departingUser);
     }
 
-    public boolean checkCurrentToken(User userInput, String tokenInput){
+    public boolean compareHeaderWithUser(User userInput, String tokenInput){
         //get the user x from the data base
         User departingUser = userRepository.findByUsername(userInput.getUsername());
         //extract the user's x token
@@ -107,13 +132,13 @@ public class UserService {
 
         //checks if token is null
         if(tokenInput==null){
-            throw new SopraServiceException(String.format("Unauthorized Access!"));
+            throw new SopraServiceException(String.format("Unauthorized user access"));
         }
         //checks if the header token is identical to the correct user token
         if(originalToken.equals(tokenInput)){
             return true;
         }
-        throw new SopraServiceException(String.format("Unauthorized Access!"));
+        throw new SopraServiceException(String.format("Unauthorized user access"));
     }
 
     /**

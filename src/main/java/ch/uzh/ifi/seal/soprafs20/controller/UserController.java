@@ -47,7 +47,7 @@ public class UserController {
     @ResponseBody
     public List<UserGetDTO> getUserList(@RequestHeader("Token") String token) {
         // fetch all users in the internal representation
-        List<User> users = userService.getUsers();
+        List<User> users = userService.getUsers(token);
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
@@ -66,8 +66,8 @@ public class UserController {
     @ResponseBody
     public UserGetDTO getUserByToken(@PathVariable String userId, @RequestHeader("Token") String token) {
 
-        //call userservice to get user by token
-        User foundUser = userService.getUser(userId);
+        //get user by token in the userservice
+        User foundUser = userService.getUser(token);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
     }
@@ -80,9 +80,11 @@ public class UserController {
     @ResponseBody
     public void updateUser(@PathVariable String userId, @RequestBody UserPutDTO userPutDTO,  @RequestHeader("Token") String token) {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
-
-        //update user by id in the userservice
-        userService.updateUser(userId, userInput);
+        //check if authorized
+        if(userService.compareHeaderWithUser(userInput, token)){
+            //update user
+            userService.updateUser(userInput);
+        }
     }
 
 
