@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -64,14 +65,20 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public User getUser(String tokenInput){
+    public User getUser(long id, String inputToken){
         //check if token is null
-        if(tokenInput==null){
+        if(inputToken==null){
             throw new SopraServiceException(String.format("Bad request"));
         }
 
+        //check if optional object is empty
+        Optional<User> optionalUser = this.userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new SopraServiceException("This user does not exist.");
+        }
+
         //find the user with the given token
-        User foundUser = userRepository.findByToken(tokenInput);
+        User foundUser = optionalUser.get();
         if (foundUser==null){
             throw new SopraServiceException(String.format("User not found"));
         }
