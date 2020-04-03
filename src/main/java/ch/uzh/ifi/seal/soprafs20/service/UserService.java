@@ -112,7 +112,7 @@ public class UserService {
         //set user online and create new token
         loggingUser.setToken(UUID.randomUUID().toString());
         loggingUser.setOnline(true);
-        //loggingUser = userRepository.save(loggingUser);
+        loggingUser = userRepository.save(loggingUser);
 
         return loggingUser;
     }

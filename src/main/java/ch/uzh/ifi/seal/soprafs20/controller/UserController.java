@@ -64,10 +64,10 @@ public class UserController {
     @GetMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserGetDTO getUserByToken(@PathVariable String userId, @RequestHeader("Token") String token) {
+    public UserGetDTO getUserByToken(@PathVariable("userId") long userId, @RequestHeader("Token") String token) {
 
         //get user by token in the userservice
-        User foundUser = userService.getUser(token);
+        User foundUser = userService.getUser(userId, token);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
     }
@@ -78,7 +78,7 @@ public class UserController {
     @PutMapping("/users/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void updateUser(@PathVariable String userId, @RequestBody UserPutDTO userPutDTO,  @RequestHeader("Token") String token) {
+    public void updateUser(@PathVariable("userId") String userId, @RequestBody UserPutDTO userPutDTO,  @RequestHeader("Token") String token) {
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
         //check if authorized
         if(userService.compareHeaderWithUser(userInput, token)){
