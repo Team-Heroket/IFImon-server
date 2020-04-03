@@ -86,8 +86,14 @@ public class UserService {
     }
 
     public void updateUser(User user){
-        User changingUser = userRepository.findByUsername((user.getUsername()));
+        //check if optional object is empty
+        Optional<User> optionalUser = this.userRepository.findById(user.getId());
+        if (optionalUser.isEmpty()) {
+            throw new SopraServiceException("This user does not exist.");
+        }
 
+        //check if optional object is empty
+        User changingUser = optionalUser.get();
         if (changingUser==null){
             throw new SopraServiceException(String.format("Updating user not found"));
         }
