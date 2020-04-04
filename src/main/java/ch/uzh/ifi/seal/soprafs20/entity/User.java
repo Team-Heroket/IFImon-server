@@ -96,7 +96,7 @@ public class User implements Serializable {
     public Statistics getStatistics() {
         return statistics;
     }
-    public void getStatistics(Statistics statistics) {
+    public void setStatistics(Statistics statistics) {
         this.statistics = statistics;
     }
      */
