@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
@@ -14,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,25 +29,33 @@ import java.util.UUID;
 public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
+    //private StatisticsService statisticsService;
+    private  UserRepository userRepository;
 
-    private final UserRepository userRepository;
 
     @Autowired
     public UserService(@Qualifier("userRepository") UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+
     public User createUser(User newUser) {
-        //set user object online
-        newUser.setOnline(true);
 
         //check for duplicate usernames
-        checkIfUserExists(newUser);
+        //checkIfUserExists(newUser);
+
+        //set user object online
+        newUser.setOnline(false);
 
         //set creation date on user object
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDateTime now = LocalDateTime.now();
         newUser.setCreationDate(pattern.format(now));
+
+        //init statistics
+        Statistics newStatistics = new Statistics();
+        newUser.setStatistics(newStatistics);
+
 
         // saves the given entity but data is only persisted in the database once flush() is called
         newUser = userRepository.save(newUser);

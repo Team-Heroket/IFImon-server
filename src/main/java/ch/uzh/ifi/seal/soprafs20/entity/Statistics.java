@@ -4,6 +4,7 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,6 +31,13 @@ public class Statistics implements Serializable {
     @Column(nullable = false)
     private int storyProgress;
 
+    public Statistics(){
+        this.encounteredPokemon=new ArrayList<Integer>();
+        this.gamesWon=0;
+        this.gamesPlayed=0;
+        this.rating=0;
+        this.storyProgress=0;
+    }
 
     public List<Integer> getEncounteredPokemon() {
         return encounteredPokemon;

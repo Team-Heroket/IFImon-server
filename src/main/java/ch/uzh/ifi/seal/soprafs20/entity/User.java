@@ -46,7 +46,7 @@ public class User implements Serializable {
     @Column(nullable = false)
     private int avatarId;
 
-    @OneToOne(targetEntity = Statistics.class)
+    @OneToOne(targetEntity = Statistics.class, cascade = {CascadeType.ALL})
     private Statistics statistics;
 
     @Column(nullable = false)
