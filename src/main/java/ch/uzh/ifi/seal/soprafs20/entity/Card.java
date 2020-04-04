@@ -21,8 +21,9 @@ public class Card implements Serializable {
     @Column(nullable = false)
     private int pokemonId;
 
-    //@Column(nullable = false)
-    //private Map<Category,Integer> categories;
+    @Column(nullable = false)
+    @ElementCollection
+    private Map<Category,Integer> categories;
 
     @Column(nullable = false)
     private String name;
@@ -33,11 +34,13 @@ public class Card implements Serializable {
     @Column(nullable = true)
     private String cryURL;
 
-    //@Column(nullable = false)
-    //private List<Element> element;
+    @Column(nullable = false)
+    @ElementCollection(targetClass=Element.class)
+    private List<Element> element;
 
-    //@Column(nullable = false)
-    //private List<Integer> evolutionId;
+    @Column(nullable = false)
+    @ElementCollection(targetClass=Integer.class)
+    private List<Integer> evolutionId;
 
 
 
@@ -48,13 +51,13 @@ public class Card implements Serializable {
         this.pokemonId = pokemonId;
     }
 
-    //public Map<Category,Integer> getCategories() { return categories; }
+    public Map<Category,Integer> getCategories() { return categories; }
 
-    /*
+
     public void setCategories(Map<Category,Integer> categories) {
         this.categories = categories;
     }
-     */
+
 
     public String getName() { return name; }
     public void setName(String input) {
@@ -71,19 +74,19 @@ public class Card implements Serializable {
         this.cryURL = cryURL;
     }
 
-    /*
+
     public List<Element> getElement() { return element; }
     public void setElement(List<Element> input) {
         this.element = element;
     }
-     */
 
-    /*
+
+
     public List<Integer> getEvolutionId() { return evolutionId; }
     public void setEvolutionId(List<Integer> evolutionId) {
         this.evolutionId = evolutionId;
     }
-     */
+
 
 
 }

@@ -1,6 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import ch.uzh.ifi.seal.soprafs20.objects.Statistics;
+import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -46,8 +46,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private int avatarId;
 
-    //@Column(nullable = false)
-    //private Statistics statistics;
+    @OneToOne(targetEntity = Statistics.class)
+    private Statistics statistics;
 
     @Column(nullable = false)
     private String creationDate;
@@ -92,14 +92,14 @@ public class User implements Serializable {
         this.avatarId = avatarId;
     }
 
-    /*
+
     public Statistics getStatistics() {
         return statistics;
     }
     public void setStatistics(Statistics statistics) {
         this.statistics = statistics;
     }
-     */
+
 
     public String getCreationDate() {
         return creationDate;

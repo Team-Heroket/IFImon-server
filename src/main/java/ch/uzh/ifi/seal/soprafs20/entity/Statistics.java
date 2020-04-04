@@ -1,12 +1,35 @@
-package ch.uzh.ifi.seal.soprafs20.objects;
+package ch.uzh.ifi.seal.soprafs20.entity;
+
+
+
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
-public class Statistics {
+@Entity
+@Table(name = "STATISTICS")
+public class Statistics implements Serializable {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(nullable = false)
+    @ElementCollection(targetClass=Integer.class)
     private List<Integer> encounteredPokemon;
+
+    @Column(nullable = false)
     private int gamesWon;
+
+    @Column(nullable = false)
     private int gamesPlayed;
+
+    @Column(nullable = false)
     private int rating;
+
+    @Column(nullable = false)
     private int storyProgress;
+
 
     public List<Integer> getEncounteredPokemon() {
         return encounteredPokemon;
@@ -42,7 +65,6 @@ public class Statistics {
     public void setStoryProgress(int storyProgress) {
         this.storyProgress = storyProgress;
     }
-
 
 
 }
