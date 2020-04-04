@@ -4,11 +4,11 @@ public class UserGetDTO {
 
     private String username;
 
-    private long avatarId;
+    private int avatarId;
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
-    public long getAvatar() { return avatarId; }
-    public void setAvatar(long avatar) { this.avatarId = avatar; }
+    public int getAvatarId() { return avatarId; }
+    public void setAvatarId(int avatarId) { this.avatarId = avatarId; }
 }
