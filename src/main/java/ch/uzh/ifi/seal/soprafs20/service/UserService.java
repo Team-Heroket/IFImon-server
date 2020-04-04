@@ -42,7 +42,7 @@ public class UserService {
     public User createUser(User newUser) {
 
         //check for duplicate usernames
-        //checkIfUserExists(newUser);
+        checkIfUserExists(newUser);
 
         //set user object online
         newUser.setOnline(false);
