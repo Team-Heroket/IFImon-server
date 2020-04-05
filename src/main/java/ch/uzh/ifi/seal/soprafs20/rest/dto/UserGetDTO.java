@@ -30,7 +30,7 @@ public class UserGetDTO {
     public void setAvatarId(int avatarId) { this.avatarId = avatarId; }
 
     public Long getId() { return id; }
-    public void setId(Long avatarId) { this.id = id; }
+    public void setId(Long id) { this.id = id; }
 
 
     public Statistics getStatistics() {

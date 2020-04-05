@@ -5,6 +5,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 import javax.persistence.*;
 import java.io.Serializable;
 
+
 /**
  * Internal User Representation
  * This class composes the internal representation of the user and defines how the user is stored in the database.
@@ -26,8 +27,6 @@ public class User implements Serializable {
     //statistics
     //creationDate
     //online
-
-
 
     @Id
     @GeneratedValue
