@@ -29,7 +29,7 @@ public class User implements Serializable {
     //online
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     //add " unique = false" in parameters to make usernames unique
@@ -45,7 +45,8 @@ public class User implements Serializable {
     @Column(nullable = false)
     private int avatarId;
 
-    @OneToOne(targetEntity = Statistics.class, cascade = {CascadeType.ALL})
+    @OneToOne(cascade = CascadeType.ALL)
+    // Join is by default id to id
     private Statistics statistics;
 
     @Column(nullable = false)

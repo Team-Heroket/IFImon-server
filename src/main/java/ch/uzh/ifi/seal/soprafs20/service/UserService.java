@@ -29,8 +29,7 @@ import java.util.UUID;
 public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
-    //private StatisticsService statisticsService;
-    private  UserRepository userRepository;
+    private UserRepository userRepository;
 
 
     @Autowired
@@ -52,14 +51,10 @@ public class UserService {
         LocalDateTime now = LocalDateTime.now();
         newUser.setCreationDate(pattern.format(now));
 
-        //init statistics
-        Statistics newStatistics = new Statistics();
-        newUser.setStatistics(newStatistics);
-
+        newUser.setStatistics(new Statistics());
 
         // saves the given entity but data is only persisted in the database once flush() is called
         newUser = userRepository.save(newUser);
-        userRepository.flush();
 
         log.debug("Created Information for User: {}", newUser);
         return newUser;
