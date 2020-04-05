@@ -8,6 +8,16 @@ public class UserPutDTO {
 
     private String token;
 
+    private int avatarId;
+
+    public int getAvatarId() {
+        return avatarId;
+    }
+
+    public void setAvatarId(int avatarId) {
+        this.avatarId = avatarId;
+    }
+
     public String getUsername() {
         return username;
     }

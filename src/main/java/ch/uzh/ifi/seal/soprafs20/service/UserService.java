@@ -65,6 +65,11 @@ public class UserService {
         if(tokenInput==null){
             throw new SopraServiceException(String.format("Bad request"));
         }
+        User isAuthorized = this.userRepository.findByToken(tokenInput);
+        if (isAuthorized==null){
+            throw new SopraServiceException("Unauthorized");
+        }
+
         return this.userRepository.findAll();
     }
 
@@ -101,20 +106,21 @@ public class UserService {
             throw new SopraServiceException("This user does not exist.");
         }
 
-        //check if optional object is empty
-        if (optionalUser.isEmpty()){
-            throw new SopraServiceException(String.format("Updating user not found"));
-        }
         User changingUser = optionalUser.get();
 
         //change username
-        changingUser.setUsername(user.getUsername());
-
+        if (user.getUsername()!=null){
+            changingUser.setUsername(user.getUsername());
+        }
         //change password
-        changingUser.setPassword(user.getPassword());
+        if (user.getPassword()!=null){
+            changingUser.setPassword(user.getPassword());
+        }
+        //change avatarId
+        if (user.getAvatarId()!=changingUser.getAvatarId()){
+            changingUser.setAvatarId(user.getAvatarId());
+        }
 
-        //change profile picture
-        changingUser.setAvatarId(user.getAvatarId());
         userRepository.save(changingUser);
     }
 
@@ -167,6 +173,10 @@ public class UserService {
 
         //checks if token is null
         if(tokenInput==null){
+            throw new SopraServiceException(String.format("Unauthorized user access"));
+        }
+        //check if the token of the user found by id is null, meaning he is offline
+        if(originalToken==null){
             throw new SopraServiceException(String.format("Unauthorized user access"));
         }
         //checks if the header token is identical to the correct user token
