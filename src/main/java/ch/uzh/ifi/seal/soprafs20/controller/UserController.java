@@ -37,13 +37,14 @@ public class UserController {
 
         // create user
         userService.createUser(userInput);
+
     }
 
 
     /*     #2      **/
     /** This request returns a list with all users **/
     @GetMapping("/users")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<UserGetDTO> getUserList(@RequestHeader("Token") String token) {
         // fetch all users in the internal representation
@@ -65,6 +66,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserGetDTO getUserByToken(@PathVariable("userId") long userId, @RequestHeader("Token") String token) {
+
 
         //get user by token in the userservice
         User foundUser = userService.getUser(userId, token);

@@ -76,7 +76,13 @@ public class UserService {
     public User getUser(long id, String inputToken){
         //check if token is null
         if(inputToken==null){
-            throw new SopraServiceException(String.format("Bad request"));
+            throw new SopraServiceException("Bad request");
+        }
+
+        //check if token is authorized
+        User isAuthorized = this.userRepository.findByToken(inputToken);
+        if (isAuthorized==null){
+            throw new SopraServiceException("Unauthorized");
         }
 
         //check if optional object is empty
@@ -145,11 +151,12 @@ public class UserService {
         }
         //get user, who wants to log out
         User departingUser = userRepository.findByToken(userToken);
+        if (compareHeaderWithUser(departingUser, userToken)){
+            //set user offline and set his token to NULL
+            departingUser.setToken(null);
+            departingUser.setOnline(false);
+        }
 
-        //set user offline and set his token to NULL
-        departingUser.setToken(null);
-        departingUser.setOnline(false);
-        departingUser = userRepository.save(departingUser);
     }
 
     public boolean compareHeaderWithUser(User userInput, String tokenInput){

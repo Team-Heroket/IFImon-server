@@ -18,6 +18,8 @@ public class UserGetDTO {
 
     private boolean online;
 
+    private Long id;
+
 
 
 
@@ -26,6 +28,9 @@ public class UserGetDTO {
 
     public int getAvatarId() { return avatarId; }
     public void setAvatarId(int avatarId) { this.avatarId = avatarId; }
+
+    public Long getId() { return id; }
+    public void setId(Long avatarId) { this.id = id; }
 
 
     public Statistics getStatistics() {
