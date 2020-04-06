@@ -1,6 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.objects.Board;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.*;
@@ -99,7 +101,7 @@ public class GameController {
     @GetMapping("/games/{gameToken}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public BoardGetDTO getGameState(@PathVariable String gameToken, @RequestHeader("Token") String token) {
+    public BoardGetDTO getGameState(@PathVariable("gameToken") String gameToken, @RequestHeader("Token") String token) {
 
         //TODO: #0 check if gamerepository.findbyToken != null
 

@@ -40,9 +40,6 @@ public interface DTOMapper {
     @Mapping(source = "token", target = "token")
     User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
 
-    @Mapping(source = "timer", target = "timer")
-    TableGetDTO convertEntityToTableGetDTO(Board board);
-
     @Mapping(source = "name", target = "name")
     CardGetDTO convertEntityToCardGetDTO(Card card);
 

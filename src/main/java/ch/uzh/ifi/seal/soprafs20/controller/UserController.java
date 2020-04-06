@@ -39,7 +39,6 @@ public class UserController {
 
         // create user
         userService.createUser(userInput);
-
     }
 
 

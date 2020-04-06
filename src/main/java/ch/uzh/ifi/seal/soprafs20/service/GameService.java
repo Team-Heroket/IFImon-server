@@ -39,6 +39,7 @@ public class GameService {
         //init and save game entity with token=input, mode=input, gamename=input, creator=rendered player from token, state=lobby, board=null
 
         //returns token so controller can send back to client
+        return "qwer";
     }
 
     public void addPlayer(String username, String gameToken){
@@ -73,6 +74,7 @@ public class GameService {
         //get board of game
 
         //return board
+        return new Board();
     }
 
     //TODO: helper methods like render player from user, maybe authentification?
