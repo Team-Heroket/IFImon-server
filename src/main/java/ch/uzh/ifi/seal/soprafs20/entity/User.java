@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.*;
 
 
 /**
@@ -15,7 +16,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "USER")
-public class User implements Serializable {
+public class User implements Serializable, Comparable {
 
     private static final long serialVersionUID = 1L;
 
@@ -115,6 +116,15 @@ public class User implements Serializable {
         this.online = online;
     }
 
+    @Override
+    public int compareTo(Object compareUser) {
+        int compareRating=((User)compareUser).getStatistics().getRating();
 
+        /* For Ascending order*/
+        //return this.statistics.getRating()-compareRating;
+
+        /* For Descending order do like this */
+        return compareRating-this.statistics.getRating();
+    }
 
 }

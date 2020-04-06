@@ -2,7 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-
+import java.util.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.CardService;
@@ -49,6 +49,7 @@ public class UserController {
     public List<UserGetDTO> getUserList(@RequestHeader("Token") String token) {
         // fetch all users in the internal representation
         List<User> users = userService.getUsers(token);
+        Collections.sort(users);
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
 
         // convert each user to the API representation
