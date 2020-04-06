@@ -42,12 +42,12 @@ public class UserService {
     }
 
 
-    public User createUser(User newUser) {
+    public void createUser(User newUser) {
 
         //check for duplicate usernames
         checkIfUserExists(newUser);
 
-        //set user object online
+        //set user object offline
         newUser.setOnline(false);
 
         //set creation date on user object
@@ -55,62 +55,28 @@ public class UserService {
         LocalDateTime now = LocalDateTime.now();
         newUser.setCreationDate(pattern.format(now));
 
+        //init statistics
         newUser.setStatistics(new Statistics());
 
-        // saves the given entity but data is only persisted in the database once flush() is called
+        // saves the given entity
         newUser = userRepository.save(newUser);
 
         log.debug("Created Information for User: {}", newUser);
-        return newUser;
     }
 
     public List<User> getUsers(String tokenInput){
-        //checks if a valid user is requesting
-        if(tokenInput==null){
-            throw new SopraServiceException(String.format("Bad request"));
-        }
-        User isAuthorized = this.userRepository.findByToken(tokenInput);
-        if (isAuthorized==null){
-            throw new SopraServiceException("Unauthorized");
-        }
-
+        //returns list of all users
         return this.userRepository.findAll();
     }
 
-    public User getUser(long id, String inputToken){
-        //check if token is null
-        if(inputToken==null){
-            throw new SopraServiceException("Bad request");
-        }
-
-        //check if token is authorized
-        User isAuthorized = this.userRepository.findByToken(inputToken);
-        if (isAuthorized==null){
-            throw new SopraServiceException("Unauthorized");
-        }
-
-        //check if optional object is empty
-        Optional<User> optionalUser = this.userRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            throw new SopraServiceException("This user does not exist.");
-        }
-
-        //find the user with the given token
-        User foundUser = optionalUser.get();
-        if (foundUser==null){
-            throw new SopraServiceException(String.format("User not found"));
-        }
-        return foundUser;
+    public User getUser(long id){
+        //get single user with this id
+        return getUserById(id);
     }
 
     public void updateUser(User user){
-        //check if optional object is empty
-        Optional<User> optionalUser = this.userRepository.findById(user.getId());
-        if (optionalUser.isEmpty()) {
-            throw new SopraServiceException("This user does not exist.");
-        }
-
-        User changingUser = optionalUser.get();
+        //get user by id
+        User changingUser = getUserById(user.getId());
 
         //change username
         if (user.getUsername()!=null){
@@ -144,11 +110,7 @@ public class UserService {
 
     public User logUserIn(User user){
         //find the user in the data base
-        User loggingUser = userRepository.findByUsername(user.getUsername());
-
-        if (loggingUser==null){
-            throw new SopraServiceException(String.format("User not found"));
-        }
+        User loggingUser = getUserByUsername(user.getUsername());
 
         //check password of the found user
         if(!(user.getPassword().equals(loggingUser.getPassword()))){
@@ -164,16 +126,14 @@ public class UserService {
     }
 
     public void logUserOut(String userToken){
-        //checks if token is null
-        if(userToken==null){
-            throw new SopraServiceException(String.format("Bad request"));
-        }
+
         //get user, who wants to log out
         User departingUser = userRepository.findByToken(userToken);
 
         //set user offline and set his token to NULL
         departingUser.setToken(null);
         departingUser.setOnline(false);
+
     }
 
     /**
@@ -183,25 +143,30 @@ public class UserService {
      * @param token Token of user to be checked
      */
     public void compareIdWithToken(Long id, String token){
-        //check if optional object is empty
+        //get all users with id
         Optional<User> optionalUser = this.userRepository.findById(id);
+
+        //check if optional object is empty
         if (optionalUser.isEmpty()) {
             throw new SopraServiceException("This user does not exist.");
         }
-
+        //get user from result
         User chosenUser = optionalUser.get();
-        //extract the user's x token
+
+        //extract the found user's token
         String originalToken = chosenUser.getToken();
 
-        //checks if token is null
-        if(token==null){
-            throw new SopraServiceException(String.format("Unauthorized user access"));
-        }
         //check if the token of the user found by id is null, meaning he is offline
         if(originalToken==null){
             throw new SopraServiceException(String.format("Unauthorized user access"));
         }
-        //checks if the header token is identical to the correct user token
+
+        //checks if header token is null
+        if(token==null){
+            throw new SopraServiceException(String.format("Unauthorized user access"));
+        }
+
+        //checks if the header token is identical to the corresponding user token
         if(!originalToken.equals(token)){
             throw new SopraServiceException(String.format("Unauthorized user access"));
         }
@@ -237,5 +202,28 @@ public class UserService {
         if (userByUsername != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
         }
+    }
+
+    private User getUserById(Long id){
+        Optional<User> optionalUser = this.userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new SopraServiceException("This user does not exist.");
+        }
+        //get single user
+        User foundUser = optionalUser.get();
+        //check if it is null
+        if(foundUser==null){
+            throw new SopraServiceException("This user does not exist.");
+        }
+        return foundUser;
+    }
+
+    private User getUserByUsername(String username){
+        User foundUser = this.userRepository.findByUsername(username);
+        //check if it is null
+        if(foundUser==null){
+            throw new SopraServiceException("This user does not exist.");
+        }
+        return foundUser;
     }
 }

@@ -32,6 +32,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public void createUser(@RequestBody UserPostDTO userPostDTO) {
+        //no need for authorization
+
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
@@ -47,15 +49,23 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<UserGetDTO> getUserList(@RequestHeader("Token") String token) {
+        //authorize user
+        userService.validateUser(token);
+
         // fetch all users in the internal representation
         List<User> users = userService.getUsers(token);
-        Collections.sort(users);
-        List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
+        //sort users by rating in descending order but only if list is not empty (NPE)
+        if(!users.isEmpty()) {
+            Collections.sort(users);
+        }
 
         // convert each user to the API representation
+        List<UserGetDTO> userGetDTOs = new ArrayList<>();
         for (User user : users) {
             userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
         }
+        //return list
         return userGetDTOs;
     }
 
@@ -67,10 +77,11 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public UserGetDTO getUserByToken(@PathVariable("userId") long userId, @RequestHeader("Token") String token) {
-
+        //authorize user
+        userService.validateUser(token);
 
         //get user by token in the userservice
-        User foundUser = userService.getUser(userId, token);
+        User foundUser = userService.getUser(userId);
 
         return DTOMapper.INSTANCE.convertEntityToUserGetDTO(foundUser);
     }
@@ -87,12 +98,11 @@ public class UserController {
         // Merges userId from path into the user
         userInput.setId(userId);
 
-        //check if authorized
-        if(userService.compareHeaderWithUser(userInput, token)){
-            //update user
-            userService.updateUser(userInput);
-        }
+        //check if authorized to change this user
+        userService.compareIdWithToken(userInput.getId(), token);
 
+        //update user
+        userService.updateUser(userInput);
     }
 
 
@@ -101,15 +111,17 @@ public class UserController {
     @PutMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public String userLogin(@RequestBody UserPutDTO userPutDTO) {
+    public UserLoginDTO userLogin(@RequestBody UserPutDTO userPutDTO) {
+        //no need for authorization of token
+
         // convert API user to internal representation
         User userInput = DTOMapper.INSTANCE.convertUserPutDTOtoEntity(userPutDTO);
 
+        //log in user
         User loggedInUser = userService.logUserIn(userInput);
 
         // convert internal representation of user back to API
-        // TODO: Maybe write a DTO for that
-        return "{\"Id\": " + loggedInUser.getId() + ", \"Token\": \"" + loggedInUser.getToken() + "\"}";
+        return DTOMapper.INSTANCE.convertEntityToUserLoginDTO(loggedInUser);
     }
 
 
@@ -119,6 +131,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void userLogout(@RequestHeader("Token") String token) {
+        //check if token represents a valid user
+        userService.validateUser(token);
+
+        //log user out
         userService.logUserOut(token);
     }
 

@@ -44,4 +44,8 @@ public interface DTOMapper {
 
     @Mapping(source = "name", target = "name")
     CardGetDTO convertEntityToCardGetDTO(Card card);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "token", target = "token")
+    UserLoginDTO convertEntityToUserLoginDTO(User user);
 }
