@@ -133,7 +133,6 @@ public class UserControllerTest {
     @MockBean
     private CardService cardService;
 
-    /*
     @Test
     public void Test_createUser() throws Exception {
         // given
@@ -156,9 +155,7 @@ public class UserControllerTest {
         mockMvc.perform(postRequest)
             .andExpect(status().isCreated());
     }
-     */
 
-    /*
     @Test
     public void Test_getUserList() throws Exception {
         // given
@@ -182,9 +179,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
                 .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
     }
-     */
 
-    /*
     @Test
     public void Test_getUserByToken() throws Exception {
         // given
@@ -208,7 +203,6 @@ public class UserControllerTest {
             .andExpect(jsonPath("$.token", is(user.getToken())));
 
     }
-     */
 
     @Test
     public void Test_updateUser() throws Exception {
