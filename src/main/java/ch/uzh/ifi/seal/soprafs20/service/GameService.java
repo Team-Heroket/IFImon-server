@@ -1,9 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Tables;
-
-import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.objects.Board;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * User Service
@@ -52,9 +45,9 @@ public class GameService {
 
     }
 
-    public Tables getGame(String gameToken){
-        Tables table = new Tables();
-        return table;
+    public Board getGame(String gameToken){
+        Board board = new Board();
+        return board;
     }
 
     public void selectCategory(Enum category, String gameToken){

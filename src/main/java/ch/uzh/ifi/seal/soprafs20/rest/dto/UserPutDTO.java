@@ -1,7 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-
 public class UserPutDTO {
 
     private String username;
@@ -9,6 +7,16 @@ public class UserPutDTO {
     private String password;
 
     private String token;
+
+    private int avatarId;
+
+    public int getAvatarId() {
+        return avatarId;
+    }
+
+    public void setAvatarId(int avatarId) {
+        this.avatarId = avatarId;
+    }
 
     public String getUsername() {
         return username;

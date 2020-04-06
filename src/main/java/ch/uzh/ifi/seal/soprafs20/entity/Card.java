@@ -4,6 +4,10 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.List;
+
+import ch.uzh.ifi.seal.soprafs20.constant.Category;
+import ch.uzh.ifi.seal.soprafs20.constant.Element;
 
 @Entity
 @Table(name = "CARD")
@@ -15,12 +19,74 @@ public class Card implements Serializable {
     private Long id;
 
     @Column(nullable = false)
+    private int pokemonId;
+
+    @Column(nullable = false)
+    @ElementCollection
+    private Map<Category,Integer> categories;
+
+    @Column(nullable = false)
     private String name;
 
-    public String getName() { return name; }
+    @Column(nullable = true)
+    private String spriteURL;
 
+    @Column(nullable = true)
+    private String cryURL;
+
+    @Column(nullable = false)
+    @ElementCollection(targetClass=Element.class)
+    private List<Element> element;
+
+    @Column(nullable = false)
+    @ElementCollection(targetClass=Integer.class)
+    private List<Integer> evolutionId;
+
+
+
+
+
+    public int getId() { return pokemonId; }
+    public void setId(int pokemonId) {
+        this.pokemonId = pokemonId;
+    }
+
+    public Map<Category,Integer> getCategories() { return categories; }
+
+
+    public void setCategories(Map<Category,Integer> categories) {
+        this.categories = categories;
+    }
+
+
+    public String getName() { return name; }
     public void setName(String input) {
         this.name = input;
     }
+
+    public String getSpriteURL() { return spriteURL; }
+    public void setSpriteURL(String spriteURL) {
+        this.spriteURL = spriteURL;
+    }
+
+    public String getCryURL() { return cryURL; }
+    public void setCryURL(String cryURL) {
+        this.cryURL = cryURL;
+    }
+
+
+    public List<Element> getElement() { return element; }
+    public void setElement(List<Element> input) {
+        this.element = element;
+    }
+
+
+
+    public List<Integer> getEvolutionId() { return evolutionId; }
+    public void setEvolutionId(List<Integer> evolutionId) {
+        this.evolutionId = evolutionId;
+    }
+
+
 
 }

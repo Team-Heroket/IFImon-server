@@ -31,17 +31,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 **/
 
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Tables;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.CardGetDTO;
 import ch.uzh.ifi.seal.soprafs20.service.CardService;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
@@ -154,7 +149,6 @@ public class UserControllerTest {
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
                 .content(asJsonString(userPostDTO));
 
         // then
@@ -246,7 +240,6 @@ public class UserControllerTest {
         // when
         MockHttpServletRequestBuilder putRequest = put("/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
                 .content(asJsonString(userPutDTO));
 
         // then
@@ -328,7 +321,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
-
+/**
     @Test
     public void Test_getGameState() throws Exception {
 
@@ -348,7 +341,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.timer").value(123));
     }
-
+**/
 
 
     @Test
