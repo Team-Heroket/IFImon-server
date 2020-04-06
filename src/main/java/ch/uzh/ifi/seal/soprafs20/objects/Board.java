@@ -5,6 +5,9 @@ import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import java.util.List;
 
 public class Board {
+
+    //TODO:Probably need to make this an entity with respository etc (same as statistics)
+
     private List<Player> players;
     private Player turnPlayer;
     private Category chosenCategory;

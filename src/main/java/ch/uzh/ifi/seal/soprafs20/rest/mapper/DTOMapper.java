@@ -1,12 +1,13 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.objects.Board;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.objects.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 /**
  * DTOMapper
@@ -48,4 +49,16 @@ public interface DTOMapper {
     @Mapping(source = "id", target = "id")
     @Mapping(source = "token", target = "token")
     UserLoginDTO convertEntityToUserLoginDTO(User user);
+
+
+    @Mapping(source = "gameName", target = "gameName")
+    @Mapping(source = "mode", target = "mode")
+    Game convertGamePostDTOToEntity(GamePostDTO gamePostDTO);
+
+    @Mapping(source = "players", target = "players")
+    @Mapping(source = "turnPlayer", target = "turnPlayer")
+    @Mapping(source = "chosenCategory", target = "chosenCategory")
+    @Mapping(source = "timer", target = "timer")
+    BoardGetDTO convertBoardToBoardGetDTO(Board board);
+
 }
