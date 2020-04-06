@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.repository.StatisticRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +31,14 @@ public class UserService {
 
     private final Logger log = LoggerFactory.getLogger(UserService.class);
     private UserRepository userRepository;
+    private StatisticRepository statisticRepository;
 
 
     @Autowired
-    public UserService(@Qualifier("userRepository") UserRepository userRepository) {
+    public UserService(@Qualifier("userRepository") UserRepository userRepository,
+                       @Qualifier("statisticRepository") StatisticRepository statisticRepository) {
         this.userRepository = userRepository;
+        this.statisticRepository = statisticRepository;
     }
 
 
@@ -121,7 +125,21 @@ public class UserService {
             changingUser.setAvatarId(user.getAvatarId());
         }
 
-        userRepository.save(changingUser);
+        /*
+        // Changing ranting on user
+        changingUser = userRepository.save(changingUser);
+
+        Optional<Statistics> optionalStatistics = this.statisticRepository.findById(changingUser.getId());
+        if (optionalStatistics.isEmpty()) {
+            throw new SopraServiceException("Could not load statistics from user");
+        }
+
+        Statistics changingStatistics = optionalStatistics.get();
+
+        changingStatistics.setRating(changingStatistics.getRating()+10);
+
+        this.statisticRepository.save(changingStatistics);
+         */
     }
 
     public User logUserIn(User user){
@@ -152,17 +170,21 @@ public class UserService {
         }
         //get user, who wants to log out
         User departingUser = userRepository.findByToken(userToken);
-        if (compareHeaderWithUser(departingUser, userToken)){
-            //set user offline and set his token to NULL
-            departingUser.setToken(null);
-            departingUser.setOnline(false);
-        }
 
+        //set user offline and set his token to NULL
+        departingUser.setToken(null);
+        departingUser.setOnline(false);
     }
 
-    public boolean compareHeaderWithUser(User userInput, String tokenInput){
+    /**
+     * Checks if the User is the same user as shown in token
+     *
+     * @param id Id of user to be checked
+     * @param token Token of user to be checked
+     */
+    public void compareIdWithToken(Long id, String token){
         //check if optional object is empty
-        Optional<User> optionalUser = this.userRepository.findById(userInput.getId());
+        Optional<User> optionalUser = this.userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new SopraServiceException("This user does not exist.");
         }
@@ -172,7 +194,7 @@ public class UserService {
         String originalToken = chosenUser.getToken();
 
         //checks if token is null
-        if(tokenInput==null){
+        if(token==null){
             throw new SopraServiceException(String.format("Unauthorized user access"));
         }
         //check if the token of the user found by id is null, meaning he is offline
@@ -180,10 +202,24 @@ public class UserService {
             throw new SopraServiceException(String.format("Unauthorized user access"));
         }
         //checks if the header token is identical to the correct user token
-        if(originalToken.equals(tokenInput)){
-            return true;
+        if(!originalToken.equals(token)){
+            throw new SopraServiceException(String.format("Unauthorized user access"));
         }
-        throw new SopraServiceException(String.format("Unauthorized user access"));
+    }
+
+    /**
+     * Check if this token is allowed to access
+     *
+     * @param token Token to check
+     */
+    public void validateUser(String token) {
+        if(token == null || token.isEmpty()){
+            throw new SopraServiceException("Bad request");
+        }
+        User isAuthorized = this.userRepository.findByToken(token);
+        if (isAuthorized==null){
+            throw new SopraServiceException("Unauthorized");
+        }
     }
 
     /**
