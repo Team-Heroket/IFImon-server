@@ -1,10 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-
-import ch.uzh.ifi.seal.soprafs20.constant.Mode;
+import ch.uzh.ifi.seal.soprafs20.constant.GameState;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "GAME")
@@ -12,44 +12,31 @@ public class Game implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false)
     private String token;
 
-    @Column(nullable = false)
-    private String gameName;
+    // Should only be readable!
+    @OneToOne
+    private Player creator;
 
-    @Column(nullable = false)
-    private Mode mode;
+    @OneToMany
+    private List<Player> players;
 
-    //TODO: Add board entity
+    // Removed mode, since we don't need to keep track of that actually
 
+    // Cool, gets converted to string for database and back to enum for java
+    @Enumerated(EnumType.STRING)
+    @Column(length = 8)
+    private GameState state;
 
+    // TODO: table
 
+    // TODO: chat
 
-    public String getGameName() {
-        return gameName;
-    }
-    public void setGameName(String gameName) {
-        this.gameName = gameName;
-    }
-
-    public Mode getMode() {
-        return mode;
-    }
-    public void setMode(Mode mode) {
-        this.mode = mode;
-    }
-
-    public String getToken() {
-        return token;
-    }
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Long getId(){return id;}
-    public void setId(Long id){this.id=id;}
 }
