@@ -74,6 +74,10 @@ public class UserService {
         return getUserById(id);
     }
 
+    public User getTokenUser(String token) {
+        return this.userRepository.findByToken(token);
+    }
+
     public void updateUser(User user){
         //get user by id
         User changingUser = getUserById(user.getId());

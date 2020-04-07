@@ -1,5 +1,5 @@
 package ch.uzh.ifi.seal.soprafs20.constant;
 
-public enum GameState {
+public enum GameStateEnum {
     LOBBY, RUNNING, FINISHED
 }

@@ -34,12 +34,14 @@ public class GameController {
     public String createLobby(@RequestBody GamePostDTO gamePostDTO, @RequestHeader("Token") String token) {
         //Authorize user
         userService.validateUser(token);
+        // The Controller has to do this step, since you have the userService instance
+        User creator = this.userService.getTokenUser(token);
 
         //wrap user input as a game entity
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
 
         //creates a Lobby with the given gamemode and gamename
-        String lobbyToken = gameService.createLobby(game);
+        String lobbyToken = gameService.createLobby(game, creator);
 
         return lobbyToken;
     }
