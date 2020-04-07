@@ -32,11 +32,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 **/
 
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
+import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.objects.Board;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.BoardGetDTO;
 import ch.uzh.ifi.seal.soprafs20.service.CardService;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
@@ -133,19 +137,17 @@ public class UserControllerTest {
     @MockBean
     private CardService cardService;
 
-    /*
+
     @Test
     public void Test_createUser() throws Exception {
         // given
         User user = new User();
         user.setUsername("testUsername");
-        user.setStatus(UserStatus.ONLINE);
-        String string = "test";
+        user.setOnline(true);
+        user.setAvatarId(1);
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
-
-        given(userService.createUser(Mockito.any())).willReturn(user);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/users")
@@ -157,20 +159,19 @@ public class UserControllerTest {
             .andExpect(status().isCreated());
     }
 
-     */
 
-    /*
+
     @Test
     public void Test_getUserList() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
-        user.setStatus(UserStatus.OFFLINE);
+        user.setOnline(true);
 
         List<User> allUsers = Collections.singletonList(user);
 
         // this mocks the UserService -> we define above what the userService should return when getUsers() is called
-        given(userService.getUsers()).willReturn(allUsers);
+        given(userService.getUsers(Mockito.any())).willReturn(allUsers);
 
         // when
         MockHttpServletRequestBuilder getRequest = get("/users")
@@ -178,24 +179,30 @@ public class UserControllerTest {
                 .header("Token", "Test");
 
         // then
-        mockMvc.perform(getRequest).andExpect(status().isCreated())
+        mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
-                .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
+                .andExpect(jsonPath("$[0].online", is(user.getOnline())));
     }
-     */
 
-    /*
+
+
     @Test
     public void Test_getUserByToken() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setToken("3");
-        user.setStatus(UserStatus.ONLINE);
+        user.setOnline(true);
+        user.setCreationDate("today");
+        user.setId(25L);
+        user.setAvatarId(1);
+        user.setStatistics(new Statistics());
+
+
 
         // this mocks the UserService -> we define above what the userService should return when getUsers() is called
-        given(userService.getUser(Mockito.any())).willReturn(user);
+        given(userService.getUser(Mockito.anyLong())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder getRequest = get("/users/3")
@@ -205,11 +212,9 @@ public class UserControllerTest {
         // then
         mockMvc.perform(getRequest)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username", is(user.getUsername())))
-            .andExpect(jsonPath("$.token", is(user.getToken())));
-
+            .andExpect(jsonPath("$.username", is(user.getUsername())));
     }
-     */
+
 
     @Test
     public void Test_updateUser() throws Exception {
@@ -229,33 +234,41 @@ public class UserControllerTest {
 
         // then
         mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
+
+
 
     @Test
     public void Test_userLogin() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword(("pw_uwu"));
         user.setToken("123");
+        user.setId(2020L);
+
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("firstname@lastname");
-        userPutDTO.setPassword("pw");
+        userPutDTO.setPassword("pw_uwu");
+        userPutDTO.setAvatarId(1);
         userPutDTO.setToken("123");
+
+        given(userService.logUserIn(Mockito.any())).willReturn(user);
+
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(userPutDTO));
 
+
         // then
         mockMvc.perform(putRequest)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("123"));
-
-
-
+                .andExpect(jsonPath("$.id", is(2020)))
+                .andExpect(jsonPath("$.token", is("123")));
 
     }
 
@@ -271,6 +284,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
+/**
     @Test
     public void Test_createLobby() throws Exception {
         // given
@@ -278,39 +292,41 @@ public class UserControllerTest {
         String newGamename = "newGame";
         mode gameMode = mode.Quick;
 
+        GamePostDTO gamePostDTO = new GamePostDTO();
 
-        given(gameService.createGame(Mockito.any(),Mockito.any())).willReturn(gameToken);
+        given(gameService.createLobby(Mockito.anyObject())).willReturn(gameToken);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/games")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Token", "Test")
-                .content(newGamename)
-                .content(String.valueOf(gameMode));
+                .content(String.valueOf(gamePostDTO));
 
         // then
         mockMvc.perform(postRequest)
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$").value("newGameToken"));
+                .andExpect(jsonPath("$.").value("newGameToken"));
     }
+
 
     @Test
     public void Test_lobbyOperation() throws Exception {
-        // given
-        long action= 2;
-        String userName = "newUsername";
+
+        long asdf = 2L;
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/games/1234/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Token", "Test")
-                .content(userName)
-                .content(String.valueOf(action));
+                .param("userName", "oldUsername")
+                .param("action", String.valueOf(asdf));
 
         // then
         mockMvc.perform(putRequest)
                 .andExpect(status().isOk());
     }
+
+
 
     @Test
     public void Test_startGame() throws Exception {
@@ -328,19 +344,19 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
-/**
+
     @Test
     public void Test_getGameState() throws Exception {
 
         //given
-        Tables table = new Tables();
-        table.setTimer(123);
+        Board board = new Board();
+        board.setTimer(123L);
 
         // this mocks the UserService -> we define above what the gameService should return when getUsers() is called
-        given(gameService.getGame(Mockito.any())).willReturn(table);
+        given(gameService.getBoard(Mockito.anyString())).willReturn(board);
 
         // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder getRequest = get("/games/1234")
+        MockHttpServletRequestBuilder getRequest = get("/games/12345")
                 .header("Token", "Test");
 
         // then
@@ -348,7 +364,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.timer").value(123));
     }
-**/
+
 
 
     @Test
@@ -367,6 +383,7 @@ public class UserControllerTest {
         mockMvc.perform(putRequest)
                 .andExpect(status().isOk());
     }
+
 
     @Test
     public void Test_berryUpgrade() throws Exception {
@@ -426,7 +443,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("firstCard"));
     }
-
+**/
 
 
     /**

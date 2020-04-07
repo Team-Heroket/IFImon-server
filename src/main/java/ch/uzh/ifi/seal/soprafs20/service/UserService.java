@@ -106,6 +106,7 @@ public class UserService {
 
         this.statisticRepository.save(changingStatistics);
          */
+        changingUser = userRepository.save(changingUser);
     }
 
     public User logUserIn(User user){
@@ -133,7 +134,7 @@ public class UserService {
         //set user offline and set his token to NULL
         departingUser.setToken(null);
         departingUser.setOnline(false);
-
+        departingUser = userRepository.save(departingUser);
     }
 
     /**
@@ -204,7 +205,7 @@ public class UserService {
         }
     }
 
-    private User getUserById(Long id){
+    User getUserById(Long id){
         Optional<User> optionalUser = this.userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new SopraServiceException("This user does not exist.");
