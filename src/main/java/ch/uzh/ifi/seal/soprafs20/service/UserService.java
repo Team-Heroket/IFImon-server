@@ -223,7 +223,7 @@ public class UserService {
         return foundUser;
     }
 
-    private User getUserByUsername(String username){
+    public User getUserByUsername(String username){
         User foundUser = this.userRepository.findByUsername(username);
         //check if it is null
         if(foundUser==null){

@@ -55,6 +55,7 @@ public class GameController {
     public void lobbyOperation(@PathVariable String gameToken, @RequestBody GameTokenUserPutDTO gameTokenUserPutDTO, @RequestHeader("Token") String token ) {
         //authorize user from header
         userService.validateUser(token);
+        User user = this.userService.getTokenUser(token);
 
         //TODO: #0 check if gamerepository.findbyToken != null
 
@@ -63,15 +64,15 @@ public class GameController {
 
         if(action==0){
             //TODO: #1 check here that players are only able to add themselves and not other players: compare "header.token" with "username.token"
-            gameService.addPlayer(username,gameToken);
+            gameService.addPlayer(gameToken, this.userService.getUserByUsername(username));
         }
         else if(action==1){
             //TODO: #1 check here that players are only able to remove themselves and not other players: compare "header.token" with "username.token"
-            gameService.removePlayer(username,gameToken);
+            gameService.removePlayer(gameToken, user);
         }
         else if(action==2){
             //TODO: #2 check here that only game creator can kick players: compare "header.token.username" with "gameToken.creator.username"
-            gameService.removePlayer(username,gameToken);
+            gameService.removePlayer(gameToken, user);
         }
         else{
             throw new SopraServiceException("Bad request: Illegal action code");

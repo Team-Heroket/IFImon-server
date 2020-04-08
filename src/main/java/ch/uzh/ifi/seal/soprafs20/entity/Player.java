@@ -18,8 +18,25 @@ public class Player {
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
+    public Player(User user) {
+        this.user = user;
+    }
+
     // TODO: OneToOne Deck
 
     // TODO: berries
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
 
 }

@@ -2,17 +2,21 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.objects.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.*;
 
+import org.hibernate.cfg.NotYetImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * User Service
@@ -40,16 +44,16 @@ public class GameService {
      * Creates a new game and put its into lobby state
      *
      * @param game
-     * @param creator
+     * @param creatingUser
      * @return
      */
-    public String createLobby(Game game, User creator){
+    public String createLobby(Game game, User creatingUser){
         if (null != this.gameRepository.findByToken(game.getToken())) {
             throw new SopraServiceException("This Game-Token already exists!");
         }
 
         //init and save game entity with token=input, mode=input, gamename=input, creator=rendered player from token, state=lobby, board=null
-        Game newGame = new Game();
+        Game newGame = new Game(new Player(creatingUser));
         newGame.setToken(this.uniquePokemonNameGenerator.get())
                 .setState(GameStateEnum.LOBBY)
                 .setGameName(game.getGameName())
@@ -63,22 +67,27 @@ public class GameService {
         return newGame.getToken();
     }
 
-    public void addPlayer(String username, String gameToken){
-        //get user corresponding to username
+    public void addPlayer(String gameToken, User user){
+        // Hmm, vielleicht wäre es trotzdem besser, wenn die validation auch hier gemacht wird...
+        Game game = this.gameRepository.findByToken(gameToken);
+        GameState state = this.getState(game);
 
-        //init player based on this user
-
-        //append player to game.players[] of game corresponding to gameToken
+        // This handles the addPlayer depending on the state the game is in.
+        state.addPlayer(game, user);
     }
 
-    public void removePlayer(String username, String gameToken){
+    public void removePlayer(String gameToken, User user){
         //get game corresponding to gameToken
+        Game game = this.gameRepository.findByToken(gameToken);
+        GameState state = this.getState(game);
 
         //remove player from this game.players[] with the provided username, if he exists
+        state.removePlayer(game, user);
     }
 
 
     public void startGame(Integer npc, String gameToken){
+        throw new NotYetImplementedException(); // Sprint 3
         //get game from gameToken
 
         //loop (from 0 to npc): render NPCs and add them to game
@@ -90,12 +99,14 @@ public class GameService {
     }
 
     public Board getBoard(String gameToken){
+        throw new NotYetImplementedException(); // Sprint 3
+
         //get game from gameToken
 
         //get board of game
 
         //return board
-        return new Board();
+        //return new Board();
     }
 
     //TODO: helper methods like render player from user, maybe authentification?

@@ -43,6 +43,14 @@ public class Game implements Serializable {
 
     // TODO: chat
 
+    public Game(Player creator) {
+        this.creator = creator;
+
+        // The creator of the game is automatically also a player of that game.
+        this.players = new ArrayList<>();
+        this.players.add(creator);
+    }
+
     //********* Getters and Setters
 
 
