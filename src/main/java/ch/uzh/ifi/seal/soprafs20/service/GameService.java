@@ -52,7 +52,7 @@ public class GameService {
         Game newGame = new Game();
         newGame.setToken(this.uniquePokemonNameGenerator.get())
                 .setState(GameStateEnum.LOBBY)
-                .setName(game.getName())
+                .setGameName(game.getGameName())
                 .setMode(game.getMode());
         // This indian pattern is perfect for copy and pasting :)
         // TODO: find correct name for that

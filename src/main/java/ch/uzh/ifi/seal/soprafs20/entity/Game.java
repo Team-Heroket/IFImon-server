@@ -18,7 +18,7 @@ public class Game implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String gameName;
 
     @Column(nullable = false)
     private String token;
@@ -56,12 +56,12 @@ public class Game implements Serializable {
         return this;
     }
 
-    public String getName() {
-        return name;
+    public String getGameName() {
+        return gameName;
     }
 
-    public Game setName(String name) {
-        this.name = name;
+    public Game setGameName(String gameName) {
+        this.gameName = gameName;
         return this;
     }
 
