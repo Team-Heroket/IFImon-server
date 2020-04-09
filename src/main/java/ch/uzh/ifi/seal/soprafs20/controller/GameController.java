@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.constant.LobbyAction;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.objects.Board;
@@ -57,24 +58,41 @@ public class GameController {
         userService.validateUser(token);
         gameService.validateGame(gameToken);
 
-        User user = this.userService.getTokenUser(token);
-
         //TODO: #0 check if gamerepository.findbyToken != null
 
-        String username=gameTokenUserPutDTO.getUsername();
-        int action=gameTokenUserPutDTO.getAction();
+        LobbyAction action=gameTokenUserPutDTO.getAction();
 
-        if(action==0){
+        if(action==LobbyAction.JOIN){
             //TODO: #1 check here that players are only able to add themselves and not other players: compare "header.token" with "username.token"
-            gameService.addPlayer(gameToken, this.userService.getUserByUsername(username));
+            String username=gameTokenUserPutDTO.getUsername();
+            User joiningUser=this.userService.getUserByUsername(username);
+
+            //here check if username==headertoken?
+            userService.compareUsernameWithToken(username, token);
+
+            gameService.addPlayer(gameToken, joiningUser);
         }
-        else if(action==1){
-            //TODO: #1 check here that players are only able to remove themselves and not other players: compare "header.token" with "username.token"
+        else if(action==LobbyAction.LEAVE){
+            //TODO: #1 check here that players are only able to remove themselves and not other players: compare "header.token" with "username.token
+            String username=gameTokenUserPutDTO.getUsername();
+            User leavingUser=this.userService.getUserByUsername(username);
+
+            //here check if username==headertoken?
+            userService.compareUsernameWithToken(username, token);
+
             gameService.removePlayer(gameToken, user);
         }
-        else if(action==2){
-            //TODO: #2 check here that only game creator can kick players: compare "header.token.username" with "gameToken.creator.username"
-            gameService.removePlayer(gameToken, user);
+        else if(action==LobbyAction.KICK){
+            //TODO: #2 check here that only game creator can kick players: compare "header.token.username" with "gameToken.creator.username
+            String username=gameTokenUserPutDTO.getUsername();
+
+            User kickingUser=this.userService.getUserByToken(token);
+
+            //check if kicking user is creator?
+            gameService.validateCreator(gameToken, kickingUser);
+
+            User kickedUser=this.userService.getUserByUsername(username);
+            gameService.removePlayer(gameToken, kickedUser);
         }
         else{
             throw new SopraServiceException("Bad request: Illegal action code");

@@ -1,12 +1,13 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
+import ch.uzh.ifi.seal.soprafs20.constant.LobbyAction;
 import ch.uzh.ifi.seal.soprafs20.constant.Mode;
 
 public class GameTokenUserPutDTO {
 
     private String username;
 
-    private int action;
+    private LobbyAction action;
 
 
     public String getUsername() {
@@ -16,10 +17,10 @@ public class GameTokenUserPutDTO {
         this.username = username;
     }
 
-    public int getAction() {
+    public LobbyAction getAction() {
         return action;
     }
-    public void setAction(int action) {
+    public void setAction(LobbyAction action) {
         this.action = action;
     }
 

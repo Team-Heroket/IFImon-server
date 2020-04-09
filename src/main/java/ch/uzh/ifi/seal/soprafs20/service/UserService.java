@@ -74,9 +74,6 @@ public class UserService {
         return getUserById(id);
     }
 
-    public User getTokenUser(String token) {
-        return this.userRepository.findByToken(token);
-    }
 
     public void updateUser(User user){
         //get user by id
@@ -266,4 +263,14 @@ public class UserService {
         }
         return foundUser;
     }
+
+    public User getUserByToken(String token) {
+        User foundUser = this.userRepository.findByToken(token);
+        //check if none found
+        if(foundUser==null){
+            throw new SopraServiceException("This user does not exist.");
+        }
+        return foundUser;
+    }
+
 }
