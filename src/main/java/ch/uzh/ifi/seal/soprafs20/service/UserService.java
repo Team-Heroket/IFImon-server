@@ -241,7 +241,7 @@ public class UserService {
         }
     }
 
-    User getUserById(Long id){
+    public User getUserById(Long id){
         Optional<User> optionalUser = this.userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new SopraServiceException("This user does not exist.");

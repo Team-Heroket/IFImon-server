@@ -58,40 +58,36 @@ public class GameController {
         userService.validateUser(token);
         gameService.validateGame(gameToken);
 
-        //TODO: #0 check if gamerepository.findbyToken != null
-
         LobbyAction action=gameTokenUserPutDTO.getAction();
 
         if(action==LobbyAction.JOIN){
-            //TODO: #1 check here that players are only able to add themselves and not other players: compare "header.token" with "username.token"
-            String username=gameTokenUserPutDTO.getUsername();
-            User joiningUser=this.userService.getUserByUsername(username);
+            Long id=gameTokenUserPutDTO.getId();
 
-            //here check if username==headertoken?
-            userService.compareUsernameWithToken(username, token);
+
+            //here check if id==headertoken?
+            userService.compareIdWithToken(id, token);
+            User joiningUser=this.userService.getUserById(id);
 
             gameService.addPlayer(gameToken, joiningUser);
         }
         else if(action==LobbyAction.LEAVE){
-            //TODO: #1 check here that players are only able to remove themselves and not other players: compare "header.token" with "username.token
-            String username=gameTokenUserPutDTO.getUsername();
-            User leavingUser=this.userService.getUserByUsername(username);
+            Long id=gameTokenUserPutDTO.getId();
 
-            //here check if username==headertoken?
-            userService.compareUsernameWithToken(username, token);
+            //here check if id==headertoken?
+            userService.compareIdWithToken(id, token);
+            User leavingUser=this.userService.getUserById(id);
 
-            gameService.removePlayer(gameToken, user);
+            gameService.removePlayer(gameToken, leavingUser);
         }
         else if(action==LobbyAction.KICK){
-            //TODO: #2 check here that only game creator can kick players: compare "header.token.username" with "gameToken.creator.username
-            String username=gameTokenUserPutDTO.getUsername();
+            Long id=gameTokenUserPutDTO.getId();
 
             User kickingUser=this.userService.getUserByToken(token);
 
             //check if kicking user is creator?
             gameService.validateCreator(gameToken, kickingUser);
 
-            User kickedUser=this.userService.getUserByUsername(username);
+            User kickedUser=this.userService.getUserById(id);
             gameService.removePlayer(gameToken, kickedUser);
         }
         else{
