@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 /**
  * User Service
  * This class is the "worker" and responsible for all functionality related to the user
@@ -98,15 +96,8 @@ public class GameService {
 
     }
 
-    public Board getBoard(String gameToken){
-        throw new NotYetImplementedException(); // Sprint 3
-
-        //get game from gameToken
-
-        //get board of game
-
-        //return board
-        //return new Board();
+    public Game getGame(String gameToken){
+        return this.gameRepository.findByToken(gameToken);
     }
 
     //TODO: helper methods like render player from user, maybe authentification?
@@ -116,11 +107,11 @@ public class GameService {
     /**
      * Checks if game exists
      *
-     * @param inputGame to validate
+     * @param gameToken token of game to validate
      * @throws SopraServiceException
      */
-    public void validateGame(Game inputGame) {
-        Game game = this.gameRepository.findByToken(inputGame.getToken());
+    public void validateGame(String gameToken) {
+        Game game = this.gameRepository.findByToken(gameToken);
         if (null == game) {
             throw new SopraServiceException("This game token doesn't exist (anymore)");
         }
