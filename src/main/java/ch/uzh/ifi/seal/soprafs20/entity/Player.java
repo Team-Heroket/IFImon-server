@@ -18,6 +18,8 @@ public class Player {
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
+    public Player() {};
+
     public Player(User user) {
         this.user = user;
     }

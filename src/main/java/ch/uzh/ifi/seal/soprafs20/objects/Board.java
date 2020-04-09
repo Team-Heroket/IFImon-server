@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.objects;
 
 import ch.uzh.ifi.seal.soprafs20.constant.Category;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 
 import java.util.List;
 

@@ -24,10 +24,10 @@ public class Game implements Serializable {
     private String token;
 
     // Should only be readable!
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Player creator;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Player> players;
 
     @Enumerated(EnumType.STRING)
@@ -42,6 +42,10 @@ public class Game implements Serializable {
     // TODO: table
 
     // TODO: chat
+
+    public Game() {
+        this.players = new ArrayList<>();
+    }
 
     public Game(Player creator) {
         this.creator = creator;
