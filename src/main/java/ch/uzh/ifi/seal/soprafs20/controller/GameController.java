@@ -53,8 +53,10 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void lobbyOperation(@PathVariable String gameToken, @RequestBody GameTokenUserPutDTO gameTokenUserPutDTO, @RequestHeader("Token") String token ) {
-        //authorize user from header
+        //authorize user from header & validate the game token
         userService.validateUser(token);
+        gameService.validateGame(gameToken);
+
         User user = this.userService.getTokenUser(token);
 
         //TODO: #0 check if gamerepository.findbyToken != null
@@ -86,7 +88,8 @@ public class GameController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public void startGame(@PathVariable String gameToken, @RequestBody GameTokenPutDTO gameTokenPutDTO, @RequestHeader("Token") String token) {
-        //TODO: #0 check if gamerepository.findbyToken != null
+        userService.validateUser(token);
+        gameService.validateGame(gameToken);
         //TODO: #2 check here that only game creator can start game: compare "header.token.username" with "gameToken.creator.username"
 
         //gets amount of NPCs chosen by client and if none provided, sets it to 0
@@ -106,14 +109,9 @@ public class GameController {
     @ResponseBody
     public BoardGetDTO getGameState(@PathVariable("gameToken") String gameToken, @RequestHeader("Token") String token) {
 
-        //TODO: #0 check if gamerepository.findbyToken != null
-
-        //TODO: #3 maybe move this to a "boardservice"? imo not necessary though
-
         //authorize user from header
-        //TODO: #4 this way every user with a valid token can access every gamestate, given he knows the gametoken.
-        // Maybe only authorize users that are part of a certain game to get the board
         userService.validateUser(token);
+        gameService.validateGame(gameToken);
 
 
 
