@@ -1,5 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
+import ch.uzh.ifi.seal.soprafs20.constant.Mode;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.objects.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
@@ -52,10 +54,14 @@ public interface DTOMapper {
     @Mapping(source = "mode", target = "mode")
     Game convertGamePostDTOToEntity(GamePostDTO gamePostDTO);
 
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "gameName", target = "gameName")
+    @Mapping(source = "token", target = "token")
+    @Mapping(source = "creator", target = "creator")
     @Mapping(source = "players", target = "players")
-    @Mapping(source = "turnPlayer", target = "turnPlayer")
-    @Mapping(source = "chosenCategory", target = "chosenCategory")
-    @Mapping(source = "timer", target = "timer")
-    BoardGetDTO convertBoardToBoardGetDTO(Board board);
+    @Mapping(source = "mode", target = "mode")
+    @Mapping(source = "state", target = "state")
+    GameGetDTO convertEntityToGameGetDTO(Game game);
 
 }

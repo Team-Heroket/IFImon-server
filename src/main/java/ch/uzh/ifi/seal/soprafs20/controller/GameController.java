@@ -107,18 +107,16 @@ public class GameController {
     @GetMapping("/games/{gameToken}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public BoardGetDTO getGameState(@PathVariable("gameToken") String gameToken, @RequestHeader("Token") String token) {
+    public GameGetDTO getGame(@PathVariable("gameToken") String gameToken, @RequestHeader("Token") String token) {
 
         //authorize user from header
         userService.validateUser(token);
         gameService.validateGame(gameToken);
 
-
-
-        Board board = gameService.getBoard(gameToken);
+        Game game = gameService.getGame(gameToken);
 
         //convert to correct API format to return
-        return DTOMapper.INSTANCE.convertBoardToBoardGetDTO(board);
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
 
 
