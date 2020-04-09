@@ -10,7 +10,7 @@ public class UserGetDTO {
 
     private String username;
 
-    private int avatarId;
+    private Integer avatarId;
 
     private Statistics statistics;
 
@@ -26,8 +26,8 @@ public class UserGetDTO {
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
 
-    public int getAvatarId() { return avatarId; }
-    public void setAvatarId(int avatarId) { this.avatarId = avatarId; }
+    public Integer getAvatarId() { return avatarId; }
+    public void setAvatarId(Integer avatarId) { this.avatarId = avatarId; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

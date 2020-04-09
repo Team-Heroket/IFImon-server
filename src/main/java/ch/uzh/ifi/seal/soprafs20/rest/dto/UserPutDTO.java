@@ -8,13 +8,13 @@ public class UserPutDTO {
 
     private String token;
 
-    private int avatarId;
+    private Integer avatarId;
 
-    public int getAvatarId() {
+    public Integer getAvatarId() {
         return avatarId;
     }
 
-    public void setAvatarId(int avatarId) {
+    public void setAvatarId(Integer avatarId) {
         this.avatarId = avatarId;
     }
 

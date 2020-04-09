@@ -36,7 +36,7 @@ public class GameController {
         //Authorize user
         userService.validateUser(token);
         // The Controller has to do this step, since you have the userService instance
-        User creator = this.userService.getTokenUser(token);
+        User creator = this.userService.getUserByToken(token);
 
         //wrap user input as a game entity
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
@@ -50,8 +50,8 @@ public class GameController {
 
     /*     #8      */
     /** This request let's a user join or leave a lobby or kick another player from the lobby **/
-    @PutMapping("/games/{gameToken}/users")
-    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/games/{gameToken}/players")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void lobbyOperation(@PathVariable String gameToken, @RequestBody GameTokenUserPutDTO gameTokenUserPutDTO, @RequestHeader("Token") String token ) {
         //authorize user from header & validate the game token
