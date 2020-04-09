@@ -45,7 +45,7 @@ public class GameService {
      * @param creatingUser
      * @return
      */
-    public String createLobby(Game game, User creatingUser){
+    public Game createLobby(Game game, User creatingUser){
         if (null != this.gameRepository.findByToken(game.getToken())) {
             throw new SopraServiceException("This Game-Token already exists!");
         }
@@ -62,7 +62,7 @@ public class GameService {
         newGame = this.gameRepository.save(newGame);
 
         //returns token so controller can send back to client
-        return newGame.getToken();
+        return newGame;
     }
 
     public void addPlayer(String gameToken, User user){

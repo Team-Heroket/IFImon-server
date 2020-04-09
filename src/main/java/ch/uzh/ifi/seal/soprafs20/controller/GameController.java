@@ -32,7 +32,7 @@ public class GameController {
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public String createLobby(@RequestBody GamePostDTO gamePostDTO, @RequestHeader("Token") String token) {
+    public GameTokenDTO createLobby(@RequestBody GamePostDTO gamePostDTO, @RequestHeader("Token") String token) {
         //Authorize user
         userService.validateUser(token);
         // The Controller has to do this step, since you have the userService instance
@@ -42,9 +42,9 @@ public class GameController {
         Game game = DTOMapper.INSTANCE.convertGamePostDTOToEntity(gamePostDTO);
 
         //creates a Lobby with the given gamemode and gamename
-        String lobbyToken = gameService.createLobby(game, creator);
+        Game createdGame = gameService.createLobby(game, creator);
 
-        return lobbyToken;
+        return DTOMapper.INSTANCE.convertEntityToGameTokenDTO(createdGame);
     }
 
 

@@ -1,15 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
-import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
-import ch.uzh.ifi.seal.soprafs20.constant.Mode;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
-import ch.uzh.ifi.seal.soprafs20.objects.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
-
-import java.util.List;
 
 /**
  * DTOMapper
@@ -67,5 +62,9 @@ public interface DTOMapper {
     @Mapping(source = "mode", target = "mode")
     @Mapping(source = "state", target = "state")
     GameGetDTO convertEntityToGameGetDTO(Game game);
+
+    @Mapping(source = "token", target = "token")
+    GameTokenDTO convertEntityToGameTokenDTO(Game game);
+
 
 }
