@@ -12,8 +12,8 @@ public class PlayerDTO {
     
 
 
-    public UserGetDTO getUserGetDTO() { return user; }
-    public void setUserGetDTO(UserGetDTO userGetDTO) { this.user = user; }
+    public UserGetDTO getUser() { return user; }
+    public void setUser(UserGetDTO user) { this.user = user; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
