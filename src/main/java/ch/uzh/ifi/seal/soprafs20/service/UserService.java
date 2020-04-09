@@ -83,15 +83,15 @@ public class UserService {
         User changingUser = getUserById(user.getId());
 
         //change username
-        if (user.getUsername()!=null){
+        if (user.getUsername() != null){
             changingUser.setUsername(user.getUsername());
         }
         //change password
-        if (user.getPassword()!=null){
+        if (user.getPassword() != null){
             changingUser.setPassword(user.getPassword());
         }
         //change avatarId
-        if (user.getAvatarId()!=changingUser.getAvatarId()){
+        if (user.getAvatarId() != null && !user.getAvatarId().equals(changingUser.getAvatarId())){
             changingUser.setAvatarId(user.getAvatarId());
         }
 
@@ -110,7 +110,8 @@ public class UserService {
 
         this.statisticRepository.save(changingStatistics);
          */
-        changingUser = userRepository.save(changingUser);
+
+        userRepository.save(changingUser);
     }
 
     public User logUserIn(User user){

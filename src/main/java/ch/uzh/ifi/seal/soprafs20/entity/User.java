@@ -44,7 +44,7 @@ public class User implements Serializable, Comparable {
     private String token;
 
     @Column(nullable = false)
-    private int avatarId;
+    private Integer avatarId;
 
     @OneToOne(cascade = CascadeType.ALL)
     // Join is by default id to id
@@ -86,7 +86,7 @@ public class User implements Serializable, Comparable {
         this.token = token;
     }
 
-    public int getAvatarId() {
+    public Integer getAvatarId() {
         return avatarId;
     }
     public void setAvatarId(int avatarId) {
