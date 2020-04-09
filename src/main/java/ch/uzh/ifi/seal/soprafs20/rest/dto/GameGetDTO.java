@@ -17,9 +17,9 @@ public class GameGetDTO {
 
     private String token;
 
-    private Player creator;
+    private PlayerDTO creator;
 
-    private List<Player> players;
+    private List<PlayerDTO> players;
 
     private Mode mode;
 
@@ -35,11 +35,11 @@ public class GameGetDTO {
     public String getToken() { return token; }
     public void setToken(String token) { this.token = token; }
 
-    public Player getCreator() { return creator; }
-    public void setCreator(Player creator) { this.creator = creator; }
+    public PlayerDTO getCreator() { return creator; }
+    public void setCreator(PlayerDTO creator) { this.creator = creator; }
 
-    public List<Player> getPlayers() { return players; }
-    public void getPlayers(List<Player> players) { this.players = players; }
+    public List<PlayerDTO> getPlayers() { return players; }
+    public void setPlayers(List<PlayerDTO> players) { this.players = players; }
 
     public Mode getMode() { return mode; }
     public void setMode(Mode mode) { this.mode = mode; }
