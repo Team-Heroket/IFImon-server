@@ -179,6 +179,40 @@ public class UserService {
     }
 
     /**
+     * Checks if the User is the same user as shown in token
+     *
+     * @param username Username of user to be checked
+     * @param token Token of user to be checked
+     */
+    public void compareUsernameWithToken(String username, String token){
+        //gets user via username
+        User user = this.userRepository.findByUsername(username);
+
+        //check if optional object is empty
+        if (null == user) {
+            throw new SopraServiceException("This user does not exist.");
+        }
+
+        //extract the found user's token
+        String originalToken = user.getToken();
+
+        //check if the token of the user found by id is null, meaning he is offline
+        if(originalToken==null){
+            throw new SopraServiceException(String.format("Unauthorized user access"));
+        }
+
+        //checks if header token is null
+        if(token==null){
+            throw new SopraServiceException(String.format("Unauthorized user access"));
+        }
+
+        //checks if the header token is identical to the corresponding user token
+        if(!originalToken.equals(token)){
+            throw new SopraServiceException(String.format("Unauthorized user access"));
+        }
+    }
+
+    /**
      * Check if this token is allowed to access
      *
      * @param token Token to check

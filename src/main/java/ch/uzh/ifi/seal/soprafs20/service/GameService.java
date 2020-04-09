@@ -117,6 +117,19 @@ public class GameService {
         }
     }
 
+    /**
+     * Validates if the user is the game creator
+     *
+     * @param gameToken token of the game to be validated
+     * @param user User to be validated
+     */
+    public void validateCreator(String gameToken, User user) {
+        Game game = this.gameRepository.findByToken(gameToken);
+        if (!game.getCreator().getUser().getToken().equals(user.getToken())) {
+            throw new SopraServiceException("This user is not the game-creator.");
+        }
+    }
+
 
     //********* Helpers
 
