@@ -13,6 +13,6 @@ public class Running implements GameState {
     @Override
     public void removePlayer(Game game, User user) {
         // TODO: Do this, when the user leaves.
-        throw new NotYetImplementedException();
+        throw new NotYetImplementedException(); // Sprint 3
     }
 }
