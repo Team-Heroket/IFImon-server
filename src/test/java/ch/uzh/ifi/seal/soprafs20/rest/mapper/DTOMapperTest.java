@@ -1,11 +1,11 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
 import ch.uzh.ifi.seal.soprafs20.constant.Category;
+import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.constant.Mode;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.objects.*;
-import ch.uzh.ifi.seal.soprafs20.objects.Board;
-import ch.uzh.ifi.seal.soprafs20.objects.Player;
+
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 import com.sun.xml.bind.v2.model.annotation.Quick;
 import org.junit.jupiter.api.Test;
@@ -127,31 +127,54 @@ public class DTOMapperTest {
         assertEquals(gamePostDTO.getGameName(), game.getGameName());
     }
 
-
     @Test
-    public void testGetBoard_fromBoard_toBoardGetDTO() {
-        // create Board
-        Board board = new Board();
-        board.setTimer(123L);
-        Category category = Category.ATK;
-        board.setChosenCategory(category);
-        List<Player> playerList = new ArrayList<Player>();
+    public void testGetGame_fromGame_toGameGetDTO() {
+        // create Game
         Player player1 = new Player();
         Player player2 = new Player();
-        playerList.add(player1);
-        playerList.add(player2);
-        board.setPlayers(playerList);
-        board.setTurnPlayer(player1);
+        List<Player> players = new ArrayList<>();
+        players.add(player1);
+        player1.setId(100L);
+        players.add(player2);
+        player2.setId(2L);
+
+        Game game = new Game(player1);
+        game.addPlayer(player2);
+        game.setId(1L);
+        game.setToken("testToken");
+        game.setGameName("firstTest");
+
+        GameStateEnum gameStateEnum = GameStateEnum.RUNNING;
+        Mode mode = Mode.QUICK;
+        game.setMode(mode);
+        game = game.setState(gameStateEnum);
+
 
         // MAP
-        BoardGetDTO boardGetDto = DTOMapper.INSTANCE.convertBoardToBoardGetDTO(board);
+        GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
 
         // check content
-        assertEquals(boardGetDto.getChosenCategory(), board.getChosenCategory());
-        assertEquals(boardGetDto.getPlayers().get(1), board.getPlayers().get(1));
-        assertEquals(boardGetDto.getTimer(), board.getTimer());
-        assertEquals(boardGetDto.getTurnPlayer(), board.getTurnPlayer());
+        assertEquals(gameGetDTO.getGameName(), game.getGameName());
+        assertEquals(gameGetDTO.getId(), game.getId());
+        assertEquals(gameGetDTO.getToken(), game.getToken());
+        assertEquals(gameGetDTO.getPlayers().get(1).getId(), game.getPlayers().get(1).getId());
+        assertEquals(gameGetDTO.getCreator().getId(), game.getCreator().getId());
+        assertEquals(gameGetDTO.getMode(), game.getMode());
+        assertEquals(gameGetDTO.getState(), game.getState());
     }
 
+
+    @Test
+    public void testGetGameTokenDTO_fromGame_toGameTokenDTO() {
+        // create Game
+        Game game = new Game();
+        game.setToken("testToken");
+
+        // MAP
+        GameTokenDTO gameTokenDTO = DTOMapper.INSTANCE.convertEntityToGameTokenDTO(game);
+
+        // check content
+        assertEquals(gameTokenDTO.getToken(), game.getToken());
+    }
 
 }

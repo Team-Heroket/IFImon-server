@@ -32,6 +32,7 @@ public class CardService {
     public Card getCard(long id){
         Card card = new Card();
         card.setName("testCard");
+        card.setId((100));
         return card;
     }
 }

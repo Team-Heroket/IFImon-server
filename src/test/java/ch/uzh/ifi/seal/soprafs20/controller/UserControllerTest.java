@@ -31,15 +31,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 **/
 
+import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
+import ch.uzh.ifi.seal.soprafs20.constant.Mode;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
+
+import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
 import ch.uzh.ifi.seal.soprafs20.service.CardService;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -279,13 +285,23 @@ public class UserControllerTest {
     @Test
     public void Test_createLobby() throws Exception {
         // given
-        String gameToken = "newGameToken";
-        String newGamename = "newGame";
-        mode gameMode = mode.Quick;
-
         GamePostDTO gamePostDTO = new GamePostDTO();
+        gamePostDTO.setMode(Mode.SOCIAL);
+        gamePostDTO.setGameName("testGameName");
 
-        given(gameService.createLobby(Mockito.anyObject())).willReturn(gameToken);
+        Game game = new Game();
+        game.setState(GameStateEnum.LOBBY);
+        game.setMode(Mode.SOCIAL);
+        game.setGameName("testGameName");
+        game.setToken("testGameToken");
+
+        User creator = new User();
+
+        // when
+        given(userRepository.findByToken(Mockito.anyString())).willReturn(creator);
+        given(userService.getUserByToken(Mockito.anyString())).willReturn(creator);
+        given(gameService.createLobby(Mockito.anyObject(),Mockito.anyObject())).willReturn(game);
+        given(gameRepository.findByToken(Mockito.anyString())).willReturn(game);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/games")
@@ -296,7 +312,7 @@ public class UserControllerTest {
         // then
         mockMvc.perform(postRequest)
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.").value("newGameToken"));
+                .andExpect(jsonPath("$.token").value(game.getToken()));
     }
 
 
