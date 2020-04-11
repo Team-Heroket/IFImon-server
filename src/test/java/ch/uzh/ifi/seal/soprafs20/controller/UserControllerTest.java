@@ -1,50 +1,14 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
-/**
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-**/
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
-import ch.uzh.ifi.seal.soprafs20.constant.Mode;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
-
-import ch.uzh.ifi.seal.soprafs20.rest.dto.GamePostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
-import ch.uzh.ifi.seal.soprafs20.service.CardService;
-import ch.uzh.ifi.seal.soprafs20.service.GameService;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
+import ch.uzh.ifi.seal.soprafs20.repository.*;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
+import ch.uzh.ifi.seal.soprafs20.service.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,33 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 
-enum mode{
-    Social(0), Quick(1), Single(2);
-
-    private int mode;
-
-    mode(int Stat){
-        this.mode = Stat;
-    }
-
-    public int getMode(){
-        return mode;
-    }
-}
-
-enum category{
-    HP(0), ATK(1), Wheight(2);
-
-    private int mode;
-
-    category(int Stat){
-        this.mode = Stat;
-    }
-
-    public int getCategory(){
-        return mode;
-    }
-}
 
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
@@ -281,118 +218,10 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
-/**
-    @Test
-    public void Test_createLobby() throws Exception {
-        // given
-        GamePostDTO gamePostDTO = new GamePostDTO();
-        gamePostDTO.setMode(Mode.SOCIAL);
-        gamePostDTO.setGameName("testGameName");
-
-        Game game = new Game();
-        game.setState(GameStateEnum.LOBBY);
-        game.setMode(Mode.SOCIAL);
-        game.setGameName("testGameName");
-        game.setToken("testGameToken");
-
-        User creator = new User();
-
-        // when
-        given(userRepository.findByToken(Mockito.anyString())).willReturn(creator);
-        given(userService.getUserByToken(Mockito.anyString())).willReturn(creator);
-        given(gameService.createLobby(Mockito.anyObject(),Mockito.anyObject())).willReturn(game);
-        given(gameRepository.findByToken(Mockito.anyString())).willReturn(game);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder postRequest = post("/games")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .content(String.valueOf(gamePostDTO));
-
-        // then
-        mockMvc.perform(postRequest)
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.token").value(game.getToken()));
-    }
+// SPRINT 3
 
 
-    @Test
-    public void Test_lobbyOperation() throws Exception {
-
-        long asdf = 2L;
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/games/1234/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .param("userName", "oldUsername")
-                .param("action", String.valueOf(asdf));
-
-        // then
-        mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
-    }
-
-
-
-    @Test
-    public void Test_startGame() throws Exception {
-        // given
-        int action= 2;
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/games/1234")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .content(String.valueOf(action));
-
-        // then
-        mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
-    }
-
-
-    @Test
-    public void Test_getGameState() throws Exception {
-
-        //given
-        Board board = new Board();
-        board.setTimer(123L);
-
-        // this mocks the UserService -> we define above what the gameService should return when getUsers() is called
-        given(gameService.getBoard(Mockito.anyString())).willReturn(board);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder getRequest = get("/games/12345")
-                .header("Token", "Test");
-
-        // then
-        mockMvc.perform(getRequest)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.timer").value(123));
-    }
-
-
-
-    @Test
-    public void Test_selectAttribute() throws Exception {
-        //given
-        category chosenCategory = category.HP;
-
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/games/1234/categories")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .content(String.valueOf(chosenCategory));
-
-        // then
-        mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
-    }
-
-
-    @Test
+/**    @Test
     public void Test_berryUpgrade() throws Exception {
         //given
         int amount = 3;
