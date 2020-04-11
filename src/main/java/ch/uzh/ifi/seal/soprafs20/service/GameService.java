@@ -57,7 +57,7 @@ public class GameService {
         Game newGame = new Game(new Player(creatingUser));
 
         //set creation date and time
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         newGame.setCreationTime(pattern.format(now));
 
