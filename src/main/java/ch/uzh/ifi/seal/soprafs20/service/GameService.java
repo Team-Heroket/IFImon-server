@@ -56,8 +56,8 @@ public class GameService {
         //init and save game entity with token=input, mode=input, gamename=input, creator=rendered player from token, state=lobby, board=null
         Game newGame = new Game(new Player(creatingUser));
 
-        //get creation date and time
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        //set creation date and time
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         newGame.setCreationTime(pattern.format(now));
 
