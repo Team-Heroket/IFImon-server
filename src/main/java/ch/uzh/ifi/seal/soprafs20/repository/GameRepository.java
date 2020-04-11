@@ -9,4 +9,5 @@ import java.util.List;
 @Repository("gameRepository")
 public interface GameRepository extends JpaRepository<Game, Long> {
     Game findByToken(String token);
+    long deleteByToken(String token);
 }

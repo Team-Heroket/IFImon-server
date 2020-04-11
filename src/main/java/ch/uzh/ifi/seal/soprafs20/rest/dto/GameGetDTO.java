@@ -25,6 +25,9 @@ public class GameGetDTO {
 
     private GameStateEnum state;
 
+    private String creationTime;
+
+
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -46,6 +49,14 @@ public class GameGetDTO {
 
     public GameStateEnum getState() { return state; }
     public void setState(GameStateEnum state) { this.state = state; }
+
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+    }
 
 
 }

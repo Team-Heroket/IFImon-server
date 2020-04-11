@@ -21,6 +21,9 @@ public class Game implements Serializable {
     private String gameName;
 
     @Column(nullable = false)
+    private String creationTime;
+
+    @Column(nullable = false)
     private String token;
 
     // Should only be readable!
@@ -94,6 +97,8 @@ public class Game implements Serializable {
         return players;
     }
 
+
+
     public void addPlayer(Player player) {
         if (this.players.isEmpty()) {
             // TODO: Determine if ArrayList is the waye
@@ -118,5 +123,21 @@ public class Game implements Serializable {
     public Game setMode(Mode mode) {
         this.mode = mode;
         return this;
+    }
+
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public void resetPlayers(){
+        this.players=null;
+    }
+
+    public void resetCreator(){
+        this.creator=null;
     }
 }

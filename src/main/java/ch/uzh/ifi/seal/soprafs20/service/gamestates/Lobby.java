@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class Lobby implements GameState {
     @Override
     public void removePlayer(Game game, User user) {
         List<Player> players = game.getPlayers();
+
+
+
 
         for (Player player: players) {
             if (player.getUser().getId().equals(user.getId())) {

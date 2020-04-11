@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * User Service
  * This class is the "worker" and responsible for all functionality related to the user
@@ -52,6 +55,12 @@ public class GameService {
 
         //init and save game entity with token=input, mode=input, gamename=input, creator=rendered player from token, state=lobby, board=null
         Game newGame = new Game(new Player(creatingUser));
+
+        //get creation date and time
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        newGame.setCreationTime(pattern.format(now));
+
         newGame.setToken(this.uniquePokemonNameGenerator.get())
                 .setState(GameStateEnum.LOBBY)
                 .setGameName(game.getGameName())
@@ -81,6 +90,11 @@ public class GameService {
 
         //remove player from this game.players[] with the provided username, if he exists
         state.removePlayer(game, user);
+
+        //if the removed player is the creator, close the lobby
+        if((game.getCreator().getId().equals(user.getId())) && game.getState()==GameStateEnum.LOBBY){
+            this.deleteGame(game);
+        }
     }
 
 
@@ -166,6 +180,23 @@ public class GameService {
             default:
                 throw new RuntimeException("Did you insert a new state?");
         }
+    }
+
+    public void deleteGame(Game game){
+        //make players and creators null, so deleting the game wont delete all associated users
+        game.resetCreator();
+        game.resetPlayers();
+        //deletes the game entity and all associated entities, watch out!
+        long deletedGames = gameRepository.deleteByToken(game.getToken());
+
+        //deleted Games is the number of deleted entities
+        if (deletedGames==0){
+            throw new SopraServiceException("Can't delete game");
+        }
+        else if (deletedGames!=0 && deletedGames!=1){
+            throw new SopraServiceException("Unhandled Error when deleting game");
+        }
+
     }
 
 }
