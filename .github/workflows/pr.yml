@@ -18,7 +18,7 @@ jobs:
           java-version: 1.13
 
       - name: Build with Gradle
-        run: ./gradlew build -xtest
+        run: ./gradlew build
 
-      #- name: Test with Gradle
-      #  run: ./gradlew test
+      - name: Test with Gradle
+        run: ./gradlew test
