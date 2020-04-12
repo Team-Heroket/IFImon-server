@@ -1,6 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions.user;
 
-public class UserNotFoundException extends RuntimeException {
+import ch.uzh.ifi.seal.soprafs20.exceptions.IFImonException;
+
+public class UserNotFoundException extends IFImonException {
 
     public UserNotFoundException(String message) {
         super(message);

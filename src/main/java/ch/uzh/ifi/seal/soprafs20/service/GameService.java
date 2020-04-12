@@ -4,6 +4,9 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.objects.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.*;
@@ -50,7 +53,7 @@ public class GameService {
      */
     public Game createLobby(Game game, User creatingUser){
         if (null != this.gameRepository.findByToken(game.getToken())) {
-            throw new SopraServiceException("This Game-Token already exists!");
+            throw new GameConflictException("This Game-Token already exists!");
         }
 
         //init and save game entity with token=input, mode=input, gamename=input, creator=rendered player from token, state=lobby, board=null
@@ -122,12 +125,12 @@ public class GameService {
      * Checks if game exists
      *
      * @param gameToken token of game to validate
-     * @throws SopraServiceException
+     * @throws GameNotFoundException
      */
     public void validateGame(String gameToken) {
         Game game = this.gameRepository.findByToken(gameToken);
         if (null == game) {
-            throw new SopraServiceException("This game token doesn't exist (anymore)");
+            throw new GameNotFoundException("This game token doesn't exist (anymore)");
         }
     }
 
@@ -136,11 +139,12 @@ public class GameService {
      *
      * @param gameToken token of the game to be validated
      * @param user User to be validated
+     * @throws GameForbiddenException
      */
     public void validateCreator(String gameToken, User user) {
         Game game = this.gameRepository.findByToken(gameToken);
         if (!game.getCreator().getUser().getToken().equals(user.getToken())) {
-            throw new SopraServiceException("This user is not the game-creator.");
+            throw new GameForbiddenException("This user is not the game-creator.");
         }
     }
 
@@ -191,10 +195,13 @@ public class GameService {
 
         //deleted Games is the number of deleted entities
         if (deletedGames==0){
-            throw new SopraServiceException("Can't delete game");
+            //throw new SopraServiceException("Can't delete game");
+            throw new GameNotFoundException("Game to delete not found."); // Probably
         }
         else if (deletedGames!=0 && deletedGames!=1){
             throw new SopraServiceException("Unhandled Error when deleting game");
+            // huh? then TODO: handle this
+            // Should this ever happen?
         }
 
     }

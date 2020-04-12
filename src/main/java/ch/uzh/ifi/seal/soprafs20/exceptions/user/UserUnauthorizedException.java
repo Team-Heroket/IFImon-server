@@ -1,6 +1,8 @@
 package ch.uzh.ifi.seal.soprafs20.exceptions.user;
 
-public class UserUnauthorizedException extends RuntimeException {
+import ch.uzh.ifi.seal.soprafs20.exceptions.IFImonException;
+
+public class UserUnauthorizedException extends IFImonException {
     public UserUnauthorizedException(String message) {
         super(message);
     }

@@ -24,7 +24,7 @@ public class UserExceptionAdvice extends ResponseEntityExceptionHandler {
     private final Logger log = LoggerFactory.getLogger(UserExceptionAdvice.class);
 
     @ExceptionHandler(UserNotFoundException.class)
-    protected ResponseEntity<Object> handleUserNotFoundExceptionException(UserNotFoundException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleUserNotFoundExceptionException(IFImonException ex, WebRequest request) {
         APIError error = new APIError();
         error.setError(ex.getTitle())
              .setMessage(ex.getMessage());
@@ -33,7 +33,7 @@ public class UserExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UserUnauthorizedException.class)
     protected ResponseEntity<Object> handleUserUnauthorizedExceptionException(
-            UserUnauthorizedException ex, WebRequest request) {
+            IFImonException ex, WebRequest request) {
         APIError error = new APIError();
         error.setError(ex.getTitle())
              .setMessage(ex.getMessage());
