@@ -3,6 +3,8 @@ package ch.uzh.ifi.seal.soprafs20.service;
 import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.user.UserNotFoundException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.user.UserUnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.StatisticRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
@@ -122,7 +124,7 @@ public class UserService {
 
         //check password of the found user
         if(!(user.getPassword().equals(loggingUser.getPassword()))){
-            throw new SopraServiceException(String.format("Wrong password"));
+            throw new UserUnauthorizedException("Wrong password");
         }
 
         //set user online and create new token
@@ -156,7 +158,7 @@ public class UserService {
 
         //check if optional object is empty
         if (optionalUser.isEmpty()) {
-            throw new SopraServiceException("This user does not exist.");
+            throw new UserNotFoundException("The given user id does not match our records.");
         }
         //get user from result
         User chosenUser = optionalUser.get();
@@ -165,19 +167,11 @@ public class UserService {
         String originalToken = chosenUser.getToken();
 
         //check if the token of the user found by id is null, meaning he is offline
-        if(originalToken==null){
-            throw new SopraServiceException(String.format("Unauthorized user access"));
-        }
-
-        //checks if header token is null
-        if(token==null){
-            throw new SopraServiceException(String.format("Unauthorized user access"));
-        }
-
         //checks if the header token is identical to the corresponding user token
-        if(!originalToken.equals(token)){
-            throw new SopraServiceException(String.format("Unauthorized user access"));
+        if(originalToken==null || !originalToken.equals(token)){
+            throw new UserUnauthorizedException("Unauthorized user access");
         }
+
     }
 
     /**
@@ -192,26 +186,18 @@ public class UserService {
 
         //check if optional object is empty
         if (null == user) {
-            throw new SopraServiceException("This user does not exist.");
+            throw new UserNotFoundException("The given user id does not match our records.");
         }
 
         //extract the found user's token
         String originalToken = user.getToken();
 
         //check if the token of the user found by id is null, meaning he is offline
-        if(originalToken==null){
-            throw new SopraServiceException(String.format("Unauthorized user access"));
-        }
-
-        //checks if header token is null
-        if(token==null){
-            throw new SopraServiceException(String.format("Unauthorized user access"));
-        }
-
         //checks if the header token is identical to the corresponding user token
-        if(!originalToken.equals(token)){
-            throw new SopraServiceException(String.format("Unauthorized user access"));
+        if(originalToken==null || !originalToken.equals(token)){
+            throw new UserUnauthorizedException("Unauthorized user access");
         }
+
     }
 
     /**
@@ -221,11 +207,11 @@ public class UserService {
      */
     public void validateUser(String token) {
         if(token == null || token.isEmpty()){
-            throw new SopraServiceException("Bad request");
+            throw new UserUnauthorizedException("Unauthorized user access");
         }
         User isAuthorized = this.userRepository.findByToken(token);
         if (isAuthorized==null){
-            throw new SopraServiceException("Unauthorized");
+            throw new UserUnauthorizedException("Unauthorized user access");
         }
     }
 
@@ -249,22 +235,17 @@ public class UserService {
     public User getUserById(Long id){
         Optional<User> optionalUser = this.userRepository.findById(id);
         if (optionalUser.isEmpty()) {
-            throw new SopraServiceException("This user does not exist.");
+            throw new UserNotFoundException("The given user id does not match our records.");
         }
-        //get single user
-        User foundUser = optionalUser.get();
-        //check if it is null
-        if(foundUser==null){
-            throw new SopraServiceException("This user does not exist.");
-        }
-        return foundUser;
+        // returns the found user
+        return optionalUser.get();
     }
 
     public User getUserByUsername(String username){
         User foundUser = this.userRepository.findByUsername(username);
         //check if it is null
         if(foundUser==null){
-            throw new SopraServiceException("This user does not exist.");
+            throw new UserNotFoundException("The given user id does not match our records.");
         }
         return foundUser;
     }
@@ -273,7 +254,7 @@ public class UserService {
         User foundUser = this.userRepository.findByToken(token);
         //check if none found
         if(foundUser==null){
-            throw new SopraServiceException("This user does not exist.");
+            throw new UserNotFoundException("The given user id does not match our records.");
         }
         return foundUser;
     }
