@@ -6,6 +6,8 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import junit.framework.AssertionFailedError;
@@ -136,7 +138,8 @@ public class GameServiceTest {
         Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(null);
 
         // then
-        assertThrows(SopraServiceException.class, () -> gameService.validateGame("testToken"));
+        // TODO: @David please check if this is what you wanted
+        assertThrows(GameNotFoundException.class, () -> gameService.validateGame("testToken"));
     }
 
     @Test
@@ -154,7 +157,8 @@ public class GameServiceTest {
         Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(differentGame);
 
         // then
-        assertThrows(SopraServiceException.class, () -> gameService.validateCreator("testToken", testUser));
+        // TODO: @David please check if this is what you wanted
+        assertThrows(GameForbiddenException.class, () -> gameService.validateCreator("testToken", testUser));
     }
 
     //test for getstate

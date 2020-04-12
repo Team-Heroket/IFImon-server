@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.user.UserUnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -144,7 +145,8 @@ public class UserServiceTest {
         Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
 
         //then
-        assertThrows(SopraServiceException.class, () -> userService.logUserIn(testUser2));
+        // TODO: @David please check if this is what you wanted
+        assertThrows(UserUnauthorizedException.class, () -> userService.logUserIn(testUser2));
     }
 
     @Test
