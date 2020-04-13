@@ -1,10 +1,14 @@
 package ch.uzh.ifi.seal.soprafs20.objects;
 
 import ch.uzh.ifi.seal.soprafs20.constant.Category;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 
 import java.util.List;
 
 public class Board {
+
+    //TODO:Probably need to make this an entity with respository etc (same as statistics)
+
     private List<Player> players;
     private Player turnPlayer;
     private Category chosenCategory;

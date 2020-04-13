@@ -6,14 +6,14 @@ public class UserPostDTO {
 
     private String password;
 
-    private int avatarId;
+    private Integer avatarId;
 
 
-    public int getAvatarId() {
+    public Integer getAvatarId() {
         return avatarId;
     }
 
-    public void setAvatarId(int input) {
+    public void setAvatarId(Integer input) {
         this.avatarId = input;
     }
 

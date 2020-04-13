@@ -1,8 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.objects.Board;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
 
 import org.mapstruct.*;
@@ -39,9 +37,35 @@ public interface DTOMapper {
     @Mapping(source = "token", target = "token")
     User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
 
-    @Mapping(source = "timer", target = "timer")
-    TableGetDTO convertEntityToTableGetDTO(Board board);
-
     @Mapping(source = "name", target = "name")
     CardGetDTO convertEntityToCardGetDTO(Card card);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "token", target = "token")
+    UserLoginDTO convertEntityToUserLoginDTO(User user);
+
+
+    @Mapping(source = "gameName", target = "gameName")
+    @Mapping(source = "mode", target = "mode")
+    Game convertGamePostDTOToEntity(GamePostDTO gamePostDTO);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "user", target = "user")
+    PlayerDTO convertEntityToPlayerDTO(Player player);
+
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "gameName", target = "gameName")
+    @Mapping(source = "token", target = "token")
+    @Mapping(source = "creator", target = "creator")
+    @Mapping(source = "players", target = "players")
+    @Mapping(source = "mode", target = "mode")
+    @Mapping(source = "state", target = "state")
+    @Mapping(source = "creationTime", target = "creationTime")
+    GameGetDTO convertEntityToGameGetDTO(Game game);
+
+    @Mapping(source = "token", target = "token")
+    GameTokenDTO convertEntityToGameTokenDTO(Game game);
+
+
 }

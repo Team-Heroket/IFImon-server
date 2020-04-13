@@ -1,45 +1,15 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
-/**
-import ch.uzh.ifi.seal.soprafs20.constant.UserStatus;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserGetDTO;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-**/
-
-import ch.uzh.ifi.seal.soprafs20.entity.Card;
+import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPostDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.UserPutDTO;
-import ch.uzh.ifi.seal.soprafs20.service.CardService;
-import ch.uzh.ifi.seal.soprafs20.service.GameService;
-import ch.uzh.ifi.seal.soprafs20.service.UserService;
+import ch.uzh.ifi.seal.soprafs20.repository.*;
+import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
+import ch.uzh.ifi.seal.soprafs20.service.*;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -49,12 +19,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -65,9 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
  import org.testng.annotations.Test;
  **/
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
@@ -84,33 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * This tests if the UserController works.
  */
 
-enum mode{
-    Social(0), Quick(1), Single(2);
-
-    private int mode;
-
-    mode(int Stat){
-        this.mode = Stat;
-    }
-
-    public int getMode(){
-        return mode;
-    }
-}
-
-enum category{
-    HP(0), ATK(1), Wheight(2);
-
-    private int mode;
-
-    category(int Stat){
-        this.mode = Stat;
-    }
-
-    public int getCategory(){
-        return mode;
-    }
-}
 
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
@@ -133,19 +71,17 @@ public class UserControllerTest {
     @MockBean
     private CardService cardService;
 
-    /*
+
     @Test
     public void Test_createUser() throws Exception {
         // given
         User user = new User();
         user.setUsername("testUsername");
-        user.setStatus(UserStatus.ONLINE);
-        String string = "test";
+        user.setOnline(true);
+        user.setAvatarId(1);
 
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setUsername("testUsername");
-
-        given(userService.createUser(Mockito.any())).willReturn(user);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/users")
@@ -157,20 +93,19 @@ public class UserControllerTest {
             .andExpect(status().isCreated());
     }
 
-     */
 
-    /*
+
     @Test
     public void Test_getUserList() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
-        user.setStatus(UserStatus.OFFLINE);
+        user.setOnline(true);
 
         List<User> allUsers = Collections.singletonList(user);
 
         // this mocks the UserService -> we define above what the userService should return when getUsers() is called
-        given(userService.getUsers()).willReturn(allUsers);
+        given(userService.getUsers(Mockito.any())).willReturn(allUsers);
 
         // when
         MockHttpServletRequestBuilder getRequest = get("/users")
@@ -178,24 +113,30 @@ public class UserControllerTest {
                 .header("Token", "Test");
 
         // then
-        mockMvc.perform(getRequest).andExpect(status().isCreated())
+        mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].username", is(user.getUsername())))
-                .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
+                .andExpect(jsonPath("$[0].online", is(user.getOnline())));
     }
-     */
 
-    /*
+
+
     @Test
     public void Test_getUserByToken() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
         user.setToken("3");
-        user.setStatus(UserStatus.ONLINE);
+        user.setOnline(true);
+        user.setCreationDate("today");
+        user.setId(25L);
+        user.setAvatarId(1);
+        user.setStatistics(new Statistics());
+
+
 
         // this mocks the UserService -> we define above what the userService should return when getUsers() is called
-        given(userService.getUser(Mockito.any())).willReturn(user);
+        given(userService.getUser(Mockito.anyLong())).willReturn(user);
 
         // when
         MockHttpServletRequestBuilder getRequest = get("/users/3")
@@ -205,11 +146,9 @@ public class UserControllerTest {
         // then
         mockMvc.perform(getRequest)
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.username", is(user.getUsername())))
-            .andExpect(jsonPath("$.token", is(user.getToken())));
-
+            .andExpect(jsonPath("$.username", is(user.getUsername())));
     }
-     */
+
 
     @Test
     public void Test_updateUser() throws Exception {
@@ -229,33 +168,41 @@ public class UserControllerTest {
 
         // then
         mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
+
+
 
     @Test
     public void Test_userLogin() throws Exception {
         // given
         User user = new User();
         user.setUsername("firstname@lastname");
+        user.setPassword(("pw_uwu"));
         user.setToken("123");
+        user.setId(2020L);
+
 
         UserPutDTO userPutDTO = new UserPutDTO();
         userPutDTO.setUsername("firstname@lastname");
-        userPutDTO.setPassword("pw");
+        userPutDTO.setPassword("pw_uwu");
+        userPutDTO.setAvatarId(1);
         userPutDTO.setToken("123");
+
+        given(userService.logUserIn(Mockito.any())).willReturn(user);
+
 
         // when
         MockHttpServletRequestBuilder putRequest = put("/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(userPutDTO));
 
+
         // then
         mockMvc.perform(putRequest)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("123"));
-
-
-
+                .andExpect(jsonPath("$.id", is(2020)))
+                .andExpect(jsonPath("$.token", is("123")));
 
     }
 
@@ -271,104 +218,10 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    public void Test_createLobby() throws Exception {
-        // given
-        String gameToken = "newGameToken";
-        String newGamename = "newGame";
-        mode gameMode = mode.Quick;
+// SPRINT 3
 
 
-        given(gameService.createGame(Mockito.any(),Mockito.any())).willReturn(gameToken);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder postRequest = post("/games")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .content(newGamename)
-                .content(String.valueOf(gameMode));
-
-        // then
-        mockMvc.perform(postRequest)
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$").value("newGameToken"));
-    }
-
-    @Test
-    public void Test_lobbyOperation() throws Exception {
-        // given
-        long action= 2;
-        String userName = "newUsername";
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/games/1234/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .content(userName)
-                .content(String.valueOf(action));
-
-        // then
-        mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void Test_startGame() throws Exception {
-        // given
-        int action= 2;
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/games/1234")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .content(String.valueOf(action));
-
-        // then
-        mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
-    }
-
-/**
-    @Test
-    public void Test_getGameState() throws Exception {
-
-        //given
-        Tables table = new Tables();
-        table.setTimer(123);
-
-        // this mocks the UserService -> we define above what the gameService should return when getUsers() is called
-        given(gameService.getGame(Mockito.any())).willReturn(table);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder getRequest = get("/games/1234")
-                .header("Token", "Test");
-
-        // then
-        mockMvc.perform(getRequest)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.timer").value(123));
-    }
-**/
-
-
-    @Test
-    public void Test_selectAttribute() throws Exception {
-        //given
-        category chosenCategory = category.HP;
-
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/games/1234/categories")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .content(String.valueOf(chosenCategory));
-
-        // then
-        mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
-    }
-
-    @Test
+/**    @Test
     public void Test_berryUpgrade() throws Exception {
         //given
         int amount = 3;
@@ -426,7 +279,7 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("firstCard"));
     }
-
+**/
 
 
     /**

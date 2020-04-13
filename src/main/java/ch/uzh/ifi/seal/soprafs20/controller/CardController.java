@@ -2,7 +2,6 @@ package ch.uzh.ifi.seal.soprafs20.controller;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardGetDTO;
-import ch.uzh.ifi.seal.soprafs20.rest.dto.TableGetDTO;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.CardService;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
