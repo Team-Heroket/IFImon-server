@@ -20,7 +20,7 @@ public class Card implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -44,7 +44,7 @@ public class Card implements Serializable {
     private List<Element> elements;
 
     @Column(nullable = false)
-    @ElementCollection(targetClass=Integer.class)
+    @ElementCollection(targetClass=String.class)
     private List<String> evolutionNames;
 
     // For the DTOs
@@ -79,7 +79,7 @@ public class Card implements Serializable {
         JSONObject evolutionChain = PokeAPI.getFromURL(species.getJSONObject("evolution_chain").getString("url"));
 
         // Set ID
-        this.pokemonId = pokemonId;
+        this.pokemonId = pokemon.getInt("id");
 
         // Categories
         this.categories = new HashMap<>();

@@ -12,7 +12,7 @@ public class Deck {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -47,7 +47,7 @@ public class Deck {
      *
      * @return Card
      */
-    public Card getCard() {
+    public Card peekCard() {
         // first card of list
         return this.cards.get(0);
     }
@@ -71,7 +71,7 @@ public class Deck {
     public Card evolveCard() {
 
         // Does not remove yet, if something crashes card would be lost...
-        Card toEvolve = this.getCard();
+        Card toEvolve = this.peekCard();
 
         // Get next element of the evolve array
 
@@ -84,6 +84,14 @@ public class Deck {
 
         // Maybe not necessary
         return evolvedCard;
+    }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public Long getId() {
+        return id;
     }
 
 }

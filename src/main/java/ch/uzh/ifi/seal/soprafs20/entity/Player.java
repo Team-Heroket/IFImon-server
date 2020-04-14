@@ -19,7 +19,7 @@ public class Player {
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL)
-    public Deck deck; // TODO: Change this
+    private Deck deck;
 
     @Column
     private Integer berries;
@@ -28,7 +28,6 @@ public class Player {
 
     public Player(User user) {
         this.user = user;
-        this.deck = new Deck();
     }
 
     public Long getId() {

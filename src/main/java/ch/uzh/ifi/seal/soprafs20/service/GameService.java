@@ -116,7 +116,7 @@ public class GameService {
         for (Player player: game.getPlayers()) {
             // # players = # berries
             player.setBerries(game.getPlayers().size());
-            player.deck = new Deck(uniquePkmId, 1); // TODO: Change this
+            player.setDeck(new Deck(uniquePkmId, 20));
         }
 
         //change game.state to running so the polling clients see the game has started and start calling "get board"
