@@ -36,7 +36,7 @@ public class CardServiceTest {
         // given
         card = new Card();
         card.setName("testCard");
-        card.setId(100);
+        card.setId(100L);
     }
 
     @Test

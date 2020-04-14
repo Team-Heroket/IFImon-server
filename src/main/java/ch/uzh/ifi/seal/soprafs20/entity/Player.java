@@ -18,16 +18,17 @@ public class Player {
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Deck deck;
+
+    @Column
+    private Integer berries;
+
     public Player() {};
 
     public Player(User user) {
         this.user = user;
     }
-
-    // TODO: OneToOne Deck
-
-    // TODO: berries
-
 
     public Long getId() {
         return id;
@@ -41,4 +42,19 @@ public class Player {
         return user;
     }
 
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
+    }
+
+    public Integer getBerries() {
+        return berries;
+    }
+
+    public void setBerries(Integer berries) {
+        this.berries = berries;
+    }
 }

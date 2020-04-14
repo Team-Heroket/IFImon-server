@@ -5,6 +5,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.objects.Board;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
 import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import ch.uzh.ifi.seal.soprafs20.service.*;
 import ch.uzh.ifi.seal.soprafs20.service.UserService;
@@ -102,16 +103,23 @@ public class GameController {
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public void startGame(@PathVariable String gameToken, @RequestBody GameTokenPutDTO gameTokenPutDTO, @RequestHeader("Token") String token) {
-        userService.validateUser(token);
+        //validate gameToken and get object
         gameService.validateGame(gameToken);
-        //TODO: #2 check here that only game creator can start game: compare "header.token.username" with "gameToken.creator.username"
+        Game game=gameService.getGame(gameToken);
+
+        //authorize user and get object
+        userService.validateUser(token);
+        User user=userService.getUserByToken(token);
+
+        //check here that only game creator can start game
+        gameService.validateCreator(gameToken,user);
 
         //gets amount of NPCs chosen by client and if none provided, sets it to 0
         Integer npc=gameTokenPutDTO.getNpc();
         if (npc==null){
             npc=0;
         }
-        gameService.startGame(npc, gameToken);
+        gameService.startGame(npc, game);
     }
 
 
@@ -123,45 +131,101 @@ public class GameController {
     @ResponseBody
     public GameGetDTO getGame(@PathVariable("gameToken") String gameToken, @RequestHeader("Token") String token) {
 
-        //authorize user from header
-        userService.validateUser(token);
+        //validate gameToken and get object
         gameService.validateGame(gameToken);
+        Game game=gameService.getGame(gameToken);
 
-        Game game = gameService.getGame(gameToken);
+        //authorize user and get object
+        userService.validateUser(token);
+        User user=userService.getUserByToken(token);
+
+        //check if user part of game
+        gameService.validatePlayer(gameToken,user);
 
         //convert to correct API format to return
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
 
 
+    /*     #11     */
+    /** This request lets the user, whose turn it is, select a category for battle **/
+    @PutMapping("/games/{gameToken}/categories")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void selectCategory(@PathVariable String gameToken, @RequestBody CategoryDTO categoryDTO, @RequestHeader("Token") String token) {
+        //try to catch invalid caategories better?
+        Category category=categoryDTO.getCategory();
 
-//    SPRINT 3:
-//
-//
-//
-//    /*     #11     */
-//    /** This request lets the user, whose turn it is, select a category for battle **/
-//    @PutMapping("/games/{gameToken}/categories")
-//    @ResponseStatus(HttpStatus.OK)
-//    @ResponseBody
-//    public void selectAttribute(@PathVariable String gameToken, Enum category, @RequestHeader("Token") String token) {
-//
-//        //call gameservice method for selecting a category
-//        gameService.selectCategory(category, gameToken);
-//
-//    }
-//
-//
-//    /*     #12     */
-//    /** This request lets a card evolve **/
-//    @PutMapping("/games/{gameToken}/berries")
-//    @ResponseStatus(HttpStatus.OK)
-//    @ResponseBody
-//    public void berryUpgrade(@PathVariable String gameToken, Integer amount, String userName, @RequestHeader("Token") String token) {
-//
-//        //call gameservice method for berry usage
-//        gameService.userBerries(amount, userName);
-//    }
+        //validate gameToken and get object
+        gameService.validateGame(gameToken);
+        Game game=gameService.getGame(gameToken);
+
+        //authorize user and get object
+        userService.validateUser(token);
+        User user=userService.getUserByToken(token);
+
+        //check if user is part of game
+        gameService.validatePlayer(gameToken,user);
+
+        //check if user is turnPlayer
+        gameService.validateTurnPlayer(gameToken,user);
+
+        //check if gamestate is running
+        if(game.getState()!=GameStateEnum.RUNNING){
+            throw new SopraServiceException("Conflict: Not in running state");
+        }
+
+        //TODO: check if "in time"
+
+        //select category
+        gameService.selectCategory(category, game);
+
+        //TODO: calculate and return winner? where do we actually update the decks etc?
+
+    }
+
+
+    /*     #12     */
+    /** This request lets a card evolve **/
+    @PutMapping("/games/{gameToken}/berries")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void berryUpgrade(@PathVariable String gameToken, @RequestBody BerryDTO berryDTO, @RequestHeader("Token") String token) {
+
+        //get username and amount from body
+        Long id=berryDTO.getId();
+        Integer amount=berryDTO.getAmount();
+
+        //validate gameToken and get object
+        gameService.validateGame(gameToken);
+        Game game=gameService.getGame(gameToken);
+
+        //authorize user and get object
+        userService.validateUser(token);
+        User user=userService.getUserById(id);
+
+        //check if gamestate is running
+        if(game.getState()!=GameStateEnum.RUNNING){
+            throw new SopraServiceException("Conflict: Not in running state");
+        }
+
+
+        //check if user is part of game
+        gameService.validatePlayer(gameToken,user);
+
+        //TODO: check if player has that many berries
+
+        //TODO: check if card can evolve that many times
+
+        //use berry
+        gameService.useBerries(amount, user, game);
+
+        //TODO: We commit the turn here, but only when all players have made the request (how do we track this?):
+            //calculate winner(s)
+            //calculate who gets which cards
+            //set new turn player
+
+    }
 
 
 }

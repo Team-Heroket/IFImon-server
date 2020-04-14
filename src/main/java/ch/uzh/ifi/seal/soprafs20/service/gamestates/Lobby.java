@@ -4,6 +4,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class Lobby implements GameState {
         // Check if the user is already added
         for (Player player: players) {
             if (user.getId().equals(player.getUser().getId())) {
-                throw new SopraServiceException("This player is already in the game.");
+                throw new GameConflictException("This player is already in the game.");
             }
         }
 
@@ -40,7 +41,7 @@ public class Lobby implements GameState {
         }
 
         // We could also throw nothing, and just ignore the wrong request.
-        throw new SopraServiceException("You can't remove a player, that does not exist");
+        throw new GameConflictException("You can't remove a player, that does not exist");
     }
 
 }

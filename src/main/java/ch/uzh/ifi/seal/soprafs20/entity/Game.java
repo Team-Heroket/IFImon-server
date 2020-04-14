@@ -30,6 +30,9 @@ public class Game implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     private Player creator;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Player turnPlayer;
+
     @OneToMany(cascade = CascadeType.ALL)
     private List<Player> players;
 
@@ -133,6 +136,14 @@ public class Game implements Serializable {
         this.creationTime = creationTime;
     }
 
+    public Player getTurnPlayer() {
+        return turnPlayer;
+    }
+
+    public void setTurnPlayer(Player turnPlayer) {
+        this.turnPlayer = turnPlayer;
+    }
+
     public void resetPlayers(){
         this.players=null;
     }
@@ -140,4 +151,6 @@ public class Game implements Serializable {
     public void resetCreator(){
         this.creator=null;
     }
+
+    public void resetTurnPlayer(){ this.turnPlayer=null; }
 }

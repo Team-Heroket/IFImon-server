@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.entity.Deck;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
@@ -10,6 +11,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.objects.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.*;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
 
 import org.hibernate.cfg.NotYetImplementedException;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * User Service
@@ -101,15 +104,51 @@ public class GameService {
     }
 
 
-    public void startGame(Integer npc, String gameToken){
-        throw new NotYetImplementedException(); // Sprint 3
-        //get game from gameToken
+    public void startGame(Integer npc, Game game){
 
         //loop (from 0 to npc): render NPCs and add them to game
+        // TODO: Sprint 4 create NPCs
 
         //give each player a deck and set turn player = game.creator if not done already
+        game.setTurnPlayer(game.getCreator());
+
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        for (Player player: game.getPlayers()) {
+            // # players = # berries
+            player.setBerries(game.getPlayers().size());
+            player.setDeck(new Deck(uniquePkmId, 20));
+        }
 
         //change game.state to running so the polling clients see the game has started and start calling "get board"
+        game.setState(GameStateEnum.RUNNING);
+
+        // save changes
+        this.gameRepository.save(game);
+    }
+
+    public void selectCategory(Category category, Game game){
+        throw new NotYetImplementedException();
+
+        //set category
+
+    }
+
+    public void useBerries(int amount, User user, Game game){
+        throw new NotYetImplementedException();
+
+        //get player associated with user
+
+        //get deck of player
+
+        //pop top card of player
+
+        //get the evolution(s?) id of the card
+
+        //render new card from evolution
+
+        //add (1!) evolved card back on top
+
+        //maybe return new card?
 
     }
 
@@ -146,6 +185,38 @@ public class GameService {
         if (!game.getCreator().getUser().getToken().equals(user.getToken())) {
             throw new GameForbiddenException("This user is not the game-creator.");
         }
+    }
+
+    /**
+     * Validates if the user is the turn player
+     *
+     * @param gameToken token of the game to be validated
+     * @param user User to be validated
+     * @throws GameForbiddenException
+     */
+    public void validateTurnPlayer(String gameToken, User user) {
+        Game game = this.gameRepository.findByToken(gameToken);
+        if (!game.getTurnPlayer().getUser().getToken().equals(user.getToken())) {
+            throw new GameForbiddenException("This user is not the turn player.");
+        }
+    }
+
+    /**
+     * Validates if the user is part of game as player
+     *
+     * @param gameToken token of the game to be validated
+     * @param user User to be validated
+     * @throws GameForbiddenException
+     */
+    public void validatePlayer(String gameToken, User user) {
+        Game game = this.gameRepository.findByToken(gameToken);
+
+        for (Player validPlayer : game.getPlayers()){
+            if (validPlayer.getUser().getId()==user.getId()){
+                return;
+            }
+        }
+        throw new GameForbiddenException("This user is not part of this game (anymore).");
     }
 
 
@@ -187,9 +258,10 @@ public class GameService {
     }
 
     public void deleteGame(Game game){
-        //make players and creators null, so deleting the game wont delete all associated users
+        //make player entities in game entity null, so deleting the game wont delete all associated users
         game.resetCreator();
         game.resetPlayers();
+        game.resetTurnPlayer();
         //deletes the game entity and all associated entities, watch out!
         long deletedGames = gameRepository.deleteByToken(game.getToken());
 

@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.constant.Mode;
+import ch.uzh.ifi.seal.soprafs20.entity.Deck;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
 
@@ -27,7 +28,7 @@ public class GameGetDTO {
 
     private String creationTime;
 
-
+    private PlayerDTO turnPlayer;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -58,5 +59,11 @@ public class GameGetDTO {
         this.creationTime = creationTime;
     }
 
+    public PlayerDTO getTurnPlayer() {
+        return turnPlayer;
+    }
 
+    public void setTurnPlayer(PlayerDTO turnPlayer) {
+        this.turnPlayer = turnPlayer;
+    }
 }
