@@ -154,7 +154,7 @@ public class GameController {
     @ResponseBody
     public void selectCategory(@PathVariable String gameToken, @RequestBody CategoryDTO categoryDTO, @RequestHeader("Token") String token) {
         //try to catch invalid caategories better?
-        Category category=DTOMapper.INSTANCE.convertCategoryDTOtoCategory(categoryDTO);
+        Category category=categoryDTO.getCategory();
 
         //validate gameToken and get object
         gameService.validateGame(gameToken);

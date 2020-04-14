@@ -68,8 +68,8 @@ public interface DTOMapper {
     @Mapping(source = "token", target = "token")
     GameTokenDTO convertEntityToGameTokenDTO(Game game);
 
-    @Mapping(source = "category", target = "category")
-    Category convertCategoryDTOtoCategory(CategoryDTO categoryDTO);
+    //@Mapping(source = "category", target = "category")
+    //Category convertCategoryDTOtoCategory(CategoryDTO categoryDTO);
 
 
 }

@@ -3,11 +3,16 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
 import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.Element;
+import ch.uzh.ifi.seal.soprafs20.rest.PokeAPI;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @Entity
 @Table(name = "CARD")
@@ -23,7 +28,7 @@ public class Card implements Serializable {
 
     @Column(nullable = false)
     @ElementCollection
-    private Map<Category,Integer> categories;
+    private HashMap<Category,Integer> categories;
 
     @Column(nullable = false)
     private String name;
@@ -36,57 +41,149 @@ public class Card implements Serializable {
 
     @Column(nullable = false)
     @ElementCollection(targetClass=Element.class)
-    private List<Element> element;
+    private ArrayList<Element> elements;
 
     @Column(nullable = false)
     @ElementCollection(targetClass=Integer.class)
-    private List<Integer> evolutionId;
+    private ArrayList<String> evolutionNames;
 
+    // For the DTOs
+    public Card() {}
 
+    // For the real use
 
+    /**
+     * Gets the card by id
+     *
+     * @param pokemonId Id of Pokémon
+     */
+    public Card(int pokemonId) {
+        JSONObject pokemon = PokeAPI.getPokemon(pokemonId);
+        JSONObject species = PokeAPI.getSpecies(pokemonId);
+        this.initialise(pokemon, species);
+    }
 
+    /**
+     * Gets the card by name
+     *
+     * @param pokemonName Name of Pokémon
+     */
+    public Card(String pokemonName) {
+        JSONObject pokemon = PokeAPI.getPokemon(pokemonName);
+        JSONObject species = PokeAPI.getSpecies(pokemonName);
+        this.initialise(pokemon, species);
+    }
 
-    public int getId() { return pokemonId; }
-    public void setId(int pokemonId) {
+    // Initialises the card
+    private void initialise(JSONObject pokemon, JSONObject species) {
+        JSONObject evolutionChain = PokeAPI.getFromURL(species.getJSONObject("evolution_chain").getString("url"));
+
+        // Set ID
+        this.pokemonId = pokemonId;
+
+        // Categories
+        this.categories = new HashMap<>();
+        JSONArray stats = pokemon.getJSONArray("stats");
+        this.categories.put(Category.SPEED, stats.getJSONObject(0).getInt("base_stat"));
+        this.categories.put(Category.DEF, stats.getJSONObject(3).getInt("base_stat"));
+        this.categories.put(Category.ATK, stats.getJSONObject(4).getInt("base_stat"));
+        this.categories.put(Category.HP, stats.getJSONObject(5).getInt("base_stat"));
+
+        this.categories.put(Category.WEIGHT, pokemon.getInt("weight"));
+        this.categories.put(Category.CAPTURE_RATING, species.getInt("capture_rate"));
+
+        // Name, first char to uppercase
+        String name = species.getString("name");
+        this.name = name.substring(0, 1).toUpperCase() + name.substring(1);
+        // Sprite URL
+        JSONObject sprites = pokemon.getJSONObject("sprites");
+        this.spriteURL = sprites.getString("front_default");
+
+        // TODO: Cry
+        this.cryURL = null;
+
+        // Element converts to ENUM
+        JSONArray types = pokemon.getJSONArray("types");
+        this.elements = new ArrayList<>();
+        for (int i = 0; i < types.length(); i++) {
+            JSONObject type = types.getJSONObject(i);
+            String typeName = type.getString("name").toUpperCase();
+            this.elements.add(Element.valueOf(typeName));
+        }
+
+        // Saves all possible evolutions
+        JSONArray evolvesTo = evolutionChain.getJSONObject("chain").getJSONArray("evolves_to");
+        this.evolutionNames = new ArrayList<>();
+        while (!evolvesTo.isEmpty()) {
+            int random = (int) (Math.random() * evolvesTo.length());
+            JSONObject evolution = evolvesTo.getJSONObject(random);
+            this.evolutionNames.add(evolution.getJSONObject("species").getString("name"));
+            evolvesTo = evolution.getJSONArray("evolves_to");
+        }
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getPokemonId() {
+        return pokemonId;
+    }
+
+    public void setPokemonId(int pokemonId) {
         this.pokemonId = pokemonId;
     }
 
-    public Map<Category,Integer> getCategories() { return categories; }
+    public HashMap<Category, Integer> getCategories() {
+        return categories;
+    }
 
-
-    public void setCategories(Map<Category,Integer> categories) {
+    public void setCategories(HashMap<Category, Integer> categories) {
         this.categories = categories;
     }
 
-
-    public String getName() { return name; }
-    public void setName(String input) {
-        this.name = input;
+    public String getName() {
+        return name;
     }
 
-    public String getSpriteURL() { return spriteURL; }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSpriteURL() {
+        return spriteURL;
+    }
+
     public void setSpriteURL(String spriteURL) {
         this.spriteURL = spriteURL;
     }
 
-    public String getCryURL() { return cryURL; }
+    public String getCryURL() {
+        return cryURL;
+    }
+
     public void setCryURL(String cryURL) {
         this.cryURL = cryURL;
     }
 
-
-    public List<Element> getElement() { return element; }
-    public void setElement(List<Element> input) {
-        this.element = element;
+    public ArrayList<Element> getElements() {
+        return elements;
     }
 
-
-
-    public List<Integer> getEvolutionId() { return evolutionId; }
-    public void setEvolutionId(List<Integer> evolutionId) {
-        this.evolutionId = evolutionId;
+    public void setElements(ArrayList<Element> elements) {
+        this.elements = elements;
     }
 
+    public ArrayList<String> getEvolutionNames() {
+        return evolutionNames;
+    }
 
-
+    public void setEvolutionNames(ArrayList<String> evolutionNames) {
+        this.evolutionNames = evolutionNames;
+    }
 }
