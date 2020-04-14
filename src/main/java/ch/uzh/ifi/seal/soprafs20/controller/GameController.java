@@ -119,7 +119,7 @@ public class GameController {
         if (npc==null){
             npc=0;
         }
-        gameService.startGame(npc, gameToken);
+        gameService.startGame(npc, game);
     }
 
 
@@ -220,7 +220,11 @@ public class GameController {
         //use berry
         gameService.useBerries(amount, user, game);
 
-        //TODO: Maybe return newly evolved card?
+        //TODO: We commit the turn here, but only when all players have made the request (how do we track this?):
+            //calculate winner(s)
+            //calculate who gets which cards
+            //set new turn player
+
     }
 
 

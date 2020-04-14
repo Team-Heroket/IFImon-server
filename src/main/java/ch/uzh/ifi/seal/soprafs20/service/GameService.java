@@ -102,9 +102,8 @@ public class GameService {
     }
 
 
-    public void startGame(Integer npc, String gameToken){
+    public void startGame(Integer npc, Game game){
         throw new NotYetImplementedException();
-        //get game from gameToken
 
         //loop (from 0 to npc): render NPCs and add them to game
 
