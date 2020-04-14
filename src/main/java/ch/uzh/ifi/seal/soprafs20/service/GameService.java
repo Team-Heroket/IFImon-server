@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.entity.Deck;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * User Service
@@ -103,14 +105,25 @@ public class GameService {
 
 
     public void startGame(Integer npc, Game game){
-        throw new NotYetImplementedException();
 
         //loop (from 0 to npc): render NPCs and add them to game
+        // TODO: Sprint 4 create NPCs
 
         //give each player a deck and set turn player = game.creator if not done already
+        game.setTurnPlayer(game.getCreator());
+
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        for (Player player: game.getPlayers()) {
+            // # players = # berries
+            player.setBerries(game.getPlayers().size());
+            player.deck = new Deck(uniquePkmId, 1); // TODO: Change this
+        }
 
         //change game.state to running so the polling clients see the game has started and start calling "get board"
+        game.setState(GameStateEnum.RUNNING);
 
+        // save changes
+        this.gameRepository.save(game);
     }
 
     public void selectCategory(Category category, Game game){

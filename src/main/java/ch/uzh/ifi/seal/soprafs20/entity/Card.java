@@ -28,7 +28,7 @@ public class Card implements Serializable {
 
     @Column(nullable = false)
     @ElementCollection
-    private HashMap<Category,Integer> categories;
+    private Map<Category,Integer> categories;
 
     @Column(nullable = false)
     private String name;
@@ -41,11 +41,11 @@ public class Card implements Serializable {
 
     @Column(nullable = false)
     @ElementCollection(targetClass=Element.class)
-    private ArrayList<Element> elements;
+    private List<Element> elements;
 
     @Column(nullable = false)
     @ElementCollection(targetClass=Integer.class)
-    private ArrayList<String> evolutionNames;
+    private List<String> evolutionNames;
 
     // For the DTOs
     public Card() {}
@@ -107,7 +107,7 @@ public class Card implements Serializable {
         this.elements = new ArrayList<>();
         for (int i = 0; i < types.length(); i++) {
             JSONObject type = types.getJSONObject(i);
-            String typeName = type.getString("name").toUpperCase();
+            String typeName = type.getJSONObject("type").getString("name").toUpperCase();
             this.elements.add(Element.valueOf(typeName));
         }
 
@@ -139,11 +139,11 @@ public class Card implements Serializable {
         this.pokemonId = pokemonId;
     }
 
-    public HashMap<Category, Integer> getCategories() {
+    public Map<Category, Integer> getCategories() {
         return categories;
     }
 
-    public void setCategories(HashMap<Category, Integer> categories) {
+    public void setCategories(Map<Category, Integer> categories) {
         this.categories = categories;
     }
 
@@ -171,7 +171,7 @@ public class Card implements Serializable {
         this.cryURL = cryURL;
     }
 
-    public ArrayList<Element> getElements() {
+    public List<Element> getElements() {
         return elements;
     }
 
@@ -179,7 +179,7 @@ public class Card implements Serializable {
         this.elements = elements;
     }
 
-    public ArrayList<String> getEvolutionNames() {
+    public List<String> getEvolutionNames() {
         return evolutionNames;
     }
 

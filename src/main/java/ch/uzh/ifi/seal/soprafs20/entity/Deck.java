@@ -1,7 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
+import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
+
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "DECK")
@@ -13,10 +16,19 @@ public class Deck {
     private Long id;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private ArrayList<Card> cards;
+    private List<Card> cards;
 
     public Deck() {
         this.cards = new ArrayList<>();
+    }
+
+    public Deck(UniqueBaseEvolutionPokemonGenerator ids, int cards) {
+        this.cards = new ArrayList<>();
+
+        for (int i = 0; i < cards; i++) {
+            this.cards.add(new Card(ids.get()));
+        }
+
     }
 
     /**
