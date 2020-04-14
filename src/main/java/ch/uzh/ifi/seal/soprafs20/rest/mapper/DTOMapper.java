@@ -52,6 +52,7 @@ public interface DTOMapper {
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "user", target = "user")
+    @Mapping(source = "berries", target = "berries")
     PlayerDTO convertEntityToPlayerDTO(Player player);
 
 
@@ -63,13 +64,13 @@ public interface DTOMapper {
     @Mapping(source = "mode", target = "mode")
     @Mapping(source = "state", target = "state")
     @Mapping(source = "creationTime", target = "creationTime")
+    @Mapping(source = "deck", target = "deck")
+    @Mapping(source = "turnPlayer", target = "turnPlayer")
     GameGetDTO convertEntityToGameGetDTO(Game game);
 
     @Mapping(source = "token", target = "token")
     GameTokenDTO convertEntityToGameTokenDTO(Game game);
 
-    //@Mapping(source = "category", target = "category")
-    //Category convertCategoryDTOtoCategory(CategoryDTO categoryDTO);
 
 
 }

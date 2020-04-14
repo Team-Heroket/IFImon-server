@@ -9,7 +9,7 @@ public class PlayerDTO {
 
     private UserGetDTO user;
     private Long id;
-    
+    private Integer berries;
 
 
     public UserGetDTO getUser() { return user; }
@@ -18,4 +18,11 @@ public class PlayerDTO {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
+    public Integer getBerries() {
+        return berries;
+    }
+
+    public void setBerries(Integer berries) {
+        this.berries = berries;
+    }
 }
