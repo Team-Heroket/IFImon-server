@@ -119,7 +119,7 @@ public class GameController {
         if (npc==null){
             npc=0;
         }
-        gameService.startGame(npc, gameToken);
+        gameService.startGame(npc, game);
     }
 
 
@@ -153,7 +153,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void selectCategory(@PathVariable String gameToken, @RequestBody CategoryDTO categoryDTO, @RequestHeader("Token") String token) {
-        //try to catch invalid caategories better?
+        //try to catch invalid categories better?
         Category category=DTOMapper.INSTANCE.convertCategoryDTOtoCategory(categoryDTO);
 
         //validate gameToken and get object
@@ -220,7 +220,11 @@ public class GameController {
         //use berry
         gameService.useBerries(amount, user, game);
 
-        //TODO: Maybe return newly evolved card?
+        //TODO: We commit the turn here, but only when all players have made the request (how do we track this?):
+            //calculate winner(s)
+            //calculate who gets which cards
+            //set new turn player
+
     }
 
 
