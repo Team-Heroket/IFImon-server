@@ -87,6 +87,7 @@ public class GameService {
 
         // This handles the addPlayer depending on the state the game is in.
         state.addPlayer(game, user);
+        this.gameRepository.save(game);
     }
 
     public void removePlayer(String gameToken, User user){
@@ -101,6 +102,10 @@ public class GameService {
         if((game.getCreator().getUser().getId().equals(user.getId())) && game.getState()==GameStateEnum.LOBBY){
             this.deleteGame(game);
         }
+        else{
+            this.gameRepository.save(game);
+        }
+
     }
 
 
@@ -109,6 +114,11 @@ public class GameService {
         //loop (from 0 to npc): render NPCs and add them to game
         // TODO: Sprint 4 create NPCs
 
+        //for testing
+        Integer deckSize= 5;
+        Long buffer=35L;
+
+
         //give each player a deck and set turn player = game.creator if not done already
         game.setTurnPlayer(game.getCreator());
 
@@ -116,21 +126,29 @@ public class GameService {
         for (Player player: game.getPlayers()) {
             // # players = # berries
             player.setBerries(game.getPlayers().size());
-            player.setDeck(new Deck(uniquePkmId, 20));
+            player.setDeck(new Deck(uniquePkmId, deckSize));
         }
 
         //change game.state to running so the polling clients see the game has started and start calling "get board"
         game.setState(GameStateEnum.RUNNING);
+
+
+        //set creation date and time
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        game.setStartTime(pattern.format(now.plusSeconds(buffer)));
 
         // save changes
         this.gameRepository.save(game);
     }
 
     public void selectCategory(Category category, Game game){
-        throw new NotYetImplementedException();
+        GameState state = this.getState(game);
 
-        //set category
+        // selects category and calculates winner
+        state.selectCategory(game, category);
 
+        this.gameRepository.save(game);
     }
 
     public void useBerries(int amount, User user, Game game){
@@ -262,6 +280,8 @@ public class GameService {
         game.resetCreator();
         game.resetPlayers();
         game.resetTurnPlayer();
+        game.resetWinners();
+
         //deletes the game entity and all associated entities, watch out!
         long deletedGames = gameRepository.deleteByToken(game.getToken());
 

@@ -1,7 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
-import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
-import ch.uzh.ifi.seal.soprafs20.constant.Mode;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -24,6 +23,9 @@ public class Game implements Serializable {
     private String creationTime;
 
     @Column(nullable = false)
+    private String startTime;
+
+    @Column(nullable = false)
     private String token;
 
     // Should only be readable!
@@ -36,9 +38,16 @@ public class Game implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Player> players;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Player> winners;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 6)
     private Mode mode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 14)
+    private Category category;
 
     // Cool, gets converted to string for database and back to enum for java
     @Enumerated(EnumType.STRING)
@@ -153,4 +162,30 @@ public class Game implements Serializable {
     }
 
     public void resetTurnPlayer(){ this.turnPlayer=null; }
+
+    public void resetWinners(){ this.winners=null; }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public List<Player> getWinners() {
+        return winners;
+    }
+
+    public void setWinners(List<Player> winner) {
+        this.winners = winner;
+    }
 }

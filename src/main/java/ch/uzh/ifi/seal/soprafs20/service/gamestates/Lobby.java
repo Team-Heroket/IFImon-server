@@ -4,8 +4,10 @@ import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
 
 import java.util.List;
 
@@ -44,4 +46,8 @@ public class Lobby implements GameState {
         throw new GameConflictException("You can't remove a player, that does not exist");
     }
 
+    @Override
+    public void selectCategory(Game game, Category category) {
+        throw new GameBadRequestException("Can't select Category in the Lobby");
+    }
 }
