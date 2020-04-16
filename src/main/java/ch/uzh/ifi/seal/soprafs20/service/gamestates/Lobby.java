@@ -50,4 +50,9 @@ public class Lobby implements GameState {
     public void selectCategory(Game game, Category category) {
         throw new GameBadRequestException("Can't select Category in the Lobby");
     }
+
+    @Override
+    public void useBerries(Game game, Integer usedBerries, Player player) {
+        throw new GameBadRequestException("Can't use Berries in Lobby");
+    }
 }

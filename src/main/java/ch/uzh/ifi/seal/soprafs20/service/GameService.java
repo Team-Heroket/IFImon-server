@@ -151,23 +151,18 @@ public class GameService {
         this.gameRepository.save(game);
     }
 
-    public void useBerries(int amount, User user, Game game){
-        throw new NotYetImplementedException();
+    public void useBerries(Game game, Player player, Integer amount){
 
-        //get player associated with user
+        GameState state = this.getState(game);
 
-        //get deck of player
+        // uses berries if possible
+        state.useBerries(game, amount, player);
 
-        //pop top card of player
+        this.gameRepository.save(game);
+    }
 
-        //get the evolution(s?) id of the card
-
-        //render new card from evolution
-
-        //add (1!) evolved card back on top
-
-        //maybe return new card?
-
+    public void nextTurn(Game game){
+        throw new NotYetImplementedException("Bruh");
     }
 
     public Game getGame(String gameToken){
@@ -235,6 +230,20 @@ public class GameService {
             }
         }
         throw new GameForbiddenException("This user is not part of this game (anymore).");
+    }
+
+    /**
+     * Returns player associated with user
+
+     */
+    public Player getPlayerFromUser(Game game, User user) {
+
+        for(Player player : game.getPlayers()){
+            if(user.getId()==player.getUser().getId()){
+                return player;
+            }
+        }
+        throw new GameForbiddenException("This user is not associated with a player");
     }
 
 

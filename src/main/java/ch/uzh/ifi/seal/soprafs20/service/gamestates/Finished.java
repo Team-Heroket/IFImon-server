@@ -1,6 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.service.gamestates;
 
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
@@ -20,5 +21,10 @@ public class Finished implements GameState {
     @Override
     public void selectCategory(Game game, Category category) {
         throw new GameBadRequestException("Can't select Category when game is done");
+    }
+
+    @Override
+    public void useBerries(Game game, Integer usedBerries, Player player) {
+        throw new GameBadRequestException("Can't use Berries when game is done");
     }
 }

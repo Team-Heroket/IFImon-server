@@ -68,22 +68,19 @@ public class Deck {
      * @pre The card is evolve-able
      * @return The evolved Card
      */
-    public Card evolveCard() {
+    public void evolveCard(Integer times) {
 
-        // Does not remove yet, if something crashes card would be lost...
-        Card toEvolve = this.peekCard();
+            // Does not remove yet, if something crashes card would be lost...
+            Card toEvolve = this.peekCard();
 
-        // Get next element of the evolve array
+            // Get next element of the evolve array
 
-        Card evolvedCard = new Card(/* ID of evolved Pkmn */);
+            Card evolvedCard = new Card(toEvolve.getEvolutionNames().get(times-1));
 
-        // Removes old card
-        this.removeCard();
-        // Adds new card TO THE TOP
-        this.cards.add(0, evolvedCard); // !Shift operation!
-
-        // Maybe not necessary
-        return evolvedCard;
+            // Removes old card
+            this.removeCard();
+            // Adds new card TO THE TOP
+            this.cards.add(0, evolvedCard); // !Shift operation!
     }
 
     public List<Card> getCards() {
@@ -92,6 +89,10 @@ public class Deck {
 
     public Long getId() {
         return id;
+    }
+
+    public boolean isEmpty(){
+        return this.cards.isEmpty();
     }
 
 }
