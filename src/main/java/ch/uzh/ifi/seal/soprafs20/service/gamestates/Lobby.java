@@ -36,9 +36,7 @@ public class Lobby implements GameState {
     public void removePlayer(Game game, User user) {
         List<Player> players = game.getPlayers();
 
-
-
-
+        
         for (Player player: players) {
             if (player.getUser().getId().equals(user.getId())) {
                 players.remove(player);

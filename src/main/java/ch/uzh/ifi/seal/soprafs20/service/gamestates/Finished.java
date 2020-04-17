@@ -5,9 +5,12 @@ import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.GameState;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
 import org.hibernate.cfg.NotYetImplementedException;
+
+import java.util.List;
 
 public class Finished implements GameState {
     @Override
@@ -16,7 +19,17 @@ public class Finished implements GameState {
     }
     @Override
     public void removePlayer(Game game, User user) {
-        throw new GameBadRequestException("A player can't leave a finished game.");
+        List<Player> players = game.getPlayers();
+
+        for (Player player: players) {
+            if (player.getUser().getId().equals(user.getId())) {
+                players.remove(player);
+                return;
+            }
+        }
+
+        // We could also throw nothing, and just ignore the wrong request.
+        throw new GameConflictException("You can't remove a player, that does not exist");
     }
 
     @Override
