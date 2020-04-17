@@ -1,14 +1,18 @@
 package ch.uzh.ifi.seal.soprafs20.service.gamestates;
 
+import ch.uzh.ifi.seal.soprafs20.entity.Deck;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
+import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Lobby implements GameState {
@@ -47,6 +51,39 @@ public class Lobby implements GameState {
     }
 
     @Override
+    public void startGame(Game game, Integer npc) {
+        //loop (from 0 to npc): render NPCs and add them to game
+        // TODO: Sprint 4 create NPCs
+
+        //for testing
+        Integer deckSize= 5;
+        Long buffer=35L;
+
+
+        //give each player a deck and set turn player = game.creator if not done already
+        game.setTurnPlayer(game.getCreator());
+
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        for (Player player: game.getPlayers()) {
+            // # players = # berries
+            player.setBerries(game.getPlayers().size());
+            player.setDeck(new Deck(uniquePkmId, deckSize));
+        }
+
+        //change game.state to running so the polling clients see the game has started and start calling "get board"
+        game.setState(GameStateEnum.RUNNING);
+
+
+        //set creation date and time
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        game.setStartTime(pattern.format(now.plusSeconds(buffer)));
+
+    }
+
+
+
+    @Override
     public void selectCategory(Game game, Category category) {
         throw new GameBadRequestException("Can't select Category in the Lobby");
     }
@@ -54,5 +91,10 @@ public class Lobby implements GameState {
     @Override
     public void useBerries(Game game, Integer usedBerries, Player player) {
         throw new GameBadRequestException("Can't use Berries in Lobby");
+    }
+
+    @Override
+    public void nextTurn(Game game) {
+        throw new GameBadRequestException("Can't get next Turn when in lobby");
     }
 }

@@ -10,4 +10,6 @@ public interface GameState {
     public void removePlayer(Game game, User user);
     public void selectCategory(Game game, Category category);
     public void useBerries(Game game, Integer usedBerries, Player player);
+    public void nextTurn(Game game);
+    public void startGame(Game game, Integer npc);
 }

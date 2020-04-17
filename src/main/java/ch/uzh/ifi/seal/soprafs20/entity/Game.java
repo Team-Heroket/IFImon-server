@@ -161,6 +161,8 @@ public class Game implements Serializable {
         this.creator=null;
     }
 
+    public void resetCategory(){ this.category=null; }
+
     public void resetTurnPlayer(){ this.turnPlayer=null; }
 
     public void resetWinners(){ this.winners=null; }

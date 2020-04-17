@@ -111,33 +111,8 @@ public class GameService {
 
     public void startGame(Integer npc, Game game){
 
-        //loop (from 0 to npc): render NPCs and add them to game
-        // TODO: Sprint 4 create NPCs
-
-        //for testing
-        Integer deckSize= 5;
-        Long buffer=35L;
-
-
-        //give each player a deck and set turn player = game.creator if not done already
-        game.setTurnPlayer(game.getCreator());
-
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
-        for (Player player: game.getPlayers()) {
-            // # players = # berries
-            player.setBerries(game.getPlayers().size());
-            player.setDeck(new Deck(uniquePkmId, deckSize));
-        }
-
-        //change game.state to running so the polling clients see the game has started and start calling "get board"
-        game.setState(GameStateEnum.RUNNING);
-
-
-        //set creation date and time
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        game.setStartTime(pattern.format(now.plusSeconds(buffer)));
-
+        GameState state = this.getState(game);
+        state.startGame(game, npc);
         // save changes
         this.gameRepository.save(game);
     }
@@ -162,7 +137,13 @@ public class GameService {
     }
 
     public void nextTurn(Game game){
+
         throw new NotYetImplementedException("Bruh");
+        GameState state = this.getState(game);
+
+        // uses berries if possible
+        state.nextTurn(game);
+
     }
 
     public Game getGame(String gameToken){
