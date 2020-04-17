@@ -92,7 +92,7 @@ public class Running implements GameState {
                     winner=new ArrayList<>();
                     winner.add(player);
                 }
-                else if(categoryValue==maxValue){
+                else if(categoryValue.equals(maxValue)){
                     maxValue=categoryValue;
                     winner.add(player);
                 }

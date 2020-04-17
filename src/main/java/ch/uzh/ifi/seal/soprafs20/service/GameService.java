@@ -99,7 +99,7 @@ public class GameService {
         state.removePlayer(game, user);
 
         //if the removed player is the creator, close the lobby
-        if((game.getCreator().getUser().getId().equals(user.getId())) && game.getState()==GameStateEnum.LOBBY){
+        if((game.getCreator().getUser().getId().equals(user.getId())) && (game.getState()==GameStateEnum.LOBBY || game.getState()==GameStateEnum.FINISHED)){
             this.deleteGame(game);
         }
         else{
@@ -216,7 +216,7 @@ public class GameService {
     public Player getPlayerFromUser(Game game, User user) {
 
         for(Player player : game.getPlayers()){
-            if(user.getId()==player.getUser().getId()){
+            if(user.getId().equals(player.getUser().getId())){
                 return player;
             }
         }
