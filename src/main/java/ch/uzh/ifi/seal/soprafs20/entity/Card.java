@@ -50,6 +50,16 @@ public class Card implements Serializable {
     // For the DTOs
     public Card() {}
 
+    public Card(Card card) {
+        this.pokemonId = card.pokemonId;
+        this.categories = new HashMap<>(card.categories);
+        this.name = card.name;
+        this.spriteURL = card.spriteURL;
+        this.cryURL = card.cryURL;
+        this.elements = new ArrayList<>(card.elements);
+        this.evolutionNames = new ArrayList<>(card.evolutionNames);
+    }
+
     // For the real use
 
     /**

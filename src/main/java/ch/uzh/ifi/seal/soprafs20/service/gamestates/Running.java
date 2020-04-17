@@ -1,5 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.service.gamestates;
 
+import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
@@ -107,13 +108,13 @@ public class Running implements GameState {
         if (winners.size()==1){
             Player winner=winners.get(0);
             for(Player player:game.getPlayers()){
-                Card temp = player.getDeck().removeCard();
+                Card temp = new Card(player.getDeck().removeCard());
                 winner.getDeck().addCard(temp);
             }
         }
         else{
             for (Player player : game.getPlayers()){
-                Card temp = player.getDeck().removeCard();
+                Card temp = new Card(player.getDeck().removeCard());
                 player.getDeck().addCard(temp);
             }
         }

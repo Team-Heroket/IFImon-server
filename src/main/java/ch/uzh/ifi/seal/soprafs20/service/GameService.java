@@ -137,13 +137,9 @@ public class GameService {
     }
 
     public void nextTurn(Game game){
-
-        throw new NotYetImplementedException("Bruh");
         GameState state = this.getState(game);
-
-        // uses berries if possible
         state.nextTurn(game);
-
+        this.gameRepository.save(game);
     }
 
     public Game getGame(String gameToken){
@@ -206,7 +202,7 @@ public class GameService {
         Game game = this.gameRepository.findByToken(gameToken);
 
         for (Player validPlayer : game.getPlayers()){
-            if (validPlayer.getUser().getId()==user.getId()){
+            if (validPlayer.getUser().getId().equals(user.getId())){
                 return;
             }
         }

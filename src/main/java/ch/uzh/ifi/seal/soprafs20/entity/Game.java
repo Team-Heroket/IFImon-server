@@ -22,7 +22,7 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private String creationTime;
 
-    @Column(nullable = false)
+    @Column
     private String startTime;
 
     @Column(nullable = false)
