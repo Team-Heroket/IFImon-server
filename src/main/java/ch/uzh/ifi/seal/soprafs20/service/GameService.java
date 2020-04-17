@@ -87,6 +87,7 @@ public class GameService {
 
         // This handles the addPlayer depending on the state the game is in.
         state.addPlayer(game, user);
+        this.gameRepository.save(game);
     }
 
     public void removePlayer(String gameToken, User user){
@@ -101,55 +102,44 @@ public class GameService {
         if((game.getCreator().getUser().getId().equals(user.getId())) && game.getState()==GameStateEnum.LOBBY){
             this.deleteGame(game);
         }
+        else{
+            this.gameRepository.save(game);
+        }
+
     }
 
 
     public void startGame(Integer npc, Game game){
 
-        //loop (from 0 to npc): render NPCs and add them to game
-        // TODO: Sprint 4 create NPCs
-
-        //give each player a deck and set turn player = game.creator if not done already
-        game.setTurnPlayer(game.getCreator());
-
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
-        for (Player player: game.getPlayers()) {
-            // # players = # berries
-            player.setBerries(game.getPlayers().size());
-            player.setDeck(new Deck(uniquePkmId, 20));
-        }
-
-        //change game.state to running so the polling clients see the game has started and start calling "get board"
-        game.setState(GameStateEnum.RUNNING);
-
+        GameState state = this.getState(game);
+        state.startGame(game, npc);
         // save changes
         this.gameRepository.save(game);
     }
 
     public void selectCategory(Category category, Game game){
-        throw new NotYetImplementedException();
+        GameState state = this.getState(game);
 
-        //set category
+        // selects category and calculates winner
+        state.selectCategory(game, category);
 
+        this.gameRepository.save(game);
     }
 
-    public void useBerries(int amount, User user, Game game){
-        throw new NotYetImplementedException();
+    public void useBerries(Game game, Player player, Integer amount){
 
-        //get player associated with user
+        GameState state = this.getState(game);
 
-        //get deck of player
+        // uses berries if possible
+        state.useBerries(game, amount, player);
 
-        //pop top card of player
+        this.gameRepository.save(game);
+    }
 
-        //get the evolution(s?) id of the card
-
-        //render new card from evolution
-
-        //add (1!) evolved card back on top
-
-        //maybe return new card?
-
+    public void nextTurn(Game game){
+        GameState state = this.getState(game);
+        state.nextTurn(game);
+        this.gameRepository.save(game);
     }
 
     public Game getGame(String gameToken){
@@ -212,11 +202,25 @@ public class GameService {
         Game game = this.gameRepository.findByToken(gameToken);
 
         for (Player validPlayer : game.getPlayers()){
-            if (validPlayer.getUser().getId()==user.getId()){
+            if (validPlayer.getUser().getId().equals(user.getId())){
                 return;
             }
         }
         throw new GameForbiddenException("This user is not part of this game (anymore).");
+    }
+
+    /**
+     * Returns player associated with user
+
+     */
+    public Player getPlayerFromUser(Game game, User user) {
+
+        for(Player player : game.getPlayers()){
+            if(user.getId()==player.getUser().getId()){
+                return player;
+            }
+        }
+        throw new GameForbiddenException("This user is not associated with a player");
     }
 
 
@@ -262,6 +266,8 @@ public class GameService {
         game.resetCreator();
         game.resetPlayers();
         game.resetTurnPlayer();
+        game.resetWinners();
+
         //deletes the game entity and all associated entities, watch out!
         long deletedGames = gameRepository.deleteByToken(game.getToken());
 

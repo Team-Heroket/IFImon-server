@@ -153,7 +153,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void selectCategory(@PathVariable String gameToken, @RequestBody CategoryDTO categoryDTO, @RequestHeader("Token") String token) {
-        //try to catch invalid caategories better?
+        //try to catch invalid categories better?
         Category category=categoryDTO.getCategory();
 
         //validate gameToken and get object
@@ -170,17 +170,11 @@ public class GameController {
         //check if user is turnPlayer
         gameService.validateTurnPlayer(gameToken,user);
 
-        //check if gamestate is running
-        if(game.getState()!=GameStateEnum.RUNNING){
-            throw new SopraServiceException("Conflict: Not in running state");
-        }
 
         //TODO: check if "in time"
 
         //select category
         gameService.selectCategory(category, game);
-
-        //TODO: calculate and return winner? where do we actually update the decks etc?
 
     }
 
@@ -204,26 +198,42 @@ public class GameController {
         userService.validateUser(token);
         User user=userService.getUserById(id);
 
-        //check if gamestate is running
-        if(game.getState()!=GameStateEnum.RUNNING){
-            throw new SopraServiceException("Conflict: Not in running state");
-        }
-
-
         //check if user is part of game
         gameService.validatePlayer(gameToken,user);
+
+        //get player associated with user
+        Player player=gameService.getPlayerFromUser(game,user);
 
         //TODO: check if player has that many berries
 
         //TODO: check if card can evolve that many times
 
         //use berry
-        gameService.useBerries(amount, user, game);
+        gameService.useBerries(game, player, amount);
 
-        //TODO: We commit the turn here, but only when all players have made the request (how do we track this?):
-            //calculate winner(s)
-            //calculate who gets which cards
-            //set new turn player
+    }
+
+    /** This request lets a card evolve **/
+    @PutMapping("/games/{gameToken}/next")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void nextTurn(@PathVariable String gameToken, @RequestHeader("Token") String token) {
+        //validate gameToken and get object
+        gameService.validateGame(gameToken);
+        Game game=gameService.getGame(gameToken);
+
+        //authorize user and get object
+        userService.validateUser(token);
+        User user=userService.getUserByToken(token);
+
+        //check if user is part of game
+        gameService.validatePlayer(gameToken,user);
+
+        //check if user is turnPlayer
+        gameService.validateTurnPlayer(gameToken,user);
+
+        gameService.nextTurn(game);
+
 
     }
 

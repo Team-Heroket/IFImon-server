@@ -1,7 +1,6 @@
 package ch.uzh.ifi.seal.soprafs20.rest.dto;
 
-import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
-import ch.uzh.ifi.seal.soprafs20.constant.Mode;
+import ch.uzh.ifi.seal.soprafs20.constant.*;
 import ch.uzh.ifi.seal.soprafs20.entity.Deck;
 import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
@@ -22,11 +21,17 @@ public class GameGetDTO {
 
     private List<PlayerDTO> players;
 
+    private List<PlayerDTO> winners;
+
     private Mode mode;
+
+    private Category category;
 
     private GameStateEnum state;
 
     private String creationTime;
+
+    private String startTime;
 
     private PlayerDTO turnPlayer;
 
@@ -59,11 +64,35 @@ public class GameGetDTO {
         this.creationTime = creationTime;
     }
 
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
     public PlayerDTO getTurnPlayer() {
         return turnPlayer;
     }
 
     public void setTurnPlayer(PlayerDTO turnPlayer) {
         this.turnPlayer = turnPlayer;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public List<PlayerDTO> getWinners() {
+        return winners;
+    }
+
+    public void setWinners(List<PlayerDTO> winners) {
+        this.winners = winners;
     }
 }
