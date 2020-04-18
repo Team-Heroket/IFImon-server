@@ -14,7 +14,7 @@ public class UniquePokemonNameGenerator {
         NOTE:
         Is the autowire in GameClass called once or on every request?
         If called on every request, this will result in unexpected behavior!
-        TODO: Check this.
+        TODO: Check this. add different generators?
      */
 
     private LinkedList<String> pokemons;

@@ -19,7 +19,7 @@ public class Running implements GameState {
     }
     @Override
     public void removePlayer(Game game, User user) {
-        // TODO: Do this, when the user leaves.
+        // TODO: Surrender.
         throw new NotYetImplementedException("Will be implemented in Sprint 3");
     }
     @Override

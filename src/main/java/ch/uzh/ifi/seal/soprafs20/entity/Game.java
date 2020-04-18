@@ -54,8 +54,6 @@ public class Game implements Serializable {
     @Column(length = 8)
     private GameStateEnum state;
 
-    // TODO: table
-
     // TODO: chat
 
     public Game() {
@@ -113,7 +111,6 @@ public class Game implements Serializable {
 
     public void addPlayer(Player player) {
         if (this.players.isEmpty()) {
-            // TODO: Determine if ArrayList is the waye
             this.players = new ArrayList<>();
         }
         this.players.add(player);

@@ -109,8 +109,8 @@ public class Card implements Serializable {
         JSONObject sprites = pokemon.getJSONObject("sprites");
         this.spriteURL = sprites.getString("front_default");
 
-        // TODO: Cry
-        this.cryURL = null;
+        //check for valid?
+        this.cryURL = String.format("https://play.pokemonshowdown.com/audio/cries/%s.mp3",this.name.toLowerCase());
 
         // Element converts to ENUM
         JSONArray types = pokemon.getJSONArray("types");
