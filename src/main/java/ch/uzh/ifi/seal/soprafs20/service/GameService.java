@@ -37,7 +37,6 @@ public class GameService {
     private final Logger log = LoggerFactory.getLogger(GameService.class);
 
     // Repositories
-    //TODO: maybe need to add user repository to render players and later update statistics etc.
     private final GameRepository gameRepository;
     private final UniquePokemonNameGenerator uniquePokemonNameGenerator;
 
@@ -71,8 +70,6 @@ public class GameService {
                 .setState(GameStateEnum.LOBBY)
                 .setGameName(game.getGameName())
                 .setMode(game.getMode());
-        // This indian pattern is perfect for copy and pasting :)
-        // TODO: find correct name for that
 
         newGame = this.gameRepository.save(newGame);
 
@@ -145,8 +142,6 @@ public class GameService {
     public Game getGame(String gameToken){
         return this.gameRepository.findByToken(gameToken);
     }
-
-    //TODO: helper methods like render player from user, maybe authentification?
 
     //********* Validators
 
@@ -278,8 +273,6 @@ public class GameService {
         }
         else if (deletedGames!=0 && deletedGames!=1){
             throw new SopraServiceException("Unhandled Error when deleting game");
-            // huh? then TODO: handle this
-            // Should this ever happen?
         }
 
     }

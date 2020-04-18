@@ -1,7 +1,7 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
 
-
+//TODO: statistics updates during game or after game
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -75,7 +75,11 @@ public class Deck {
 
             // Get next element of the evolve array
 
-            Card evolvedCard = new Card(toEvolve.getEvolutionNames().get(times-1));
+        Card evolvedCard = new Card(toEvolve.getEvolutionNames().get(times-1));
+
+        for (int i = 0; i < times; i++) {
+            evolvedCard.getEvolutionNames().remove(0);
+        }
 
             // Removes old card
             this.removeCard();
