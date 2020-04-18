@@ -128,6 +128,25 @@ public class DTOMapperTest {
     }
 
     @Test
+    public void testPlayerDTO_fromEntity_toPlayerDTO() {
+        // create Player
+        User testUser = new User();
+        testUser.setId(100L);
+        Player testPlayer = new Player(testUser);
+        testPlayer.setBerries(1);
+
+        // MAP
+        PlayerDTO playerDTO = DTOMapper.INSTANCE.convertEntityToPlayerDTO(testPlayer);
+
+        // check content
+        assertEquals(playerDTO.getId(), testPlayer.getId());
+        assertEquals(playerDTO.getUser().getId(), testUser.getId());
+        assertEquals(playerDTO.getBerries(), testPlayer.getBerries());
+        assertEquals(playerDTO.getDeck(), null);
+
+    }
+
+    @Test
     public void testGetGame_fromGame_toGameGetDTO() {
         // create Game
         Player player1 = new Player();

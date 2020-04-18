@@ -2,6 +2,7 @@ package ch.uzh.ifi.seal.soprafs20.service;
 
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.user.UserNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.user.UserUnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -160,6 +161,104 @@ public class UserServiceTest {
         //then
         userService.compareIdWithToken(1L,"12345");
         Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.any());
+    }
+
+
+    @Test
+    public void Test_compareUsernameWithToken_noUserFound(){
+        //when
+        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(null);
+
+        //then
+        assertThrows(UserNotFoundException.class, () -> userService.compareUsernameWithToken("testUsername","12345"));
+        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.any());
+    }
+
+
+    @Test
+    public void Test_compareUsernameWithToken_nullToken(){
+        //when
+        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
+
+        //then
+        assertThrows(UserUnauthorizedException.class, () -> userService.compareUsernameWithToken("testUsername",null));
+        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.any());
+    }
+
+    @Test
+    public void Test_compareUsernameWithToken_wrongToken(){
+        //when
+        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
+
+        //then
+        assertThrows(UserUnauthorizedException.class, () -> userService.compareUsernameWithToken("testUsername","54321"));
+        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.any());
+    }
+
+    @Test
+    public void Test_validateUser_noUserFound(){
+        //when
+        Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(null);
+
+        //then
+        assertThrows(UserUnauthorizedException.class, () -> userService.validateUser("12345"));
+        Mockito.verify(userRepository, Mockito.times(1)).findByToken(Mockito.any());
+    }
+
+    @Test
+    public void Test_validateUser_nullToken(){
+        //when
+        Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(testUser);
+
+        //then
+        assertThrows(UserUnauthorizedException.class, () -> userService.validateUser(null));
+        Mockito.verify(userRepository, Mockito.times(0)).findByToken(Mockito.any());
+    }
+
+    @Test
+    public void Test_validateUser_emptyUser(){
+        //when
+        Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(testUser);
+
+        //then
+        assertThrows(UserUnauthorizedException.class, () -> userService.validateUser(""));
+        Mockito.verify(userRepository, Mockito.times(0)).findByToken(Mockito.any());
+    }
+
+    @Test
+    public void Test_getUserById(){
+        //given
+        Optional<User> opList = Optional.of(testUser);;
+
+        //when
+        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(opList);
+
+        //then
+        User returnedUser = userService.getUserById(1L);
+        assertEquals(returnedUser.getId(),testUser.getId());
+        Mockito.verify(userRepository, Mockito.times(1)).findById(Mockito.any());
+    }
+
+    @Test
+    public void Test_getUserByUsername(){
+        //when
+        Mockito.when(userRepository.findByUsername(Mockito.any())).thenReturn(testUser);
+
+        //then
+        User returnedUser = userService.getUserByUsername("testUsername");
+        assertEquals(returnedUser.getUsername(),testUser.getUsername());
+        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.any());
+    }
+
+    @Test
+    public void Test_getUserByToken(){
+        //when
+        Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(testUser);
+
+        //then
+        User returnedUser = userService.getUserByToken("12345");
+        assertEquals(returnedUser.getToken(),testUser.getToken());
+        Mockito.verify(userRepository, Mockito.times(1)).findByToken(Mockito.any());
     }
 
 }
