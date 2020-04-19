@@ -5,6 +5,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import org.hibernate.cfg.NotYetImplementedException;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,10 @@ public class Running implements GameState {
     }
     @Override
     public void selectCategory(Game game, Category category) {
-        //code here
+        // Dosnt allow setting category more than once
+        if (null != game.getCreator()) {
+            throw new GameForbiddenException("Category already set.");
+        }
         game.setCategory(category);
         game.setWinners(getWinner(game));
     }
