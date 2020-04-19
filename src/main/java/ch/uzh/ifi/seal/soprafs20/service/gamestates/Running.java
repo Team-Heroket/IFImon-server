@@ -79,7 +79,7 @@ public class Running implements GameState {
     }
 
     //helper to return winners of gamestate
-    private ArrayList<Player> getWinner(Game game){
+    public ArrayList<Player> getWinner(Game game){
 
         Integer maxValue=-1;
         ArrayList<Player> winner=new ArrayList<>();
@@ -102,24 +102,28 @@ public class Running implements GameState {
         return winner;
     }
 
-    private void distributeCards(Game game){
+    public void distributeCards(Game game){
         List<Player> winners=game.getWinners();
 
         if (winners.size()==1){
             Player winner=winners.get(0);
             for(Player player:game.getPlayers()){
-                Card temp = new Card(player.getDeck().removeCard());
-                winner.getDeck().addCard(temp);
+                if (!player.getDeck().isEmpty()) {
+                    Card temp = new Card(player.getDeck().removeCard());
+                    winner.getDeck().addCard(temp);
+                }
             }
         }
         else{
             for (Player player : game.getPlayers()){
-                Card temp = new Card(player.getDeck().removeCard());
-                player.getDeck().addCard(temp);
+                if (!player.getDeck().isEmpty()) {
+                    Card temp = new Card(player.getDeck().removeCard());
+                    player.getDeck().addCard(temp);
+                }
             }
         }
     }
-    private void setNewTurnPlayer(Game game){
+    public void setNewTurnPlayer(Game game){
         List<Player> winners=game.getWinners();
 
         if (winners.size()==1){
@@ -128,7 +132,7 @@ public class Running implements GameState {
         //TODO: different draw mechanics?
     }
 
-    private boolean isFinished(Game game){
+    public boolean isFinished(Game game){
         for (Player player : game.getPlayers()){
             if(!player.getDeck().isEmpty() && !isWinner(game,player)){
                 return false;
@@ -137,7 +141,7 @@ public class Running implements GameState {
         return true;
     }
 
-    private boolean isWinner(Game game, Player player){
+    public boolean isWinner(Game game, Player player){
         Long playerId= player.getId();
         List<Long> winnerIds = new ArrayList<Long>();
         for (Player winner : game.getWinners()){
