@@ -108,14 +108,18 @@ public class Running implements GameState {
         if (winners.size()==1){
             Player winner=winners.get(0);
             for(Player player:game.getPlayers()){
-                Card temp = new Card(player.getDeck().removeCard());
-                winner.getDeck().addCard(temp);
+                if (!player.getDeck().isEmpty()) {
+                    Card temp = new Card(player.getDeck().removeCard());
+                    winner.getDeck().addCard(temp);
+                }
             }
         }
         else{
             for (Player player : game.getPlayers()){
-                Card temp = new Card(player.getDeck().removeCard());
-                player.getDeck().addCard(temp);
+                if (!player.getDeck().isEmpty()) {
+                    Card temp = new Card(player.getDeck().removeCard());
+                    player.getDeck().addCard(temp);
+                }
             }
         }
     }
