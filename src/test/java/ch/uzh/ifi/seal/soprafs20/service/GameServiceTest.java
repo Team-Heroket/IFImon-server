@@ -1,16 +1,17 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.constant.Mode;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
+import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
+import ch.uzh.ifi.seal.soprafs20.service.gamestates.Finished;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.GameState;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Lobby;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Running;
@@ -322,56 +323,379 @@ public class GameServiceTest {
 
     @Test
     public void Test_nextTurn_invalidStateFinished() {
-        //give a game in lobby state
+        //give a game in finished state
         Player player1 = new Player(testUser);
         Game game = new Game(player1);
         game.setState(GameStateEnum.FINISHED);
 
-        // then check if lobby throws an exception bc of invalid state
+        // then check if finished throws an exception because of invalid state
         assertThrows(GameBadRequestException.class, () -> gameService.nextTurn(game));
         Mockito.verify(gameRepository, Mockito.times(0)).save(Mockito.any());
     }
 
-    // cant figure out how to mock an overridden method or more specifically the gamestates' methods
-/**
+
     @Test
     public void Test_nextTurn_unfinishedGame() {
-        //give a game in lobby state
+        //give a game in running state and two users with 2 cards each
         Player player1 = new Player(testUser);
-        Game game = new Game();
-        game.setState(GameStateEnum.RUNNING);
         List<Player> winners = new ArrayList<>();
-        winners.add(player1);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        player1.setDeck(new Deck(uniquePkmId,2));
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        player2.setDeck(new Deck(uniquePkmId2,2));
+
+        Game game = new Game(player1);
         game.setWinners(winners);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
 
-
-        // when isFinished returns false
-        Mockito.when(running.isFinished(Mockito.anyObject())).thenReturn(false);
 
         // then check if parameters changed correctly
         gameService.nextTurn(game);
-        assertNotEquals(game.getStartTime(),null);
+        assertEquals(game.getWinners(),null);
         Mockito.verify(gameRepository, Mockito.times(1)).save(Mockito.any());
     }
 
     @Test
     public void Test_nextTurn_finishedGame() {
-        //give a game in lobby state
+        //give a game in running state and two users with 1 cards each + --> game will be finished after
         Player player1 = new Player(testUser);
-        Game game = new Game();
-        game.setState(GameStateEnum.RUNNING);
         List<Player> winners = new ArrayList<>();
         winners.add(player1);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        player1.setDeck(new Deck(uniquePkmId,1));
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        player2.setDeck(new Deck(uniquePkmId2,1));
+
+        Game game = new Game(player1);
         game.setWinners(winners);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
 
-
-        // when isFinished returns false
-        Mockito.when(running.isFinished(Mockito.anyObject())).thenReturn(true);
 
         // then check if parameters changed correctly
         gameService.nextTurn(game);
         assertEquals(game.getWinners(),winners);
+        assertEquals(game.getState(),GameStateEnum.FINISHED);
         Mockito.verify(gameRepository, Mockito.times(1)).save(Mockito.any());
     }
-**/
+
+    @Test
+    public void Test_getWinner_whileRunningState() {
+        //give a game in running state and two users with 1 cards each
+        Player player1 = new Player(testUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        player1.setDeck(new Deck(uniquePkmId,1));
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        player2.setDeck(new Deck(uniquePkmId2,1));
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+        game.setCategory(Category.ATK);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if parameters changed correctly
+        ArrayList<Player> winners = running.getWinner(game);
+        assertTrue(winners.size()>0);
+    }
+
+    @Test
+    public void Test_selectCategory_whileRunningState() {
+        //give a game in running state and two users with 1 cards each
+        Player player1 = new Player(testUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        player1.setDeck(new Deck(uniquePkmId,1));
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        player2.setDeck(new Deck(uniquePkmId2,1));
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if parameters changed correctly
+        running.selectCategory(game,Category.ATK);
+        assertNotEquals(game.getWinners(),null);
+        assertNotEquals(game.getCategory(),null);
+    }
+
+    @Test
+    public void Test_selectCategory_invalidStateLobby() {
+        //give a game in lobby state and two users with 1 cards each
+        Player player1 = new Player(testUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        player1.setDeck(new Deck(uniquePkmId,1));
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        player2.setDeck(new Deck(uniquePkmId2,1));
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+
+        // initiate a running state
+        Lobby lobby = new Lobby();
+        assertThrows(GameBadRequestException.class, () -> lobby.selectCategory(game,Category.ATK));
+    }
+
+    @Test
+    public void Test_selectCategory_invalidStateFinished() {
+        //give a game in running state and two users with 1 cards each
+        Player player1 = new Player(testUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        player1.setDeck(new Deck(uniquePkmId,1));
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        player2.setDeck(new Deck(uniquePkmId2,1));
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+
+        // initiate a running state
+        Finished finished = new Finished();
+        assertThrows(GameBadRequestException.class, () -> finished.selectCategory(game,Category.ATK));
+    }
+
+    @Test
+    public void Test_userBerries_validInput_ValidState() {
+        //give a game in running state and a user with one card
+        Player player1 = new Player(testUser);
+        Card bulbasaur = new Card("bulbasaur");
+        Deck bulbasaurOnlyDeck = new Deck();
+        bulbasaurOnlyDeck.addCard(bulbasaur);
+        player1.setDeck(bulbasaurOnlyDeck);
+        player1.setBerries(1);
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if the only card has evolved
+            //bulbasaur id is 1 in our database
+        assertEquals(game.getPlayers().get(0).getDeck().getCards().get(0).getPokemonId(),1);
+        running.useBerries(game,1,player1);
+            //ivysaur id is 2 in our database
+        assertEquals(game.getPlayers().get(0).getDeck().getCards().get(0).getPokemonId(),2);
+    }
+
+    @Test
+    public void Test_userBerries_tooMuchBerriesForEvolution_ValidState() {
+        //give a game in running state and a user with one card
+        Player player1 = new Player(testUser);
+        Card bulbasaur = new Card("bulbasaur");
+        Deck bulbasaurOnlyDeck = new Deck();
+        bulbasaurOnlyDeck.addCard(bulbasaur);
+        player1.setDeck(bulbasaurOnlyDeck);
+        player1.setBerries(3);
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if exception is thrown because this pokemon can not evolve 3 times
+        assertThrows(GameBadRequestException.class, () -> running.useBerries(game,3, player1));
+    }
+
+    @Test
+    public void Test_userBerries_tooFewBerriesAvailable_ValidState() {
+        //give a game in running state a user with no berries available
+        Player player1 = new Player(testUser);
+        Card bulbasaur = new Card("bulbasaur");
+        Deck bulbasaurOnlyDeck = new Deck();
+        bulbasaurOnlyDeck.addCard(bulbasaur);
+        player1.setDeck(bulbasaurOnlyDeck);
+        player1.setBerries(0);
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if exception is thrown because no berries are available
+        assertThrows(GameBadRequestException.class, () -> running.useBerries(game,3, player1));
+    }
+
+    @Test
+    public void Test_userBerries_emptyDeck_ValidState() {
+        //give a game in running state a user with an empty deck
+        Player player1 = new Player(testUser);
+        player1.setBerries(3);
+        player1.setDeck(new Deck());
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if exception is thrown because there is no card to evolve
+        //bulbasaur id is 1 in our database
+        assertThrows(GameBadRequestException.class, () -> running.useBerries(game,0, player1));
+    }
+
+    @Test
+    public void Test_userBerries_validInput_invalidStateLobby() {
+        //give a game in lobby state and a user with one card
+        Player player1 = new Player(testUser);
+        Card bulbasaur = new Card("bulbasaur");
+        Deck bulbasaurOnlyDeck = new Deck();
+        bulbasaurOnlyDeck.addCard(bulbasaur);
+        player1.setDeck(bulbasaurOnlyDeck);
+        player1.setBerries(1);
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.LOBBY);
+
+        // initiate a lobby state
+        Lobby lobby = new Lobby();
+
+        // then check if exception is thrown because the game state is illegal
+        assertThrows(GameBadRequestException.class, () -> lobby.useBerries(game,1, player1));
+    }
+
+    @Test
+    public void Test_userBerries_validInput_invalidStateFinished() {
+        //give a game in finished state a user with one card
+        Player player1 = new Player(testUser);
+        Card bulbasaur = new Card("bulbasaur");
+        Deck bulbasaurOnlyDeck = new Deck();
+        bulbasaurOnlyDeck.addCard(bulbasaur);
+        player1.setDeck(bulbasaurOnlyDeck);
+        player1.setBerries(1);
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.FINISHED);
+
+        // initiate a finished state
+        Finished finished = new Finished();
+
+        // then check if exception is thrown because the game state is illegal
+        assertThrows(GameBadRequestException.class, () -> finished.useBerries(game,1, player1));
+    }
+
+    @Test
+    public void Test_distributeCards_inRunning() {
+        //give a game in running state and 2 players with player1 as winner
+        Player player1 = new Player(testUser);
+        Deck deck1 = new Deck();
+        deck1.addCard(new Card("ivysaur"));
+        player1.setDeck(deck1);
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        Deck deck2 = new Deck();
+        deck2.addCard(new Card("bulbasaur"));
+        player2.setDeck(deck2);
+        List<Player> winners = new ArrayList<>();
+        winners.add(player1);
+
+        Game game = new Game(player1);
+        game.setWinners(winners);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if player1 received a card
+        running.distributeCards(game);
+        assertEquals(player1.getDeck().getCards().get(0).getPokemonId(),2);
+        assertEquals(player1.getDeck().getCards().get(1).getPokemonId(),1);
+    }
+
+    @Test
+    public void Test_newTurnPlayer_inRunning() {
+        //give a game in running state and 2 players with player2 as winner and player1 as turnplayer
+        Player player1 = new Player(testUser);
+
+        User secondUser = new User();
+        secondUser.setId(1000L);
+        Player player2 = new Player(secondUser);
+
+        List<Player> winners = new ArrayList<>();
+        winners.add(player2);
+
+        Game game = new Game(player1);
+        game.setWinners(winners);
+        game.setTurnPlayer(player1);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if player2 (=winner) is now the turnplayer
+        running.setNewTurnPlayer(game);
+        assertTrue(game.getTurnPlayer().getUser().getId()==secondUser.getId());
+    }
+
+    @Test
+    public void Test_isWinner_inRunning() {
+        //give a game in running state and 2 players with player2 as winner
+        Player player1 = new Player(testUser);
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+
+        List<Player> winners = new ArrayList<>();
+        winners.add(player2);
+
+        Game game = new Game(player1);
+        game.setWinners(winners);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if player2 is in winner
+        assertTrue(running.isWinner(game, player2));
+    }
+
+    @Test
+    public void Test_isFinished_inRunning() {
+        //give a game in running state and 2 players with player2 as winner
+        Player player1 = new Player(testUser);
+        player1.setDeck(new Deck());
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        player2.setDeck(new Deck());
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if game is finished when players have no cards
+        assertTrue(running.isFinished(game));
+    }
 }
