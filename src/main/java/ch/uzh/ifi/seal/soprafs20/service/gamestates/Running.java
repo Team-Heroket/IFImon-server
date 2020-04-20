@@ -3,7 +3,6 @@ package ch.uzh.ifi.seal.soprafs20.service.gamestates;
 import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import org.hibernate.cfg.NotYetImplementedException;
@@ -51,7 +50,6 @@ public class Running implements GameState {
 
     @Override
     public void nextTurn(Game game) {
-        getWinner(game);
 
         distributeCards(game);
 
@@ -148,23 +146,20 @@ public class Running implements GameState {
         //10% chance to use 2 berries if possible
         if(validateBerry(2,npc)){
             if(decideBerry(10)){
-                npc.getDeck().evolveCard(2);
-                npc.setBerries(npc.getBerries()-2);
+                this.useBerries(game, 2, npc);
             }
         }
         //30% chance to use 1 berry if possible
         else if(validateBerry(1,npc)){
             if(decideBerry(30)){
-                npc.getDeck().evolveCard(1);
-                npc.setBerries(npc.getBerries()-1);
+                this.useBerries(game, 1, npc);
             }
         }
 
     }
     private void npcSelectCategory(Game game){
         //choose random category
-        game.setCategory(randomEnum(Category.class));
-
+        this.selectCategory(game, randomEnum(Category.class));
     }
 
 
@@ -197,7 +192,7 @@ public class Running implements GameState {
 
     private static boolean decideBerry(Integer percentChance){
         Random r = new Random();
-        Integer result= r.nextInt(100)+1;
+        int result= r.nextInt(100)+1;
         if (result<=percentChance){
             return true;
         }

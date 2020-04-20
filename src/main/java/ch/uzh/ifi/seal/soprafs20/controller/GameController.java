@@ -138,7 +138,7 @@ public class GameController {
         gameService.validatePlayer(gameToken,user);
 
         //calculate winner if state is running
-        gameService.calculateWinner(game);
+        //gameService.calculateWinner(game);
 
         //convert to correct API format to return
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
