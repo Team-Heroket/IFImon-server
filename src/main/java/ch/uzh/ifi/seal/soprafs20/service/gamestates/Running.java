@@ -29,8 +29,8 @@ public class Running implements GameState {
     }
     @Override
     public void selectCategory(Game game, Category category) {
-        // Dosnt allow setting category more than once
-        if (null != game.getCreator()) {
+        // Doesn't allow setting category more than once
+        if (null != game.getCategory()) {
             throw new GameForbiddenException("Category already set.");
         }
         game.setCategory(category);
