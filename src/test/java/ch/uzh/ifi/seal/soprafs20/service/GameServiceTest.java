@@ -380,6 +380,7 @@ public class GameServiceTest {
 
 
         // then check if parameters changed correctly
+        // TODO: @david test fails because the user has no statistics entity set!
         gameService.nextTurn(game);
         assertEquals(game.getWinners(),winners);
         assertEquals(game.getState(),GameStateEnum.FINISHED);

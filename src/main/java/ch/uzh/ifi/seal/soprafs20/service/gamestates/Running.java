@@ -5,6 +5,7 @@ import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
+import ch.uzh.ifi.seal.soprafs20.service.StatisticsHelper;
 import org.hibernate.cfg.NotYetImplementedException;
 
 import java.time.LocalDateTime;
@@ -55,6 +56,7 @@ public class Running implements GameState {
 
         if(isFinished(game)){
             game.setState(GameStateEnum.FINISHED);
+            StatisticsHelper.doPostStatistics(game);
             return;
         }
 

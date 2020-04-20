@@ -8,6 +8,7 @@ import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueTrainerNameGenerator;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
+import ch.uzh.ifi.seal.soprafs20.service.StatisticsHelper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -72,6 +73,9 @@ public class Lobby implements GameState {
             player.setBerries(game.getPlayers().size());
             player.setDeck(new Deck(uniquePkmId, deckSize));
         }
+
+        // Does the pre statistics
+        StatisticsHelper.doPreStatistics(game);
 
         //change game.state to running so the polling clients see the game has started and start calling "get board"
         game.setState(GameStateEnum.RUNNING);
