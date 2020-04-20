@@ -1,18 +1,17 @@
 package ch.uzh.ifi.seal.soprafs20.service.gamestates;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Deck;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
+import ch.uzh.ifi.seal.soprafs20.objects.UniqueTrainerNameGenerator;
 import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Lobby implements GameState {
@@ -53,9 +52,15 @@ public class Lobby implements GameState {
         //loop (from 0 to npc): render NPCs and add them to game
         // TODO: Sprint 4 create NPCs
 
-        //for testing
+        //for testing here are some parameters we can change
         Integer deckSize= 5;
         Long buffer=35L;
+
+        //add npcs
+        UniqueTrainerNameGenerator trainerNameGenerator = new UniqueTrainerNameGenerator();
+        for (int i = 0; i < npc; i++) {
+            game.getPlayers().add(new Npc(trainerNameGenerator.get()));
+        }
 
 
         //give each player a deck and set turn player = game.creator if not done already
@@ -94,5 +99,10 @@ public class Lobby implements GameState {
     @Override
     public void nextTurn(Game game) {
         throw new GameBadRequestException("Can't get next Turn when in lobby");
+    }
+
+    @Override
+    public ArrayList<Player> getWinner(Game game) {
+        return null;
     }
 }

@@ -10,8 +10,7 @@ import org.hibernate.cfg.NotYetImplementedException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Running implements GameState {
     @Override
@@ -39,30 +38,21 @@ public class Running implements GameState {
 
     @Override
     public void useBerries(Game game, Integer usedBerries, Player player) {
-        // does player have this many berries?
-        if(player.getBerries()<usedBerries){
-            throw new GameBadRequestException("Player doesn't have this many berries left");
+
+        if(validateBerry(usedBerries, player)){
+            player.getDeck().evolveCard(usedBerries);
+            player.setBerries(player.getBerries()-usedBerries);
         }
-
-        if(player.getDeck().isEmpty()){
-            throw new GameBadRequestException("Player has no more cards to evolve");
+        else{
+            throw new GameBadRequestException("Invalid Evolution");
         }
-
-        //is player allowed to use this many berries?
-        if(player.getDeck().peekCard().getEvolutionNames().size() < usedBerries){
-            throw new GameBadRequestException("Pokemon can't evolve this many times");
-        }
-
-
-        player.getDeck().evolveCard(usedBerries);
-
-
-        player.setBerries(player.getBerries()-usedBerries);
 
     }
 
     @Override
     public void nextTurn(Game game) {
+        getWinner(game);
+
         distributeCards(game);
 
         if(isFinished(game)){
@@ -80,10 +70,28 @@ public class Running implements GameState {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
         game.setStartTime(pattern.format(now.plusSeconds(buffer)));
+
+        //if the turnPlayer is an npc he should chose a category
+        if(game.getTurnPlayer() instanceof Npc){
+            npcSelectCategory(game);
+        }
+
+        //all npc players decide if they should use berries here
+        for (Player player : game.getPlayers()){
+            if(player instanceof Npc){
+                npcUseBerry(game, player);
+            }
+        }
+
     }
 
     //helper to return winners of gamestate
+    @Override
     public ArrayList<Player> getWinner(Game game){
+
+        if(game.getCategory()==null){
+            return null;
+        }
 
         Integer maxValue=-1;
         ArrayList<Player> winner=new ArrayList<>();
@@ -136,6 +144,33 @@ public class Running implements GameState {
         //TODO: different draw mechanics?
     }
 
+    private void npcUseBerry(Game game, Player npc){
+        //10% chance to use 2 berries if possible
+        if(validateBerry(2,npc)){
+            if(decideBerry(10)){
+                npc.getDeck().evolveCard(2);
+                npc.setBerries(npc.getBerries()-2);
+            }
+        }
+        //30% chance to use 1 berry if possible
+        else if(validateBerry(1,npc)){
+            if(decideBerry(30)){
+                npc.getDeck().evolveCard(1);
+                npc.setBerries(npc.getBerries()-1);
+            }
+        }
+
+    }
+    private void npcSelectCategory(Game game){
+        //choose random category
+        game.setCategory(randomEnum(Category.class));
+
+    }
+
+
+
+
+
     public boolean isFinished(Game game){
         for (Player player : game.getPlayers()){
             if(!player.getDeck().isEmpty() && !isWinner(game,player)){
@@ -153,4 +188,40 @@ public class Running implements GameState {
         }
         return winnerIds.contains(playerId);
     }
+
+    private static <T extends Enum<?>> T randomEnum(Class<T> clazz){
+        Random random = new Random();
+        int x = random.nextInt(clazz.getEnumConstants().length);
+        return clazz.getEnumConstants()[x];
+    }
+
+    private static boolean decideBerry(Integer percentChance){
+        Random r = new Random();
+        Integer result= r.nextInt(100)+1;
+        if (result<=percentChance){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean validateBerry(Integer amount, Player player){
+        // does player have this many berries?
+        if(player.getBerries()<amount){
+            return false;
+        }
+
+        //does player have a top card?
+        if(player.getDeck().isEmpty()){
+            return false;
+        }
+
+        //is player allowed to use this many berries on card?
+        if(player.getDeck().peekCard().getEvolutionNames().size() < amount){
+            return false;
+        }
+
+        return true;
+    }
+
+
 }

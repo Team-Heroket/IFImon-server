@@ -123,6 +123,13 @@ public class GameService {
         this.gameRepository.save(game);
     }
 
+    public void calculateWinner(Game game){
+        GameState state = this.getState(game);
+        // selects category and calculates winner
+        game.setWinners(state.getWinner(game));
+        this.gameRepository.save(game);
+    }
+
     public void useBerries(Game game, Player player, Integer amount){
 
         GameState state = this.getState(game);
