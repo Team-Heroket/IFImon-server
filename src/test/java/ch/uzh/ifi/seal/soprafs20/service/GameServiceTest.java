@@ -62,6 +62,15 @@ public class GameServiceTest {
 
     @Test
     public void Test_createLobby() {
+        //given a user with a username
+        User testUser = new User();
+        testUser.setUsername("testUserName");
+
+
+        // when gamerepository is called
+        Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(null);
+
+
         // create lobby with setup inputs
         Game returnedGame = gameService.createLobby(testGame, testUser);
         assertEquals(returnedGame.getGameName(),testGame.getGameName());
@@ -362,6 +371,8 @@ public class GameServiceTest {
     @Test
     public void Test_nextTurn_finishedGame() {
         //give a game in running state and two users with 1 cards each + --> game will be finished after
+        User testUser = new User();
+        testUser.setStatistics(new Statistics());
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
         winners.add(player1);
@@ -369,6 +380,7 @@ public class GameServiceTest {
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
+        secondUser.setStatistics(new Statistics());
         Player player2 = new Player(secondUser);
         UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
         player2.setDeck(new Deck(uniquePkmId2,1));
@@ -482,6 +494,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_validInput_ValidState() {
         //give a game in running state and a user with one card
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -506,6 +520,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_tooMuchBerriesForEvolution_ValidState() {
         //give a game in running state and a user with one card
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -526,6 +542,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_tooFewBerriesAvailable_ValidState() {
         //give a game in running state a user with no berries available
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -546,6 +564,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_emptyDeck_ValidState() {
         //give a game in running state a user with an empty deck
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         player1.setBerries(3);
         player1.setDeck(new Deck());
@@ -564,6 +584,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_validInput_invalidStateLobby() {
         //give a game in lobby state and a user with one card
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -584,6 +606,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_validInput_invalidStateFinished() {
         //give a game in finished state a user with one card
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -604,6 +628,8 @@ public class GameServiceTest {
     @Test
     public void Test_distributeCards_inRunning() {
         //give a game in running state and 2 players with player1 as winner
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Deck deck1 = new Deck();
         deck1.addCard(new Card("ivysaur"));
