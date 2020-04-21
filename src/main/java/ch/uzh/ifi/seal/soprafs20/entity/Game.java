@@ -99,6 +99,10 @@ public class Game implements Serializable {
         return this;
     }
 
+    public void setCreator(Player creator) {
+        this.creator = creator;
+    }
+
     public Player getCreator() {
         return creator;
     }

@@ -3,6 +3,7 @@ package ch.uzh.ifi.seal.soprafs20.service.gamestates;
 import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import ch.uzh.ifi.seal.soprafs20.service.StatisticsHelper;
@@ -10,6 +11,7 @@ import org.hibernate.cfg.NotYetImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.SocketException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -24,8 +26,42 @@ public class Running implements GameState {
     }
     @Override
     public void removePlayer(Game game, User user) {
-        // TODO: Surrender.
-        throw new NotYetImplementedException("Will be implemented in Sprint 3");
+
+        log.debug(String.format("Player %s is leaving the game.", user.getUsername()));
+
+        List<Player> players = game.getPlayers();
+
+        // Change to a new creator, if the creator leaves
+        if (game.getCreator().getUser().getId().equals(user.getId())) {
+            log.debug(String.format("Player %s is creator, reassigning to new.", user.getUsername()));
+
+            game.resetCreator(); // Just to be able to throw an error
+
+            for (Player player: players) {
+                if (!(player instanceof Npc)) {
+                    game.setCreator(player);
+                    break;
+                }
+            }
+            if(null == game.getCreator()) {
+                throw new SopraServiceException("Huh, no other real players left?");
+            }
+
+            log.debug(String.format("New creator is %s.", game.getCreator().getUser().getUsername()));
+        }
+
+        log.warn("The leaving player gets removed from list, there is no redistribution routine in place atm.");
+
+        for (Player player: players) {
+            if (player.getUser().getId().equals(user.getId())) {
+                players.remove(player);
+                log.debug("User removed.");
+                return;
+            }
+        }
+
+        // TODO: Surrender routine.
+
     }
     @Override
     public void startGame(Game game, Integer npc) {

@@ -38,7 +38,7 @@ public class Lobby implements GameState {
 
     @Override
     public void removePlayer(Game game, User user) {
-        log.debug(String.format("%s will be removed.", user.getUsername()));
+        log.debug(String.format("%s will be removed from lobby.", user.getUsername()));
         List<Player> players = game.getPlayers();
 
         
