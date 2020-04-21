@@ -82,11 +82,12 @@ public class Running implements GameState {
         game.resetCategory();
         game.resetWinners();
 
-        Long buffer=7L;
+        Long buffer=7000L;
         //set start time for new turn
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        game.setStartTime(pattern.format(now.plusSeconds(buffer)));
+        //DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //LocalDateTime now = LocalDateTime.now();
+        game.setStartTime( String.valueOf(System.currentTimeMillis() + buffer) );
+        // TODO: update game entity accordingly
 
         //if the turnPlayer is an npc he should chose a category
         if(game.getTurnPlayer() instanceof Npc){
