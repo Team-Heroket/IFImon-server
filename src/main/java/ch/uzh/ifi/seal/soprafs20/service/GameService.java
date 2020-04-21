@@ -55,7 +55,7 @@ public class GameService {
      */
     public Game createLobby(Game game, User creatingUser){
 
-        log.debug("Create Lobby request send.");
+        log.debug(String.format("Create Lobby request send by %s.", creatingUser.getUsername()));
 
         if (null != this.gameRepository.findByToken(game.getToken())) {
             throw new GameConflictException("This Game-Token already exists!");
@@ -65,9 +65,9 @@ public class GameService {
         Game newGame = new Game(new Player(creatingUser));
 
         //set creation date and time
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        newGame.setCreationTime(pattern.format(now));
+        //DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //LocalDateTime now = LocalDateTime.now();
+        newGame.setCreationTime(String.valueOf(System.currentTimeMillis()));
 
         newGame.setToken(this.uniquePokemonNameGenerator.get())
                 .setState(GameStateEnum.LOBBY)
@@ -76,7 +76,7 @@ public class GameService {
 
         newGame = this.gameRepository.save(newGame);
 
-        log.debug("Lobby created");
+        log.debug(String.format("Lobby created. Token: %s.", game.getToken()));
 
         //returns token so controller can send back to client
         return newGame;
