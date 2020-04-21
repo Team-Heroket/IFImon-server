@@ -54,6 +54,9 @@ public class GameService {
      * @return
      */
     public Game createLobby(Game game, User creatingUser){
+
+        log.debug("Create Lobby request send.");
+
         if (null != this.gameRepository.findByToken(game.getToken())) {
             throw new GameConflictException("This Game-Token already exists!");
         }
@@ -72,6 +75,8 @@ public class GameService {
                 .setMode(game.getMode());
 
         newGame = this.gameRepository.save(newGame);
+
+        log.debug("Lobby created");
 
         //returns token so controller can send back to client
         return newGame;

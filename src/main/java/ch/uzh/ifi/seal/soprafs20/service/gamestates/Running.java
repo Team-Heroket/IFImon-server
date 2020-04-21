@@ -7,12 +7,17 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import ch.uzh.ifi.seal.soprafs20.service.StatisticsHelper;
 import org.hibernate.cfg.NotYetImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Running implements GameState {
+
+    private final Logger log = LoggerFactory.getLogger(Running.class);
+
     @Override
     public void addPlayer(Game game, User user) {
         throw new GameBadRequestException("You can't add new players to a running game.");
@@ -28,16 +33,23 @@ public class Running implements GameState {
     }
     @Override
     public void selectCategory(Game game, Category category) {
+
+        log.debug(String.format("Select category was called, with category: %s", category));
+
         // Doesn't allow setting category more than once
         if (null != game.getCategory()) {
             throw new GameForbiddenException("Category already set.");
         }
         game.setCategory(category);
         game.setWinners(getWinner(game));
+
+        log.debug("Category set.");
     }
 
     @Override
     public void useBerries(Game game, Integer usedBerries, Player player) {
+
+        log.debug(String.format("Use Berry got called by %s, amount %s, game %s.", player.getUser().getUsername(), usedBerries, game.getToken()));
 
         if(validateBerry(usedBerries, player)){
             player.getDeck().evolveCard(usedBerries);
@@ -47,16 +59,21 @@ public class Running implements GameState {
             throw new GameBadRequestException("Invalid Evolution");
         }
 
+        log.debug("Berries set.");
+
     }
 
     @Override
     public void nextTurn(Game game) {
+
+        log.debug("Next Turn got called.");
 
         distributeCards(game);
 
         if(isFinished(game)){
             game.setState(GameStateEnum.FINISHED);
             StatisticsHelper.doPostStatistics(game);
+            log.debug("Game finished.");
             return;
         }
 
@@ -82,6 +99,8 @@ public class Running implements GameState {
                 npcUseBerry(game, player);
             }
         }
+
+        log.debug("Next Turn set.");
 
     }
 

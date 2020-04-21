@@ -21,9 +21,22 @@ public class StatisticsHelper {
             // This way the IDs should be add ordered to the list, which is helpful for later
             for (Card card: player.getDeck().getCards()) {
                 int id = card.getPokemonId();
-                for (int i = 0; i < encountered.size(); i++) {
-                    if (id < encountered.get(i)) {
-                        encountered.add(i, id);
+                // If list is empty just add it
+                if (encountered.isEmpty()) {
+                    encountered.add(id);
+                } else {
+                    // Go trough list
+                    for (int i = 0; i < encountered.size(); i++) {
+                        // Add element before the next bigger number
+                        if (id < encountered.get(i)) {
+                            encountered.add(i, id);
+                            // Stop the loop!
+                            break;
+                        }
+                    }
+                    // Add id if its bigger as the last value (or else it is the same number)
+                    if (id > encountered.get(encountered.size()-1)){
+                        encountered.add(id);
                     }
                 }
 

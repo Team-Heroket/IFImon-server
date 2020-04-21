@@ -1,14 +1,14 @@
 package ch.uzh.ifi.seal.soprafs20.service.gamestates;
 
 import ch.uzh.ifi.seal.soprafs20.entity.*;
-import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueTrainerNameGenerator;
-import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
 import ch.uzh.ifi.seal.soprafs20.service.StatisticsHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,8 +17,11 @@ import java.util.List;
 
 public class Lobby implements GameState {
 
+    private final Logger log = LoggerFactory.getLogger(Lobby.class);
+
     @Override
     public void addPlayer(Game game, User user) {
+        log.debug(String.format("%s wants to join.", user.getUsername()));
         List<Player> players = game.getPlayers();
 
         // Check if the user is already added
@@ -30,16 +33,19 @@ public class Lobby implements GameState {
 
         //init player based on this user and append player
         game.addPlayer(new Player(user));
+        log.debug("User joined.");
     }
 
     @Override
     public void removePlayer(Game game, User user) {
+        log.debug(String.format("%s will be removed.", user.getUsername()));
         List<Player> players = game.getPlayers();
 
         
         for (Player player: players) {
             if (player.getUser().getId().equals(user.getId())) {
                 players.remove(player);
+                log.debug("User removed.");
                 return;
             }
         }
@@ -50,12 +56,15 @@ public class Lobby implements GameState {
 
     @Override
     public void startGame(Game game, Integer npc) {
+
+        log.info(String.format("Start game request was called on %s. Amount of NPCs: %s.", game.getToken(), npc));
+
         //loop (from 0 to npc): render NPCs and add them to game
         // TODO: Sprint 4 create NPCs
 
         //for testing here are some parameters we can change
         Integer deckSize= 5;
-        Long buffer=35L;
+        Long buffer=35000L; // in milliseconds
 
         //add npcs
         UniqueTrainerNameGenerator trainerNameGenerator = new UniqueTrainerNameGenerator();
@@ -82,9 +91,13 @@ public class Lobby implements GameState {
 
 
         //set creation date and time
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        game.setStartTime(pattern.format(now.plusSeconds(buffer)));
+        //DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //LocalDateTime now = LocalDateTime.now();
+        game.setStartTime( String.valueOf(System.currentTimeMillis() + buffer) );
+        // TODO: update game entity accordingly
+
+        log.debug(String.format("Game will start at %s.", game.getStartTime()));
+        log.debug(String.format("Game created. %s", game));
 
     }
 
