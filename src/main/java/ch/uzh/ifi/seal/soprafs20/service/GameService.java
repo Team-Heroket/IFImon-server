@@ -75,6 +75,7 @@ public class GameService {
                 .setMode(game.getMode());
 
         newGame = this.gameRepository.save(newGame);
+        gameRepository.flush();
 
         log.debug(String.format("Lobby created. Token: %s.", newGame.getToken()));
 

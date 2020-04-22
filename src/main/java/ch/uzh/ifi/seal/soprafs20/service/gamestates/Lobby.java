@@ -59,8 +59,6 @@ public class Lobby implements GameState {
 
         log.info(String.format("Start game request was called on %s. Amount of NPCs: %s.", game.getToken(), npc));
 
-        //loop (from 0 to npc): render NPCs and add them to game
-        // TODO: Sprint 4 create NPCs
 
         //for testing here are some parameters we can change
         Integer deckSize= 5;

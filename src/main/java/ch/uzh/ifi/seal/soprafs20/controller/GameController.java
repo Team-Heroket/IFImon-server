@@ -40,7 +40,15 @@ public class GameController {
         //creates a Lobby with the given gamemode and gamename
         Game createdGame = gameService.createLobby(game, creator);
 
+
+
+        Mode mode=game.getMode();
+        if(mode==Mode.SINGLE_PLAYER){
+            gameService.startGame(3,createdGame);
+        }
+
         return DTOMapper.INSTANCE.convertEntityToGameTokenDTO(createdGame);
+
     }
 
 
