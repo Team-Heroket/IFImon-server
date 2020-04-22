@@ -76,7 +76,7 @@ public class GameService {
 
         newGame = this.gameRepository.save(newGame);
 
-        log.debug(String.format("Lobby created. Token: %s.", game.getToken()));
+        log.debug(String.format("Lobby created. Token: %s.", newGame.getToken()));
 
         //returns token so controller can send back to client
         return newGame;
