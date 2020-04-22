@@ -62,7 +62,7 @@ public class Lobby implements GameState {
 
         //for testing here are some parameters we can change
         Integer deckSize= 5;
-        Long buffer=35000L; // in milliseconds
+        Long buffer=15000L; // in milliseconds
 
         //add npcs
         UniqueTrainerNameGenerator trainerNameGenerator = new UniqueTrainerNameGenerator();

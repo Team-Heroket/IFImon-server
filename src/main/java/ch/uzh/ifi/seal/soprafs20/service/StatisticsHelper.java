@@ -80,7 +80,7 @@ public class StatisticsHelper {
             winnerStats.setRating(winnerStats.getRating() + 2); // + 2 since one was subtracted before
 
             // *** games won
-            winnerStats.setGamesPlayed(winnerStats.getGamesPlayed() + 1);
+            winnerStats.setGamesWon(winnerStats.getGamesWon() + 1);
         }
 
     }
