@@ -10,6 +10,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.objects.*;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.*;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
 
@@ -39,11 +40,14 @@ public class GameService {
     // Repositories
     private final GameRepository gameRepository;
     private final UniquePokemonNameGenerator uniquePokemonNameGenerator;
+    private final PokeAPICacheRepository pokeAPICacheRepository;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("pokeAPICacheRepository") PokeAPICacheRepository pokeAPICacheRepository) {
         this.gameRepository = gameRepository;
         this.uniquePokemonNameGenerator = new UniquePokemonNameGenerator();
+        this.pokeAPICacheRepository = pokeAPICacheRepository;
+        PokeAPICacheService.setRepository(pokeAPICacheRepository);
     }
 
     /**
@@ -75,7 +79,6 @@ public class GameService {
                 .setMode(game.getMode());
 
         newGame = this.gameRepository.save(newGame);
-        gameRepository.flush();
 
         log.debug(String.format("Lobby created. Token: %s.", newGame.getToken()));
 

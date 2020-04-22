@@ -42,7 +42,7 @@ public class Game implements Serializable {
     private List<Player> winners;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 6)
+    @Column(length = 13)
     private Mode mode;
 
     @Enumerated(EnumType.STRING)

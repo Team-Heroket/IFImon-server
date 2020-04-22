@@ -10,13 +10,14 @@ import java.util.List;
 
 import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.Element;
+import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.PokeAPI;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 @Entity
 @Table(name = "CARD")
-public class Card implements Serializable {
+public class Card implements Serializable, ICard {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -50,14 +51,14 @@ public class Card implements Serializable {
     // For the DTOs
     public Card() {}
 
-    public Card(Card card) {
-        this.pokemonId = card.pokemonId;
-        this.categories = new HashMap<>(card.categories);
-        this.name = card.name;
-        this.spriteURL = card.spriteURL;
-        this.cryURL = card.cryURL;
-        this.elements = new ArrayList<>(card.elements);
-        this.evolutionNames = new ArrayList<>(card.evolutionNames);
+    public Card(ICard card) {
+        this.pokemonId = card.getPokemonId();
+        this.categories = new HashMap<>(card.getCategories());
+        this.name = card.getName();
+        this.spriteURL = card.getSpriteURL();
+        this.cryURL = card.getCryURL();
+        this.elements = new ArrayList<>(card.getElements());
+        this.evolutionNames = new ArrayList<>(card.getEvolutionNames());
     }
 
     // For the real use

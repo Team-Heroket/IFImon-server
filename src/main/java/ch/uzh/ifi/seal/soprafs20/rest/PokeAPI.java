@@ -1,7 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.rest;
 
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -12,6 +15,8 @@ import java.net.URL;
  */
 public class PokeAPI {
     // Not an object, just use static methods
+
+    private final static Logger log = LoggerFactory.getLogger(PokeAPI.class);
 
     // **** Settings
     private static String baseUrl = "https://pokeapi.co/api/v2/%s/%s/";
@@ -33,6 +38,7 @@ public class PokeAPI {
     }
 
     public static JSONObject getFromURL(String strURL) {
+        log.debug(String.format("PokéAPI call %s.", strURL));
         JSONObject root = null;
         try {
             URL url = new URL(strURL);
@@ -46,6 +52,7 @@ public class PokeAPI {
         catch (IOException e) {
             e.printStackTrace();
         }
+        log.debug("Call finished.");
         return root;
     }
 
