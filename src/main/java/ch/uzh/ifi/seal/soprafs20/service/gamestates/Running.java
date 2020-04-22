@@ -29,6 +29,8 @@ public class Running implements GameState {
 
         log.debug(String.format("Player %s is leaving the game.", user.getUsername()));
 
+        // TODO: Change turnplayer
+
         List<Player> players = game.getPlayers();
 
         // Change to a new creator, if the creator leaves
@@ -94,6 +96,8 @@ public class Running implements GameState {
         else{
             throw new GameBadRequestException("Invalid Evolution");
         }
+
+        game.setWinners(getWinner(game));
 
         log.debug("Berries set.");
 
