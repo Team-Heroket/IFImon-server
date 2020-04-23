@@ -154,9 +154,7 @@ public class Game implements Serializable {
         this.turnPlayer = turnPlayer;
     }
 
-    public void resetPlayers(){
-        this.players=null;
-    }
+
 
     public void resetCreator(){
         this.creator=null;
@@ -164,9 +162,35 @@ public class Game implements Serializable {
 
     public void resetCategory(){ this.category=null; }
 
-    public void resetTurnPlayer(){ this.turnPlayer=null; }
+    public void resetTurnPlayer(){
+        if(this.turnPlayer instanceof Npc){
+            return;
+        }
+        this.turnPlayer=null;
 
-    public void resetWinners(){ this.winners=null; }
+    }
+
+    public void resetWinners(){
+        for (Player player : this.winners){
+            if(player instanceof Npc){
+                continue;
+            }
+            else{
+                this.winners.remove(player);
+            }
+        }
+    }
+
+    public void resetPlayers(){
+        for (Player player : this.players){
+            if(player instanceof Npc){
+                continue;
+            }
+            else{
+                this.players.remove(player);
+            }
+        }
+    }
 
     public String getStartTime() {
         return startTime;

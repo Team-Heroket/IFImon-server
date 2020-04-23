@@ -9,7 +9,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.objects.*;
-import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.*;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
@@ -39,12 +39,14 @@ public class GameService {
 
     // Repositories
     private final GameRepository gameRepository;
+    private final UserRepository userRepository;
     private final UniquePokemonNameGenerator uniquePokemonNameGenerator;
     private final PokeAPICacheRepository pokeAPICacheRepository;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("pokeAPICacheRepository") PokeAPICacheRepository pokeAPICacheRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("pokeAPICacheRepository") PokeAPICacheRepository pokeAPICacheRepository, @Qualifier("userRepository") UserRepository userRepository) {
         this.gameRepository = gameRepository;
+        this.userRepository = userRepository;
         this.uniquePokemonNameGenerator = new UniquePokemonNameGenerator();
         this.pokeAPICacheRepository = pokeAPICacheRepository;
         PokeAPICacheService.setRepository(pokeAPICacheRepository);
@@ -159,6 +161,7 @@ public class GameService {
         GameState state = this.getState(game);
         state.nextTurn(game);
         this.gameRepository.save(game);
+
     }
 
     public Game getGame(String gameToken){

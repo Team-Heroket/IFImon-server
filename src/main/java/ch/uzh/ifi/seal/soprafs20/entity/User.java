@@ -34,7 +34,7 @@ public class User implements Serializable, Comparable {
     private Long id;
 
     //add " unique = false" in parameters to make usernames unique
-    @Column(nullable = false, unique=true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)

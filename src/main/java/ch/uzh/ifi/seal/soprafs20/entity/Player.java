@@ -57,4 +57,6 @@ public class Player {
     public void setBerries(Integer berries) {
         this.berries = berries;
     }
+
+    public void resetUser(){ this.user=null;}
 }

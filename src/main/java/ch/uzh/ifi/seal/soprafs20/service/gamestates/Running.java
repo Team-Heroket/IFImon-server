@@ -111,6 +111,7 @@ public class Running implements GameState {
         distributeCards(game);
 
         if(isFinished(game)){
+
             game.setState(GameStateEnum.FINISHED);
             StatisticsHelper.doPostStatistics(game);
             log.debug("Game finished.");
