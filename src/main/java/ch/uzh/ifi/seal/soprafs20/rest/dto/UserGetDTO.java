@@ -20,6 +20,8 @@ public class UserGetDTO {
 
     private Long id;
 
+    private boolean npc;
+
 
 
 
@@ -52,5 +54,13 @@ public class UserGetDTO {
     }
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public boolean isNpc() {
+        return npc;
+    }
+
+    public void setNpc(boolean npc) {
+        this.npc = npc;
     }
 }

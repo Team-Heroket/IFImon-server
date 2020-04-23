@@ -52,6 +52,9 @@ public class Npc extends Player{
         //init statistics
         npcUser.setStatistics(new Statistics());
 
+        //set npc flag
+        npcUser.setNpc(true);
+
         // saves the given entity
         this.user=npcUser;
     }

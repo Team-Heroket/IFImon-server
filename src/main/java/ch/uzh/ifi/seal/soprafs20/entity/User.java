@@ -56,6 +56,9 @@ public class User implements Serializable, Comparable {
     @Column(nullable = false)
     private boolean online;
 
+    @Column(nullable=false)
+    private boolean npc=false;
+
 
 
     public Long getId() {
@@ -127,4 +130,11 @@ public class User implements Serializable, Comparable {
         return compareRating-this.statistics.getRating();
     }
 
+    public boolean isNpc() {
+        return npc;
+    }
+
+    public void setNpc(boolean npc) {
+        this.npc = npc;
+    }
 }

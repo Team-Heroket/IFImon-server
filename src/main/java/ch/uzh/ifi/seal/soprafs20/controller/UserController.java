@@ -62,7 +62,9 @@ public class UserController {
         // convert each user to the API representation
         List<UserGetDTO> userGetDTOs = new ArrayList<>();
         for (User user : users) {
-            userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+            if(!user.isNpc()){
+                userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+            }
         }
         //return list
         return userGetDTOs;

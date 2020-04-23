@@ -61,7 +61,7 @@ public class Lobby implements GameState {
 
 
         //for testing here are some parameters we can change
-        Integer deckSize= 1;
+        Integer deckSize= 5;
         Long buffer=15000L; // in milliseconds
 
         //add npcs
