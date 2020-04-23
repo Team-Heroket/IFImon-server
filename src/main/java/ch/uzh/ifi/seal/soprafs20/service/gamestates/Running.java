@@ -111,33 +111,39 @@ public class Running implements GameState {
         distributeCards(game);
 
         if(isFinished(game)){
-
+            log.debug("Changing to finished state");
             game.setState(GameStateEnum.FINISHED);
             StatisticsHelper.doPostStatistics(game);
             log.debug("Game finished.");
             return;
         }
 
+        log.debug("Not finished yet");
 
         setNewTurnPlayer(game);
+        log.debug(String.format("Turn Player changed to: %s",game.getTurnPlayer().getUser().getUsername()));
         game.resetCategory();
-        game.resetWinners();
+        log.debug("Category resetted");
+        game.setWinners(new ArrayList<Player>());
+        log.debug("Winners resetted");
 
         Long buffer=7000L;
-        //set start time for new turn
-        //DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        //LocalDateTime now = LocalDateTime.now();
         game.setStartTime( String.valueOf(System.currentTimeMillis() + buffer) );
+        log.debug("New start Time set");
         // TODO: update game entity accordingly
 
         //if the turnPlayer is an npc he should chose a category
         if(game.getTurnPlayer() instanceof Npc){
+            log.debug("NPC is turnplayer and chooses category");
             npcSelectCategory(game);
+            log.debug("NPC has chosen category");
         }
+
 
         //all npc players decide if they should use berries here
         for (Player player : game.getPlayers()){
             if(player instanceof Npc){
+                log.debug("NPC tries to use berry");
                 npcUseBerry(game, player);
             }
         }
@@ -202,6 +208,9 @@ public class Running implements GameState {
         if (winners.size()==1){
             game.setTurnPlayer(winners.get(0));
         }
+        else{
+
+        }
         //TODO: different draw mechanics?
     }
 
@@ -210,12 +219,14 @@ public class Running implements GameState {
         if(validateBerry(2,npc)){
             if(decideBerry(10)){
                 this.useBerries(game, 2, npc);
+                log.debug("NPC used 2 berries");
             }
         }
         //30% chance to use 1 berry if possible
         else if(validateBerry(1,npc)){
             if(decideBerry(30)){
                 this.useBerries(game, 1, npc);
+                log.debug("NPC used a berry");
             }
         }
 
@@ -231,7 +242,7 @@ public class Running implements GameState {
 
     public boolean isFinished(Game game){
         for (Player player : game.getPlayers()){
-            if(!player.getDeck().isEmpty() && !isWinner(game,player)){
+            if((!player.getDeck().isEmpty() && !isWinner(game,player)) || game.getWinners().size()>1){
                 return false;
             }
         }

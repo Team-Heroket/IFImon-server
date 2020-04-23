@@ -80,6 +80,7 @@ public class Card implements Serializable, ICard {
      * @param pokemonName Name of Pokémon
      */
     public Card(String pokemonName) {
+        pokemonName=pokemonName.toLowerCase();
         JSONObject pokemon = PokeAPI.getPokemon(pokemonName);
         JSONObject species = PokeAPI.getSpecies(pokemonName);
         this.initialise(pokemon, species);
@@ -128,7 +129,8 @@ public class Card implements Serializable, ICard {
         while (!evolvesTo.isEmpty()) {
             int random = (int) (Math.random() * evolvesTo.length());
             JSONObject evolution = evolvesTo.getJSONObject(random);
-            this.evolutionNames.add(evolution.getJSONObject("species").getString("name"));
+            String evolutionName=evolution.getJSONObject("species").getString("name");
+            this.evolutionNames.add(evolutionName.substring(0, 1).toUpperCase() + evolutionName.substring(1));
             evolvesTo = evolution.getJSONArray("evolves_to");
         }
 

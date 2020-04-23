@@ -88,15 +88,25 @@ public class Deck {
      */
     public void evolveCard(Integer times) {
 
-        // TODO: Use cached cards
 
         // Does not remove yet, if something crashes card would be lost...
         Card toEvolve = this.peekCard();
 
         // Get next element of the evolve array
+        String name=toEvolve.getEvolutionNames().get(times-1);
 
-        Card evolvedCard = new Card(toEvolve.getEvolutionNames().get(times-1));
+        CachedCard cachedCard = PokeAPICacheService.getCachedCard(name);
+        Card evolvedCard=null;
+        //check if card cached
+        if (null == cachedCard) {
+            evolvedCard = new Card(name);
+            PokeAPICacheService.cacheCard(evolvedCard);
+        } else {
+            log.debug(String.format("Cached evolution card found! %s", cachedCard.getName()));
+            evolvedCard=new Card(cachedCard);
+        }
 
+        //edit evolutions array
         for (int i = 0; i < times; i++) {
             evolvedCard.getEvolutionNames().remove(0);
         }

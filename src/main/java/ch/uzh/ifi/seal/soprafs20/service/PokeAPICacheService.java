@@ -27,5 +27,11 @@ public class PokeAPICacheService {
 
         return pokeAPICacheRepository.findByPokemonId(id);
     }
+    public static CachedCard getCachedCard(String name) {
+        if (null == pokeAPICacheRepository) {
+            throw new SopraServiceException("PokeAPICacheRepository got not set.");
+        }
+        return pokeAPICacheRepository.findByName(name);
+    }
 
 }
