@@ -13,6 +13,8 @@ public class StatisticsHelper {
     public static void doPreStatistics(Game game) {
         // This exists (for now) only for the encountered pokémons, since the initial deck is important
 
+        // TODO: Rework, returns duplicates
+
         List<Player> players = game.getPlayers();
 
         for (Player player: players) {

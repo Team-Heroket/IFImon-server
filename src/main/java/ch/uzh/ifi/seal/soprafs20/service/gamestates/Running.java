@@ -55,8 +55,11 @@ public class Running implements GameState {
             }
 
             // Creator is null if no "real" player which is not spectating exist
-
-            log.debug(String.format("New creator is %s.", game.getCreator().getUser().getUsername()));
+            if (null == game.getCategory()) {
+                log.debug("No new creator got set.");
+            } else {
+                log.debug(String.format("New creator is %s.", game.getCreator().getUser().getUsername()));
+            }
         }
 
         log.warn("The leaving player gets removed from list, there is no redistribution routine in place atm.");
@@ -154,6 +157,8 @@ public class Running implements GameState {
                 npcUseBerry(game, player);
             }
         }
+
+        // TODO: If creator looses, change the creator to player with cards
 
         log.debug("Next Turn set.");
 
