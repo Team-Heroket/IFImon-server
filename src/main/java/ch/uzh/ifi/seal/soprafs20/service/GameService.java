@@ -296,7 +296,7 @@ public class GameService {
             //throw new SopraServiceException("Can't delete game");
             throw new GameNotFoundException("Game to delete not found."); // Probably
         }
-        else if (deletedGames!=0 && deletedGames!=1){
+        else if (deletedGames!=1){
             throw new SopraServiceException("Unhandled Error when deleting game");
         }
 
