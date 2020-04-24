@@ -29,7 +29,10 @@ public class Running implements GameState {
 
         log.debug(String.format("Player %s is leaving the game.", user.getUsername()));
 
-        // TODO: Change turnplayer
+        // chooses random category for left turnplayer
+        if (game.getTurnPlayer().getUser().getId().equals(user.getId()) && null == game.getCategory()) {
+            this.selectCategory(game, randomEnum(Category.class));
+        }
 
         List<Player> players = game.getPlayers();
 
@@ -37,17 +40,21 @@ public class Running implements GameState {
         if (game.getCreator().getUser().getId().equals(user.getId())) {
             log.debug(String.format("Player %s is creator, reassigning to new.", user.getUsername()));
 
+            // To prevent setting the same creator back
+            long creatorID = game.getCreator().getUser().getId();
+
             game.resetCreator(); // Just to be able to throw an error
 
             for (Player player: players) {
-                if (!(player instanceof Npc)) {
+                if (!(player instanceof Npc) &&
+                        !(player.getUser().getId().equals(creatorID)) &&
+                        !(player.getDeck().isEmpty())) { // Add so spectators do not get chosen as creator TODO test it
                     game.setCreator(player);
                     break;
                 }
             }
-            if(null == game.getCreator()) {
-                throw new SopraServiceException("Huh, no other real players left?");
-            }
+
+            // Creator is null if no "real" player which is not spectating exist
 
             log.debug(String.format("New creator is %s.", game.getCreator().getUser().getUsername()));
         }

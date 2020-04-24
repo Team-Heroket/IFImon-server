@@ -95,7 +95,7 @@ public class Lobby implements GameState {
         // TODO: update game entity accordingly
 
         log.debug(String.format("Game will start at %s.", game.getStartTime()));
-        log.debug(String.format("Game created. %s", game));
+        log.debug(String.format("Game created. Token %s", game.getToken()));
 
     }
 

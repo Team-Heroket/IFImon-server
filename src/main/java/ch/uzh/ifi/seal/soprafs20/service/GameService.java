@@ -107,8 +107,9 @@ public class GameService {
         state.removePlayer(game, user);
 
         //if the removed player is the creator, close the lobby
-        if((game.getCreator().getUser().getId().equals(user.getId())) && (game.getState()==GameStateEnum.LOBBY || game.getState()==GameStateEnum.FINISHED)){
+        if(null == game.getCreator() || game.getCreator().getUser().getId().equals(user.getId())){
             this.deleteGame(game);
+            log.debug(String.format("Game deleted. Token: %s.", game.getToken()));
         }
         else{
             this.gameRepository.save(game);
