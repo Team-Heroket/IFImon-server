@@ -38,6 +38,10 @@ public class PokeAPI {
     }
 
     public static JSONObject getFromURL(String strURL) {
+
+        
+
+
         log.debug(String.format("PokéAPI call %s.", strURL));
         JSONObject root = null;
         try {

@@ -171,24 +171,41 @@ public class Game implements Serializable {
     }
 
     public void resetWinners(){
-        for (Player player : this.winners){
-            if(player instanceof Npc){
+
+
+        List<Integer> delete_those=new ArrayList<Integer>();
+
+
+        for (int i = 0; i < this.winners.size(); i++) {
+            if(this.winners.get(i) instanceof Npc){
                 continue;
             }
             else{
-                this.winners.remove(player);
+                delete_those.add(i);
             }
         }
+
+        for (int i = delete_those.size()-1; i >= 0; i--) {
+            this.winners.remove(i);
+        }
+
     }
 
     public void resetPlayers(){
-        for (Player player : this.players){
-            if(player instanceof Npc){
+        List<Integer> delete_those=new ArrayList<Integer>();
+
+
+        for (int i = 0; i < this.players.size(); i++) {
+            if(this.players.get(i) instanceof Npc){
                 continue;
             }
             else{
-                this.players.remove(player);
+                delete_those.add(i);
             }
+        }
+
+        for (int i = delete_those.size()-1; i >= 0; i--) {
+            this.players.remove(i);
         }
     }
 
