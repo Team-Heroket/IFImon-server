@@ -10,6 +10,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Finished;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.GameState;
@@ -41,9 +42,16 @@ public class GameServiceTest {
     @InjectMocks
     private GameService gameService;
 
+
+
     private Game testGame;
     private User testUser;
 
+    @Mock
+    private PokeAPICacheRepository pokeAPICacheRepository;
+
+    @MockBean
+    private PokeAPICacheService pokeAPICacheService;
 
     @BeforeEach
     public void setup() {
@@ -273,10 +281,10 @@ public class GameServiceTest {
 
         // then check for resetted parameters
         gameService.deleteGame(game);
-        assertEquals(game.getPlayers(),null);
-        assertEquals(game.getTurnPlayer(),null);
-        assertEquals(game.getCreator(),null);
-        assertEquals(game.getWinners(),null);
+        assertEquals(game.getPlayers().size(),0);
+        assertNull(game.getTurnPlayer());
+        assertNull(game.getCreator());
+        assertEquals(game.getWinners().size(),0);
         Mockito.verify(gameRepository, Mockito.times(1)).deleteByToken(Mockito.any());
     }
 
@@ -346,12 +354,15 @@ public class GameServiceTest {
     @Test
     public void Test_nextTurn_unfinishedGame() {
         //give a game in running state and two users with 2 cards each
+        User testUser = new User();
+        testUser.setUsername("turnplayer");
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
         UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
         player1.setDeck(new Deck(uniquePkmId,2));
 
         User secondUser = new User();
+        secondUser.setUsername("hansundheiri");
         Player player2 = new Player(secondUser);
         UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
         player2.setDeck(new Deck(uniquePkmId2,2));
@@ -360,11 +371,12 @@ public class GameServiceTest {
         game.setWinners(winners);
         game.setState(GameStateEnum.RUNNING);
         game.addPlayer(player2);
+        game.setTurnPlayer(player1);
 
 
         // then check if parameters changed correctly
         gameService.nextTurn(game);
-        assertEquals(game.getWinners(),null);
+        assertEquals(game.getWinners().size(),0);
         Mockito.verify(gameRepository, Mockito.times(1)).save(Mockito.any());
     }
 
@@ -715,7 +727,11 @@ public class GameServiceTest {
         Player player2 = new Player(secondUser);
         player2.setDeck(new Deck());
 
+        List<Player> winners = new ArrayList<>();
+        winners.add(player1);
+
         Game game = new Game(player1);
+        game.setWinners(winners);
         game.setState(GameStateEnum.RUNNING);
         game.addPlayer(player2);
 
