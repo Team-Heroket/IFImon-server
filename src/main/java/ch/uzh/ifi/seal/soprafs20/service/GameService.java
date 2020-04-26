@@ -9,7 +9,8 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.objects.*;
-import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.*;
+import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.*;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
 
@@ -38,12 +39,17 @@ public class GameService {
 
     // Repositories
     private final GameRepository gameRepository;
+    private final UserRepository userRepository;
     private final UniquePokemonNameGenerator uniquePokemonNameGenerator;
+    private final PokeAPICacheRepository pokeAPICacheRepository;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("pokeAPICacheRepository") PokeAPICacheRepository pokeAPICacheRepository, @Qualifier("userRepository") UserRepository userRepository) {
         this.gameRepository = gameRepository;
+        this.userRepository = userRepository;
         this.uniquePokemonNameGenerator = new UniquePokemonNameGenerator();
+        this.pokeAPICacheRepository = pokeAPICacheRepository;
+        PokeAPICacheService.setRepository(pokeAPICacheRepository);
     }
 
     /**
@@ -54,6 +60,9 @@ public class GameService {
      * @return
      */
     public Game createLobby(Game game, User creatingUser){
+
+        log.debug(String.format("Create Lobby request send by %s.", creatingUser.getUsername()));
+
         if (null != this.gameRepository.findByToken(game.getToken())) {
             throw new GameConflictException("This Game-Token already exists!");
         }
@@ -62,9 +71,9 @@ public class GameService {
         Game newGame = new Game(new Player(creatingUser));
 
         //set creation date and time
-        DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        newGame.setCreationTime(pattern.format(now));
+        //DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //LocalDateTime now = LocalDateTime.now();
+        newGame.setCreationTime(String.valueOf(System.currentTimeMillis()));
 
         newGame.setToken(this.uniquePokemonNameGenerator.get())
                 .setState(GameStateEnum.LOBBY)
@@ -72,6 +81,8 @@ public class GameService {
                 .setMode(game.getMode());
 
         newGame = this.gameRepository.save(newGame);
+
+        log.debug(String.format("Lobby created. Token: %s.", newGame.getToken()));
 
         //returns token so controller can send back to client
         return newGame;
@@ -96,11 +107,13 @@ public class GameService {
         state.removePlayer(game, user);
 
         //if the removed player is the creator, close the lobby
-        if((game.getCreator().getUser().getId().equals(user.getId())) && (game.getState()==GameStateEnum.LOBBY || game.getState()==GameStateEnum.FINISHED)){
+        if(null == game.getCreator() || game.getCreator().getUser().getId().equals(user.getId())){
             this.deleteGame(game);
+            log.debug(String.format("Game deleted. Token: %s.", game.getToken()));
         }
         else{
             this.gameRepository.save(game);
+            this.gameRepository.flush();
         }
 
     }
@@ -123,6 +136,19 @@ public class GameService {
         this.gameRepository.save(game);
     }
 
+    /*
+    public void calculateWinner(Game game){
+        GameState state = this.getState(game);
+
+        game.resetWinners();
+        this.gameRepository.save(game);
+
+        // selects category and calculates winner
+        game.setWinners(state.getWinner(game));
+        this.gameRepository.save(game);
+    }
+     */
+
     public void useBerries(Game game, Player player, Integer amount){
 
         GameState state = this.getState(game);
@@ -137,6 +163,7 @@ public class GameService {
         GameState state = this.getState(game);
         state.nextTurn(game);
         this.gameRepository.save(game);
+
     }
 
     public Game getGame(String gameToken){
@@ -271,7 +298,7 @@ public class GameService {
             //throw new SopraServiceException("Can't delete game");
             throw new GameNotFoundException("Game to delete not found."); // Probably
         }
-        else if (deletedGames!=0 && deletedGames!=1){
+        else if (deletedGames!=1){
             throw new SopraServiceException("Unhandled Error when deleting game");
         }
 

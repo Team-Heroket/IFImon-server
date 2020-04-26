@@ -40,7 +40,15 @@ public class GameController {
         //creates a Lobby with the given gamemode and gamename
         Game createdGame = gameService.createLobby(game, creator);
 
+
+
+        Mode mode=game.getMode();
+        if(mode==Mode.SINGLE_PLAYER){
+            gameService.startGame(3,createdGame);
+        }
+
         return DTOMapper.INSTANCE.convertEntityToGameTokenDTO(createdGame);
+
     }
 
 
@@ -137,6 +145,9 @@ public class GameController {
         //check if user part of game
         gameService.validatePlayer(gameToken,user);
 
+        //calculate winner if state is running
+        //gameService.calculateWinner(game);
+
         //convert to correct API format to return
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
@@ -221,7 +232,7 @@ public class GameController {
         gameService.validatePlayer(gameToken,user);
 
         //check if user is turnPlayer
-        gameService.validateTurnPlayer(gameToken,user);
+        gameService.validateCreator(gameToken,user);
 
         gameService.nextTurn(game);
 

@@ -1,6 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.entity;
 
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
+import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
+import ch.uzh.ifi.seal.soprafs20.service.PokeAPICacheService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,6 +13,8 @@ import java.util.List;
 @Entity
 @Table(name = "DECK")
 public class Deck {
+
+    private final static Logger log = LoggerFactory.getLogger(Deck.class);
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -26,7 +32,19 @@ public class Deck {
         this.cards = new ArrayList<>();
 
         for (int i = 0; i < cards; i++) {
-            this.cards.add(new Card(ids.get()));
+
+            int generatedId = ids.get();
+            CachedCard cachedCard = PokeAPICacheService.getCachedCard(generatedId);
+
+            if (null == cachedCard) {
+                Card newCard = new Card(generatedId);
+                PokeAPICacheService.cacheCard(newCard);
+                this.cards.add(newCard);
+            } else {
+                log.debug(String.format("Cached card found! %s", cachedCard.getName()));
+                this.cards.add(new Card(cachedCard));
+            }
+
         }
 
     }
@@ -70,21 +88,33 @@ public class Deck {
      */
     public void evolveCard(Integer times) {
 
-            // Does not remove yet, if something crashes card would be lost...
-            Card toEvolve = this.peekCard();
 
-            // Get next element of the evolve array
+        // Does not remove yet, if something crashes card would be lost...
+        Card toEvolve = this.peekCard();
 
-        Card evolvedCard = new Card(toEvolve.getEvolutionNames().get(times-1));
+        // Get next element of the evolve array
+        String name=toEvolve.getEvolutionNames().get(times-1);
 
+        CachedCard cachedCard = PokeAPICacheService.getCachedCard(name);
+        Card evolvedCard=null;
+        //check if card cached
+        if (null == cachedCard) {
+            evolvedCard = new Card(name);
+            PokeAPICacheService.cacheCard(evolvedCard);
+        } else {
+            log.debug(String.format("Cached evolution card found! %s", cachedCard.getName()));
+            evolvedCard=new Card(cachedCard);
+        }
+
+        //edit evolutions array
         for (int i = 0; i < times; i++) {
             evolvedCard.getEvolutionNames().remove(0);
         }
 
-            // Removes old card
-            this.removeCard();
-            // Adds new card TO THE TOP
-            this.cards.add(0, evolvedCard); // !Shift operation!
+        // Removes old card
+        this.removeCard();
+        // Adds new card TO THE TOP
+        this.cards.add(0, evolvedCard); // !Shift operation!
     }
 
     public List<Card> getCards() {

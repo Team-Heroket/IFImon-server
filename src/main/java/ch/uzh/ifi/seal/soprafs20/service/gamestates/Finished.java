@@ -10,6 +10,7 @@ import ch.uzh.ifi.seal.soprafs20.service.gamestates.GameState;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
 import org.hibernate.cfg.NotYetImplementedException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Finished implements GameState {
@@ -51,5 +52,10 @@ public class Finished implements GameState {
     public void startGame(Game game, Integer npc) {
         //TODO: maybe rematch
         throw new NotYetImplementedException("Rematch?");
+    }
+
+    @Override
+    public ArrayList<Player> getWinner(Game game) {
+        return null;
     }
 }

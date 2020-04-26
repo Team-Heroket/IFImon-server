@@ -49,9 +49,9 @@ public class UserService {
         //check for duplicate usernames
         checkIfUserExists(newUser);
 
-        //if no userAvatar in post-request, default it to 0
+        //if no userAvatar in post-request, default it to 1
         if (null == newUser.getAvatarId()) {
-            newUser.setAvatarId(0);
+            newUser.setAvatarId(1);
         }
 
         //set user object offline

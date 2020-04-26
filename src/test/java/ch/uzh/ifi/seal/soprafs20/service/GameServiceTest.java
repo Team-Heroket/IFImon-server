@@ -10,6 +10,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Finished;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.GameState;
@@ -41,9 +42,16 @@ public class GameServiceTest {
     @InjectMocks
     private GameService gameService;
 
+
+
     private Game testGame;
     private User testUser;
 
+    @Mock
+    private PokeAPICacheRepository pokeAPICacheRepository;
+
+    @MockBean
+    private PokeAPICacheService pokeAPICacheService;
 
     @BeforeEach
     public void setup() {
@@ -62,6 +70,15 @@ public class GameServiceTest {
 
     @Test
     public void Test_createLobby() {
+        //given a user with a username
+        User testUser = new User();
+        testUser.setUsername("testUserName");
+
+
+        // when gamerepository is called
+        Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(null);
+
+
         // create lobby with setup inputs
         Game returnedGame = gameService.createLobby(testGame, testUser);
         assertEquals(returnedGame.getGameName(),testGame.getGameName());
@@ -264,10 +281,10 @@ public class GameServiceTest {
 
         // then check for resetted parameters
         gameService.deleteGame(game);
-        assertEquals(game.getPlayers(),null);
-        assertEquals(game.getTurnPlayer(),null);
-        assertEquals(game.getCreator(),null);
-        assertEquals(game.getWinners(),null);
+        assertEquals(game.getPlayers().size(),0);
+        assertNull(game.getTurnPlayer());
+        assertNull(game.getCreator());
+        assertEquals(game.getWinners().size(),0);
         Mockito.verify(gameRepository, Mockito.times(1)).deleteByToken(Mockito.any());
     }
 
@@ -337,12 +354,17 @@ public class GameServiceTest {
     @Test
     public void Test_nextTurn_unfinishedGame() {
         //give a game in running state and two users with 2 cards each
+        User testUser = new User();
+        testUser.setId(100L);
+        testUser.setUsername("turnplayer");
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
         UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
         player1.setDeck(new Deck(uniquePkmId,2));
 
         User secondUser = new User();
+        secondUser.setId(200L);
+        secondUser.setUsername("hansundheiri");
         Player player2 = new Player(secondUser);
         UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
         player2.setDeck(new Deck(uniquePkmId2,2));
@@ -351,17 +373,20 @@ public class GameServiceTest {
         game.setWinners(winners);
         game.setState(GameStateEnum.RUNNING);
         game.addPlayer(player2);
+        game.setTurnPlayer(player1);
 
 
         // then check if parameters changed correctly
         gameService.nextTurn(game);
-        assertEquals(game.getWinners(),null);
+        assertEquals(game.getWinners().size(),0);
         Mockito.verify(gameRepository, Mockito.times(1)).save(Mockito.any());
     }
 
     @Test
     public void Test_nextTurn_finishedGame() {
         //give a game in running state and two users with 1 cards each + --> game will be finished after
+        User testUser = new User();
+        testUser.setStatistics(new Statistics());
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
         winners.add(player1);
@@ -369,6 +394,7 @@ public class GameServiceTest {
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
+        secondUser.setStatistics(new Statistics());
         Player player2 = new Player(secondUser);
         UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
         player2.setDeck(new Deck(uniquePkmId2,1));
@@ -481,6 +507,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_validInput_ValidState() {
         //give a game in running state and a user with one card
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -505,6 +533,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_tooMuchBerriesForEvolution_ValidState() {
         //give a game in running state and a user with one card
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -525,6 +555,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_tooFewBerriesAvailable_ValidState() {
         //give a game in running state a user with no berries available
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -545,6 +577,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_emptyDeck_ValidState() {
         //give a game in running state a user with an empty deck
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         player1.setBerries(3);
         player1.setDeck(new Deck());
@@ -563,6 +597,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_validInput_invalidStateLobby() {
         //give a game in lobby state and a user with one card
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -583,6 +619,8 @@ public class GameServiceTest {
     @Test
     public void Test_userBerries_validInput_invalidStateFinished() {
         //give a game in finished state a user with one card
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Card bulbasaur = new Card("bulbasaur");
         Deck bulbasaurOnlyDeck = new Deck();
@@ -603,6 +641,8 @@ public class GameServiceTest {
     @Test
     public void Test_distributeCards_inRunning() {
         //give a game in running state and 2 players with player1 as winner
+        User testUser = new User();
+        testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         Deck deck1 = new Deck();
         deck1.addCard(new Card("ivysaur"));
@@ -633,10 +673,13 @@ public class GameServiceTest {
     @Test
     public void Test_newTurnPlayer_inRunning() {
         //give a game in running state and 2 players with player2 as winner and player1 as turnplayer
+        User testUser = new User();
+        testUser.setId(20L);
         Player player1 = new Player(testUser);
 
         User secondUser = new User();
         secondUser.setId(1000L);
+        secondUser.setUsername("secondUserTest");
         Player player2 = new Player(secondUser);
 
         List<Player> winners = new ArrayList<>();
@@ -688,7 +731,11 @@ public class GameServiceTest {
         Player player2 = new Player(secondUser);
         player2.setDeck(new Deck());
 
+        List<Player> winners = new ArrayList<>();
+        winners.add(player1);
+
         Game game = new Game(player1);
+        game.setWinners(winners);
         game.setState(GameStateEnum.RUNNING);
         game.addPlayer(player2);
 

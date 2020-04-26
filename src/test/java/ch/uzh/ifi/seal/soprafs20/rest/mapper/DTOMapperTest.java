@@ -48,6 +48,7 @@ public class DTOMapperTest {
         user.setCreationDate("today");
         user.setOnline(true);
         Statistics stats = new Statistics();
+        stats.setGamesPlayed(2);
         user.setStatistics(stats);
 
         // MAP -> Create UserGetDTO
@@ -59,7 +60,7 @@ public class DTOMapperTest {
         assertEquals(userGetDTO.getAvatarId(), user.getAvatarId());
         assertEquals(userGetDTO.getCreationDate(), user.getCreationDate());
         assertEquals(userGetDTO.getOnline(), user.getOnline());
-        assertEquals(userGetDTO.getStatistics(), user.getStatistics());
+        assertEquals(userGetDTO.getStatistics().getGamesPlayed(), user.getStatistics().getGamesPlayed());
     }
 
 

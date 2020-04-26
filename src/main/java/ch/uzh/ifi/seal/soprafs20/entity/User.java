@@ -34,7 +34,7 @@ public class User implements Serializable, Comparable {
     private Long id;
 
     //add " unique = false" in parameters to make usernames unique
-    @Column(nullable = false, unique=true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -55,6 +55,9 @@ public class User implements Serializable, Comparable {
 
     @Column(nullable = false)
     private boolean online;
+
+    @Column(nullable=false)
+    private boolean npc=false;
 
 
 
@@ -127,4 +130,11 @@ public class User implements Serializable, Comparable {
         return compareRating-this.statistics.getRating();
     }
 
+    public boolean isNpc() {
+        return npc;
+    }
+
+    public void setNpc(boolean npc) {
+        this.npc = npc;
+    }
 }

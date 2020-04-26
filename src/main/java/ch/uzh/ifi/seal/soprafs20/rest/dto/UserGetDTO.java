@@ -12,13 +12,15 @@ public class UserGetDTO {
 
     private Integer avatarId;
 
-    private Statistics statistics;
+    private StatisticsGetDTO statistics;
 
     private String creationDate;
 
     private boolean online;
 
     private Long id;
+
+    private boolean npc;
 
 
 
@@ -33,10 +35,10 @@ public class UserGetDTO {
     public void setId(Long id) { this.id = id; }
 
 
-    public Statistics getStatistics() {
+    public StatisticsGetDTO getStatistics() {
         return statistics;
     }
-    public void setStatistics(Statistics statistics) {
+    public void setStatistics(StatisticsGetDTO statistics) {
         this.statistics = statistics;
     }
 
@@ -52,5 +54,13 @@ public class UserGetDTO {
     }
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public boolean isNpc() {
+        return npc;
+    }
+
+    public void setNpc(boolean npc) {
+        this.npc = npc;
     }
 }

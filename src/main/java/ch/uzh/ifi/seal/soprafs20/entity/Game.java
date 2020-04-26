@@ -42,7 +42,7 @@ public class Game implements Serializable {
     private List<Player> winners;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 6)
+    @Column(length = 13)
     private Mode mode;
 
     @Enumerated(EnumType.STRING)
@@ -99,6 +99,10 @@ public class Game implements Serializable {
         return this;
     }
 
+    public void setCreator(Player creator) {
+        this.creator = creator;
+    }
+
     public Player getCreator() {
         return creator;
     }
@@ -150,9 +154,7 @@ public class Game implements Serializable {
         this.turnPlayer = turnPlayer;
     }
 
-    public void resetPlayers(){
-        this.players=null;
-    }
+
 
     public void resetCreator(){
         this.creator=null;
@@ -160,9 +162,52 @@ public class Game implements Serializable {
 
     public void resetCategory(){ this.category=null; }
 
-    public void resetTurnPlayer(){ this.turnPlayer=null; }
+    public void resetTurnPlayer(){
+        if(this.turnPlayer instanceof Npc){
+            return;
+        }
+        this.turnPlayer=null;
 
-    public void resetWinners(){ this.winners=null; }
+    }
+
+    public void resetWinners(){
+
+
+        List<Integer> delete_those=new ArrayList<Integer>();
+
+
+        for (int i = 0; i < this.winners.size(); i++) {
+            if(this.winners.get(i) instanceof Npc){
+                continue;
+            }
+            else{
+                delete_those.add(i);
+            }
+        }
+
+        for (int i = delete_those.size()-1; i >= 0; i--) {
+            this.winners.remove(i);
+        }
+
+    }
+
+    public void resetPlayers(){
+        List<Integer> delete_those=new ArrayList<Integer>();
+
+
+        for (int i = 0; i < this.players.size(); i++) {
+            if(this.players.get(i) instanceof Npc){
+                continue;
+            }
+            else{
+                delete_those.add(i);
+            }
+        }
+
+        for (int i = delete_those.size()-1; i >= 0; i--) {
+            this.players.remove(i);
+        }
+    }
 
     public String getStartTime() {
         return startTime;
