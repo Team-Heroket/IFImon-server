@@ -113,6 +113,7 @@ public class GameService {
         }
         else{
             this.gameRepository.save(game);
+            this.gameRepository.flush();
         }
 
     }

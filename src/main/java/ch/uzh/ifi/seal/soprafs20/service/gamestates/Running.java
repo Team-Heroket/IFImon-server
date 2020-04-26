@@ -55,7 +55,7 @@ public class Running implements GameState {
             }
 
             // Creator is null if no "real" player which is not spectating exist
-            if (null == game.getCategory()) {
+            if (null == game.getCreator()) {
                 log.debug("No new creator got set.");
             } else {
                 log.debug(String.format("New creator is %s.", game.getCreator().getUser().getUsername()));
@@ -140,7 +140,6 @@ public class Running implements GameState {
         Long buffer=7000L;
         game.setStartTime( String.valueOf(System.currentTimeMillis() + buffer) );
         log.debug("New start Time set");
-        // TODO: update game entity accordingly
 
         //if the turnPlayer is an npc he should chose a category
         if(game.getTurnPlayer() instanceof Npc){
@@ -157,8 +156,6 @@ public class Running implements GameState {
                 npcUseBerry(game, player);
             }
         }
-
-        // TODO: If creator looses, change the creator to player with cards
 
         log.debug("Next Turn set.");
 
@@ -217,10 +214,65 @@ public class Running implements GameState {
     public void setNewTurnPlayer(Game game){
         List<Player> winners=game.getWinners();
 
+        log.debug("Setting new turn-player.");
+
         if (winners.size()==1){
-            game.setTurnPlayer(winners.get(0));
-        }
-        else{
+            Player winner = winners.get(0);
+
+            log.debug("Just one winner.");
+
+            // Safety-check so that turn-player is never null
+            for (Player player: game.getPlayers()) {
+                if (winner.getUser().getId().equals(player.getUser().getId())) {
+                    log.debug(String.format("Setting %s as turn-player", winner.getUser().getUsername()));
+                    game.setTurnPlayer(winner);
+                    return;
+                }
+            }
+
+            // If winner left game, assign a new turn-player
+            for (Player player: game.getPlayers()) {
+                if (!(player instanceof Npc)) {
+                    log.debug(String.format("Winner left, setting %s as turn-player", winner.getUser().getUsername()));
+                    game.setTurnPlayer(winner);
+                    return;
+                }
+            }
+
+        } else {
+
+            log.debug("Multiple winners (which means draw).");
+
+            Player turnPlayer = game.getTurnPlayer();
+
+            for (Player player: game.getPlayers()) {
+                if (turnPlayer.getUser().getId().equals(player.getUser().getId())) {
+                    log.debug(String.format("The turn-player %s stays.", turnPlayer.getUser().getUsername()));
+                    return;
+                }
+            }
+
+            // Chooses other winner from array, who don't left
+            for (Player winner: winners) {
+                for (Player player: game.getPlayers()) {
+                    if (winner.getUser().getId().equals(player.getUser().getId())) {
+                        if (!(winner instanceof Npc)) {
+                            log.debug(String.format("Turn-player left, setting to %s.", winner.getUser().getUsername()));
+                            game.setTurnPlayer(winner);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // If ALL winner left game, assign a new turn-player
+            for (Player player: game.getPlayers()) {
+                if (!(player instanceof Npc)) {
+                    log.debug(String.format("All winners left, setting turn-player to %s.", player.getUser().getUsername()));
+                    game.setTurnPlayer(player);
+                    return;
+                }
+            }
 
         }
         //TODO: different draw mechanics?
