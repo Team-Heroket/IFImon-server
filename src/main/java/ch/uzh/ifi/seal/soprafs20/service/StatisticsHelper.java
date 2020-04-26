@@ -1,49 +1,28 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.Player;
-import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 
 public class StatisticsHelper {
+
+    private final static Logger log = LoggerFactory.getLogger(StatisticsHelper.class);
 
     public static void doPreStatistics(Game game) {
         // This exists (for now) only for the encountered pokémons, since the initial deck is important
 
-        // TODO: Rework, returns duplicates
-
-        List<Player> players = game.getPlayers();
-
-        for (Player player: players) {
-            List<Integer> encountered = player.getUser().getStatistics().getEncounteredPokemon();
-
-            // This way the IDs should be add ordered to the list, which is helpful for later
-            for (Card card: player.getDeck().getCards()) {
-                int id = card.getPokemonId();
-                // If list is empty just add it
-                if (encountered.isEmpty()) {
+        for (Player player: game.getPlayers()) {
+            if (!(player instanceof Npc)) {
+                Set<Integer> encountered = player.getUser().getStatistics().getEncounteredPokemon();
+                for (Card card: player.getDeck().getCards()) {
+                    int id = card.getPokemonId();
                     encountered.add(id);
-                } else {
-                    // Go trough list
-                    for (int i = 0; i < encountered.size(); i++) {
-                        // Add element before the next bigger number
-                        if (id < encountered.get(i)) {
-                            encountered.add(i, id);
-                            // Stop the loop!
-                            break;
-                        }
-                    }
-                    // Add id if its bigger as the last value (or else it is the same number)
-                    if (id > encountered.get(encountered.size()-1)){
-                        encountered.add(id);
-                    }
                 }
-
             }
-
         }
 
     }

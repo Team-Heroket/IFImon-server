@@ -12,7 +12,7 @@ public class UserGetDTO {
 
     private Integer avatarId;
 
-    private Statistics statistics;
+    private StatisticsGetDTO statistics;
 
     private String creationDate;
 
@@ -35,10 +35,10 @@ public class UserGetDTO {
     public void setId(Long id) { this.id = id; }
 
 
-    public Statistics getStatistics() {
+    public StatisticsGetDTO getStatistics() {
         return statistics;
     }
-    public void setStatistics(Statistics statistics) {
+    public void setStatistics(StatisticsGetDTO statistics) {
         this.statistics = statistics;
     }
 
