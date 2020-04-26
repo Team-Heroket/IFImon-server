@@ -19,7 +19,7 @@ public class Statistics implements Serializable {
 
     @Column(nullable = false)
     @ElementCollection(targetClass=Integer.class)
-    private Set<Integer> encounteredPokemon;
+    private List<Integer> encounteredPokemon;
 
     @Column(nullable = false)
     private int gamesWon;
@@ -34,17 +34,17 @@ public class Statistics implements Serializable {
     private int storyProgress;
 
     public Statistics(){
-        this.encounteredPokemon=new TreeSet<>();
+        this.encounteredPokemon=new ArrayList<>();
         this.gamesWon=0;
         this.gamesPlayed=0;
         this.rating=0;
         this.storyProgress=0;
     }
 
-    public Set<Integer> getEncounteredPokemon() {
+    public List<Integer> getEncounteredPokemon() {
         return encounteredPokemon;
     }
-    public void setEncounteredPokemon(Set<Integer> encounteredPokemon) {
+    public void setEncounteredPokemon(List<Integer> encounteredPokemon) {
         this.encounteredPokemon = encounteredPokemon;
     }
 

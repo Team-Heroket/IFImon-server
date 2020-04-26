@@ -4,7 +4,7 @@ import java.util.*;
 
 public class StatisticsGetDTO {
 
-    private Set<Integer> encounteredPokemon;
+    private List<Integer> encounteredPokemon;
 
     private int gamesWon;
 
@@ -15,12 +15,10 @@ public class StatisticsGetDTO {
     private int storyProgress;
 
     public List<Integer> getEncounteredPokemon() {
-        List<Integer> asArray = new ArrayList<>(encounteredPokemon);
-        Collections.sort(asArray);
-        return asArray;
+        return encounteredPokemon;
     }
 
-    public void setEncounteredPokemon(Set<Integer> encounteredPokemon) {
+    public void setEncounteredPokemon(List<Integer> encounteredPokemon) {
         this.encounteredPokemon = encounteredPokemon;
     }
 

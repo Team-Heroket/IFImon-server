@@ -5,8 +5,9 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 public class StatisticsHelper {
 
@@ -17,11 +18,12 @@ public class StatisticsHelper {
 
         for (Player player: game.getPlayers()) {
             if (!(player instanceof Npc)) {
-                Set<Integer> encountered = player.getUser().getStatistics().getEncounteredPokemon();
+                TreeSet<Integer> encountered = new TreeSet<>(player.getUser().getStatistics().getEncounteredPokemon());
                 for (Card card: player.getDeck().getCards()) {
                     int id = card.getPokemonId();
                     encountered.add(id);
                 }
+                player.getUser().getStatistics().setEncounteredPokemon(new ArrayList<>(encountered));
             }
         }
 
