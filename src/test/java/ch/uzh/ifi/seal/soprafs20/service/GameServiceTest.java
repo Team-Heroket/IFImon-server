@@ -355,6 +355,7 @@ public class GameServiceTest {
     public void Test_nextTurn_unfinishedGame() {
         //give a game in running state and two users with 2 cards each
         User testUser = new User();
+        testUser.setId(100L);
         testUser.setUsername("turnplayer");
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
@@ -362,6 +363,7 @@ public class GameServiceTest {
         player1.setDeck(new Deck(uniquePkmId,2));
 
         User secondUser = new User();
+        secondUser.setId(200L);
         secondUser.setUsername("hansundheiri");
         Player player2 = new Player(secondUser);
         UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
@@ -404,7 +406,6 @@ public class GameServiceTest {
 
 
         // then check if parameters changed correctly
-        // TODO: @david test fails because the user has no statistics entity set!
         gameService.nextTurn(game);
         assertEquals(game.getWinners(),winners);
         assertEquals(game.getState(),GameStateEnum.FINISHED);
@@ -672,10 +673,13 @@ public class GameServiceTest {
     @Test
     public void Test_newTurnPlayer_inRunning() {
         //give a game in running state and 2 players with player2 as winner and player1 as turnplayer
+        User testUser = new User();
+        testUser.setId(20L);
         Player player1 = new Player(testUser);
 
         User secondUser = new User();
         secondUser.setId(1000L);
+        secondUser.setUsername("secondUserTest");
         Player player2 = new Player(secondUser);
 
         List<Player> winners = new ArrayList<>();
