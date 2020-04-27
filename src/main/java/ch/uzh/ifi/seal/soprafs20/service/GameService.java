@@ -122,7 +122,7 @@ public class GameService {
     public void startGame(Integer npc, Game game){
 
         GameState state = this.getState(game);
-        state.startGame(game, npc);
+        state.startGame(game, npc, 1, 15000L);
         // save changes
         this.gameRepository.save(game);
     }

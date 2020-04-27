@@ -13,6 +13,6 @@ public interface GameState {
     public void selectCategory(Game game, Category category);
     public void useBerries(Game game, Integer usedBerries, Player player);
     public void nextTurn(Game game);
-    public void startGame(Game game, Integer npc);
+    public void startGame(Game game, Integer npc, int deckSize, long buffer);
     public ArrayList<Player> getWinner(Game game);
 }

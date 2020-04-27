@@ -76,7 +76,7 @@ public class Running implements GameState {
 
     }
     @Override
-    public void startGame(Game game, Integer npc) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer) {
         throw new GameBadRequestException("Game already started");
     }
     @Override
