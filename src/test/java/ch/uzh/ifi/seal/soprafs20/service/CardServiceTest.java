@@ -29,20 +29,4 @@ public class CardServiceTest {
 
     private Card card;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-
-        // given
-        card = new Card();
-        card.setName("testCard");
-        card.setId(100L);
-    }
-
-    @Test
-    public void testGetCard(){
-
-        // SPRINT 3
-
-    }
 }
