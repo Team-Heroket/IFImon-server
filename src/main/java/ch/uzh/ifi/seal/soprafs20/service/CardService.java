@@ -1,7 +1,11 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
+import ch.uzh.ifi.seal.soprafs20.entity.CachedCard;
 import ch.uzh.ifi.seal.soprafs20.entity.Card;
 
+import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.StatisticRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +28,29 @@ public class CardService {
 
     private final Logger log = LoggerFactory.getLogger(CardService.class);
 
-    public Map<Long,String> getCards(){
-        Map<Long,String> testMap = new HashMap<Long,String>();
-        return testMap;
+    private PokeAPICacheRepository pokeAPICacheRepository;
+
+
+    @Autowired
+    public CardService(@Qualifier("pokeAPICacheRepository") PokeAPICacheRepository pokeAPICacheRepository) {
+        this.pokeAPICacheRepository = pokeAPICacheRepository;
     }
 
-    public Card getCard(long id){
-        Card card = new Card();
-        card.setName("testCard");
-        card.setId((100L));
-        return card;
+    public Card getCard(int id){
+
+        // Danger! Evolutions Array contains previous evolutions too.
+
+        log.debug("Card requested");
+
+        CachedCard cachedCard = PokeAPICacheService.getCachedCard(id);
+
+        if (null == cachedCard) {
+            Card newCard = new Card(id);
+            PokeAPICacheService.cacheCard(newCard);
+            return newCard;
+        }
+
+        log.debug(String.format("Cached card found! %s", cachedCard.getName()));
+        return new Card(cachedCard);
     }
 }

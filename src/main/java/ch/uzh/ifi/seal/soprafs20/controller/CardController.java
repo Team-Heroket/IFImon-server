@@ -14,27 +14,13 @@ import java.util.Map;
 @RestController
 public class CardController {
 
+    private final UserService userService;
     private final CardService cardService;
 
-    CardController(UserService userService, GameService gameService, CardService cardService) {
+    CardController(UserService userService, CardService cardService) {
+        this.userService = userService;
         this.cardService = cardService;
     }
-
-
-    /*     #13     */
-    /** This request returns a map with all Pokémon IDs and Sprite urls **/
-
-    @GetMapping("/cards")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public Map<Long,String> getCardList(@RequestHeader("Token") String token) {
-
-        //get a map with all ids and urls of the cards
-        Map<Long,String> map = cardService.getCards();
-
-        return map;
-    }
-
 
     /*     #14     */
     /** This request returns a complete pkm-card **/
@@ -43,9 +29,11 @@ public class CardController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public CardGetDTO getCard(@PathVariable String pokemonId, @RequestHeader("Token") String token) {
-
         //convert pathvaraible to long
-        long cardId = Long.parseLong(pokemonId);
+        int cardId = Integer.parseInt(pokemonId);
+
+        // If uyer is allowed to do that call
+        this.userService.validateUser(token);
 
         //get card from service
         Card card = cardService.getCard(cardId);

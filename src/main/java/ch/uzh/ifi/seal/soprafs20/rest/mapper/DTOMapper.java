@@ -41,7 +41,13 @@ public interface DTOMapper {
     @Mapping(source = "token", target = "token")
     User convertUserPutDTOtoEntity(UserPutDTO userPutDTO);
 
+    @Mapping(source = "pokemonId", target = "pokemonId")
+    @Mapping(source = "categories", target = "categories")
     @Mapping(source = "name", target = "name")
+    @Mapping(source = "spriteURL", target = "spriteURL")
+    @Mapping(source = "cryURL", target = "cryURL")
+    @Mapping(source = "elements", target = "elements")
+    //@Mapping(source = "evolutionNames", target = "evolutionNames")
     CardGetDTO convertEntityToCardGetDTO(Card card);
 
     @Mapping(source = "id", target = "id")
