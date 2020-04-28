@@ -106,10 +106,10 @@ public class Deck {
             evolvedCard=new Card(cachedCard);
         }
 
-        //edit evolutions array
-        for (int i = 0; i < times; i++) {
-            evolvedCard.getEvolutionNames().remove(0);
-        }
+//        //edit evolutions array
+//        for (int i = 0; i < times; i++) {
+//            evolvedCard.getEvolutionNames().remove(0);
+//        }
 
         // Removes old card
         this.removeCard();
