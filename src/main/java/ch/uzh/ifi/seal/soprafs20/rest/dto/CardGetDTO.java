@@ -21,7 +21,7 @@ public class CardGetDTO {
 
     private List<Element> elements;
 
-    //private List<String> evolutionNames;
+    private List<String> evolutionNames;
 
     public int getPokemonId() {
         return pokemonId;
@@ -71,7 +71,7 @@ public class CardGetDTO {
         this.elements = elements;
     }
 
-    /*
+
     public List<String> getEvolutionNames() {
         return evolutionNames;
     }
@@ -79,5 +79,5 @@ public class CardGetDTO {
     public void setEvolutionNames(List<String> evolutionNames) {
         this.evolutionNames = evolutionNames;
     }
-     */
+
 }

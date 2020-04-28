@@ -47,7 +47,7 @@ public interface DTOMapper {
     @Mapping(source = "spriteURL", target = "spriteURL")
     @Mapping(source = "cryURL", target = "cryURL")
     @Mapping(source = "elements", target = "elements")
-    //@Mapping(source = "evolutionNames", target = "evolutionNames")
+    @Mapping(source = "evolutionNames", target = "evolutionNames")
     CardGetDTO convertEntityToCardGetDTO(Card card);
 
     @Mapping(source = "id", target = "id")

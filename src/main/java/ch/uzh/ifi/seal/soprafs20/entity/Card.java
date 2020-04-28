@@ -129,37 +129,49 @@ public class Card implements Serializable, ICard {
 
         //adds the base (or baby) evolution to array
         String evolutionName=starterEvolution.getString("name");
+        this.evolutionNames = new ArrayList<>();
         this.evolutionNames.add(evolutionName.substring(0, 1).toUpperCase() + evolutionName.substring(1));
 
         //adds all "higher" evolutions to array. Chooses randomly in a layer if multiple options
         JSONArray evolvesTo = chain.getJSONArray("evolves_to");
-        this.evolutionNames = new ArrayList<>();
+
+
         while (!evolvesTo.isEmpty()) {
-            int random = (int) (Math.random() * evolvesTo.length());
-            JSONObject evolution = evolvesTo.getJSONObject(random);
-            evolutionName=evolution.getJSONObject("species").getString("name");
-            this.evolutionNames.add(evolutionName.substring(0, 1).toUpperCase() + evolutionName.substring(1));
-            evolvesTo = evolution.getJSONArray("evolves_to");
+
+            boolean foundSelf=false;
+
+            for (int i = 0; i < evolvesTo.length() ; i++) {
+                JSONObject evolution = evolvesTo.getJSONObject(i);
+                evolutionName=evolution.getJSONObject("species").getString("name");
+
+                if(evolutionName.toUpperCase().equals(this.name.toUpperCase())){
+                    this.evolutionNames.add(evolutionName.substring(0, 1).toUpperCase() + evolutionName.substring(1));
+                    evolvesTo = evolution.getJSONArray("evolves_to");
+                    foundSelf=true;
+                    break;
+                }
+            }
+
+            if(!foundSelf) {
+                int random = (int) (Math.random() * evolvesTo.length());
+                JSONObject evolution = evolvesTo.getJSONObject(random);
+                evolutionName = evolution.getJSONObject("species").getString("name");
+                this.evolutionNames.add(evolutionName.substring(0, 1).toUpperCase() + evolutionName.substring(1));
+                evolvesTo = evolution.getJSONArray("evolves_to");
+            }
         }
 
-//        int j=1;
-//        for (int i = 0; i < this.evolutionNames.size(); i++) {
-//            if (this.evolutionNames.get(i).toUpperCase().equals(this.name.toUpperCase())){
-//                break;
-//            }
-//            j+=1;
-//        }
-//        for (int i = 0; i <j ; i++) {
-//            this.evolutionNames.remove(0);
-//        }
-
+        int j=1;
         for (int i = 0; i < this.evolutionNames.size(); i++) {
             if (this.evolutionNames.get(i).toUpperCase().equals(this.name.toUpperCase())){
-                this.evolutionNames.remove(0);
                 break;
             }
+            j+=1;
+        }
+        for (int i = 0; i <j ; i++) {
             this.evolutionNames.remove(0);
         }
+
 
 
     }
