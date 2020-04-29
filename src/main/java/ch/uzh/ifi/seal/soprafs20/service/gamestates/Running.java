@@ -102,6 +102,8 @@ public class Running implements GameState {
         if(validateBerry(usedBerries, player)){
             player.getDeck().evolveCard(usedBerries);
             player.setBerries(player.getBerries()-usedBerries);
+            // evolveCard evolves the card a the top, so this method checks the top card
+            StatisticsHelper.encounter(player, player.getDeck().peekCard());
         }
         else{
             throw new GameBadRequestException("Invalid Evolution");
@@ -199,6 +201,8 @@ public class Running implements GameState {
                 if (!player.getDeck().isEmpty()) {
                     Card temp = new Card(player.getDeck().removeCard());
                     winner.getDeck().addCard(temp);
+                    // The card the winner gets is most likely new from him, so he has to encounter it
+                    StatisticsHelper.encounter(winner, temp);
                 }
             }
         }
