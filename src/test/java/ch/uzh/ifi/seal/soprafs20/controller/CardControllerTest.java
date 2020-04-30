@@ -65,6 +65,4 @@ public class CardControllerTest {
     @MockBean
     private CardService cardService;
 
-
-    // SPRINT 3
 }

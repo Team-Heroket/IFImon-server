@@ -227,34 +227,38 @@ public class GameControllerTest {
 
     @Test
     public void Test_getGameState() throws Exception {
-        //given
+        //given a testuser and a game
         User testUser = new User();
         testUser.setUsername("testUser");
+
         Game game = new Game(new Player(testUser));
         game.setState(GameStateEnum.LOBBY);
         game.setMode(Mode.SOCIAL);
         game.setGameName("testGameName");
         game.setToken("12345");
         game.setId(100L);
+        game.setStartTime("now");
         game.setCreationTime("testDay");
 
-        // when
+        // when repositories are called for validation
         given(userRepository.findByToken(Mockito.anyString())).willReturn(testUser);
         given(gameRepository.findByToken(Mockito.anyString())).willReturn(game);
+        // when service is called to get the game
         given(gameService.getGame(Mockito.anyString())).willReturn(game);
 
 
-        // when/then -> do the request + validate the result
+        // when we do a request use this request parameters
         MockHttpServletRequestBuilder getRequest = get("/games/12345")
                 .header("Token", "Test");
 
-        // then
+        // then do request and check returned parameters
         mockMvc.perform(getRequest)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.gameName").value(game.getGameName()))
                 .andExpect(jsonPath("$.state").value("LOBBY"))
                 .andExpect(jsonPath("$.mode").value("SOCIAL"))
                 .andExpect(jsonPath("$.token").value(game.getToken()))
+                .andExpect(jsonPath("$.startTime").value(game.getStartTime()))
                 .andExpect(jsonPath("$.id").value(game.getId()))
                 .andExpect(jsonPath("$.creationTime").value(game.getCreationTime()));
     }
@@ -322,6 +326,7 @@ public class GameControllerTest {
         mockMvc.perform(putRequest)
                 .andExpect(status().isOk());
     }
+
     @Test
     public void Test_nextTurn() throws Exception {
         //given
