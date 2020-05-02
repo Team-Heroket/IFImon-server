@@ -44,7 +44,7 @@ public class GameController {
 
         Mode mode=game.getMode();
         if(mode==Mode.SINGLE_PLAYER){
-            gameService.startGame(3,createdGame);
+            gameService.startGame(3,createdGame,5);
         }
 
         return DTOMapper.INSTANCE.convertEntityToGameTokenDTO(createdGame);
@@ -122,7 +122,20 @@ public class GameController {
         if (npc==null){
             npc=0;
         }
-        gameService.startGame(npc, game);
+
+        Integer card = gameTokenPutDTO.getCard();
+        // Protect from strange input
+        if (card==null) {
+            card=5;
+        }
+        else if (card < 2) {
+            card=2;
+        }
+        else if (card>6) {
+            card=6;
+        }
+
+        gameService.startGame(npc, game, card);
     }
 
 

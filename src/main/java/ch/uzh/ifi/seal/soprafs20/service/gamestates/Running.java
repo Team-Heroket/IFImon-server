@@ -308,12 +308,10 @@ public class Running implements GameState {
 
 
 
-    public boolean isFinished(Game game){
+    public boolean isFinished(Game game){ // TODO: finish game when only bots left.
         for (Player player : game.getPlayers()){
-            if (!(player instanceof Npc)) {
-                if((!player.getDeck().isEmpty() && !isWinner(game,player)) || game.getWinners().size()>1){
-                    return false;
-                }
+            if((!player.getDeck().isEmpty() && !isWinner(game,player)) || game.getWinners().size()>1){
+                return false;
             }
         }
         return true;

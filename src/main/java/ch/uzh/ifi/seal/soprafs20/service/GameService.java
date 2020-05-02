@@ -119,10 +119,10 @@ public class GameService {
     }
 
 
-    public void startGame(Integer npc, Game game){
+    public void startGame(Integer npc, Game game, int deckSize){
 
         GameState state = this.getState(game);
-        state.startGame(game, npc, 5, 15000L);
+        state.startGame(game, npc, deckSize, 15000L);
         // save changes
         this.gameRepository.save(game);
     }
