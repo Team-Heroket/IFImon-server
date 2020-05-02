@@ -310,8 +310,10 @@ public class Running implements GameState {
 
     public boolean isFinished(Game game){
         for (Player player : game.getPlayers()){
-            if((!player.getDeck().isEmpty() && !isWinner(game,player)) || game.getWinners().size()>1){
-                return false;
+            if (!(player instanceof Npc)) {
+                if((!player.getDeck().isEmpty() && !isWinner(game,player)) || game.getWinners().size()>1){
+                    return false;
+                }
             }
         }
         return true;
