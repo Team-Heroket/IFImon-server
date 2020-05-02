@@ -203,6 +203,19 @@ public class Running implements GameState {
                     winner.getDeck().addCard(temp);
                     // The card the winner gets is most likely new from him, so he has to encounter it
                     StatisticsHelper.encounter(winner, temp);
+
+                    if (player.getUser().getId().equals(game.getCreator().getUser().getId()) && player.getDeck().isEmpty()) {
+                        log.debug("Current creator is spectator, reassigning...");
+                        for (Player player2: game.getPlayers()) {
+                            if (!(player2 instanceof Npc) &&
+                                    !(player2.getUser().getId().equals(game.getCreator().getUser().getId())) &&
+                                    !(player2.getDeck().isEmpty())) { // Add so spectators do not get chosen as creator TODO test it
+                                game.setCreator(player2);
+                                break;
+                            }
+                        }
+                        log.debug(String.format("Reassigned to %s.", game.getCreator().getUser().getUsername()));
+                    }
                 }
             }
         }
