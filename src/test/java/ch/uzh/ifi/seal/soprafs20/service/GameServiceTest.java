@@ -142,7 +142,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.LOBBY);
 
         // then check if game is in running after the call
-        gameService.startGame(0,testGame);
+        gameService.startGame(0,testGame,3);
         assertEquals(testGame.getState(),GameStateEnum.RUNNING);
     }
 
@@ -155,7 +155,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.RUNNING);
 
         // then if exception if game is already running
-        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame));
+        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame,3));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.FINISHED);
 
         // then if exception if game is already finished
-        gameService.startGame(0,testGame);
+        gameService.startGame(0,testGame,3);
         assertEquals(testGame.getState(),GameStateEnum.RUNNING);
     }
 
@@ -387,6 +387,7 @@ public class GameServiceTest {
     public void Test_nextTurn_finishedGame() {
         //give a game in running state and two users with 1 cards each + --> game will be finished after
         User testUser = new User();
+        testUser.setId(10L);
         testUser.setStatistics(new Statistics());
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
@@ -395,6 +396,7 @@ public class GameServiceTest {
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
+        secondUser.setId(20L);
         secondUser.setStatistics(new Statistics());
         Player player2 = new Player(secondUser);
         UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
@@ -645,11 +647,13 @@ public class GameServiceTest {
     public void Test_distributeCards_inRunning() {
         // given 2 players
         User testUser = new User();
+        testUser.setId(10L);
         testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
         testUser.setStatistics(new Statistics());
         testUser.getStatistics().setEncounteredPokemon(new ArrayList<>());
         User secondUser = new User();
+        secondUser.setId(20L);
         secondUser.setUsername("testUserName2");
         Player player2 = new Player(secondUser);
         secondUser.setStatistics(new Statistics());
