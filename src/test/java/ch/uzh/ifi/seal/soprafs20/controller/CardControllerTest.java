@@ -65,6 +65,35 @@ public class CardControllerTest {
     @MockBean
     private CardService cardService;
 
+    @Mock
+    private PokeAPICacheRepository pokeAPICacheRepository;
 
-    // SPRINT 3
+    @MockBean
+    private PokeAPICacheService pokeAPICacheService;
+
+/** sprint 5
+    @Test
+    public void Test_getCard() throws Exception {
+        // given
+        User testUser = new User();
+        Card card = new Card("ivysaur");
+
+
+        // this mocks the cardservice
+        given(cardService.getCard(Mockito.any())).willReturn(card);
+        given(userRepository.findByToken(Mockito.any())).willReturn(testUser);
+
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/cards/2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Token", "Test");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is(card.getName())));
+    }
+**/
+
 }

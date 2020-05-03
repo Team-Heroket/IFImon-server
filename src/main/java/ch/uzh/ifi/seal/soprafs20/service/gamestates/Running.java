@@ -76,7 +76,7 @@ public class Running implements GameState {
 
     }
     @Override
-    public void startGame(Game game, Integer npc) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer) {
         throw new GameBadRequestException("Game already started");
     }
     @Override
@@ -102,6 +102,8 @@ public class Running implements GameState {
         if(validateBerry(usedBerries, player)){
             player.getDeck().evolveCard(usedBerries);
             player.setBerries(player.getBerries()-usedBerries);
+            // evolveCard evolves the card a the top, so this method checks the top card
+            StatisticsHelper.encounter(player, player.getDeck().peekCard());
         }
         else{
             throw new GameBadRequestException("Invalid Evolution");
@@ -199,6 +201,21 @@ public class Running implements GameState {
                 if (!player.getDeck().isEmpty()) {
                     Card temp = new Card(player.getDeck().removeCard());
                     winner.getDeck().addCard(temp);
+                    // The card the winner gets is most likely new from him, so he has to encounter it
+                    StatisticsHelper.encounter(winner, temp);
+
+                    if (player.getUser().getId().equals(game.getCreator().getUser().getId()) && player.getDeck().isEmpty()) {
+                        log.debug("Current creator is spectator, reassigning...");
+                        for (Player player2: game.getPlayers()) {
+                            if (!(player2 instanceof Npc) &&
+                                    !(player2.getUser().getId().equals(game.getCreator().getUser().getId())) &&
+                                    !(player2.getDeck().isEmpty())) { // Add so spectators do not get chosen as creator TODO test it
+                                game.setCreator(player2);
+                                break;
+                            }
+                        }
+                        log.debug(String.format("Reassigned to %s.", game.getCreator().getUser().getUsername()));
+                    }
                 }
             }
         }
@@ -304,7 +321,7 @@ public class Running implements GameState {
 
 
 
-    public boolean isFinished(Game game){
+    public boolean isFinished(Game game){ // TODO: finish game when only bots left.
         for (Player player : game.getPlayers()){
             if((!player.getDeck().isEmpty() && !isWinner(game,player)) || game.getWinners().size()>1){
                 return false;

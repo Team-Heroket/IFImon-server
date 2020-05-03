@@ -16,6 +16,7 @@ public class StatisticsHelper {
     public static void doPreStatistics(Game game) {
         // This exists (for now) only for the encountered pokémons, since the initial deck is important
 
+        // The player only encounters his the pokémons from his own deck
         for (Player player: game.getPlayers()) {
             if (!(player instanceof Npc)) {
                 TreeSet<Integer> encountered = new TreeSet<>(player.getUser().getStatistics().getEncounteredPokemon());
@@ -27,6 +28,25 @@ public class StatisticsHelper {
             }
         }
 
+    }
+
+    /**
+     * Encounter Pokémon in game.
+     *
+     * The only two possiblities are evolving your own card
+     * and getting a card from "enemy" player
+     *
+     * @param player who encounters the pokémon
+     * @param card the pokémon to encounter
+     */
+    public static void encounter(Player player, Card card) {
+        if (!(player instanceof Npc)) {
+            TreeSet<Integer> encountered = new TreeSet<>(player.getUser().getStatistics().getEncounteredPokemon());
+            int id = card.getPokemonId();
+            encountered.add(id);
+            player.getUser().getStatistics().setEncounteredPokemon(new ArrayList<>(encountered));
+        }
+        // somewhat code duplication from the method doPreStatistics TODO: refactor encounter pokémon
     }
 
     public static void doPostStatistics(Game game) {

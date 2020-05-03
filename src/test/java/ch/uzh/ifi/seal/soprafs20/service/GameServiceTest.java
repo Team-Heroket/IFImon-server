@@ -142,7 +142,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.LOBBY);
 
         // then check if game is in running after the call
-        gameService.startGame(0,testGame);
+        gameService.startGame(0,testGame,3);
         assertEquals(testGame.getState(),GameStateEnum.RUNNING);
     }
 
@@ -155,19 +155,20 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.RUNNING);
 
         // then if exception if game is already running
-        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame));
+        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame,3));
     }
 
     @Test
-    public void startGame_invalidStateFinished() {
-        // given a game in runningState
+    public void startGame_rematchInFinishedState() {
+        // given a game in finishedstate
         User testUser = new User();
         testUser.setId(100L);
         testGame = new Game();
         testGame.setState(GameStateEnum.FINISHED);
 
         // then if exception if game is already finished
-        assertThrows(NotYetImplementedException.class, () -> gameService.startGame(0,testGame));
+        gameService.startGame(0,testGame,3);
+        assertEquals(testGame.getState(),GameStateEnum.RUNNING);
     }
 
     @Test
@@ -386,6 +387,7 @@ public class GameServiceTest {
     public void Test_nextTurn_finishedGame() {
         //give a game in running state and two users with 1 cards each + --> game will be finished after
         User testUser = new User();
+        testUser.setId(10L);
         testUser.setStatistics(new Statistics());
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
@@ -394,6 +396,7 @@ public class GameServiceTest {
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
+        secondUser.setId(20L);
         secondUser.setStatistics(new Statistics());
         Player player2 = new Player(secondUser);
         UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
@@ -515,6 +518,8 @@ public class GameServiceTest {
         bulbasaurOnlyDeck.addCard(bulbasaur);
         player1.setDeck(bulbasaurOnlyDeck);
         player1.setBerries(1);
+        testUser.setStatistics(new Statistics());
+        player1.getUser().getStatistics().setEncounteredPokemon(new ArrayList<>());
 
         Game game = new Game(player1);
         game.setState(GameStateEnum.RUNNING);
@@ -640,34 +645,48 @@ public class GameServiceTest {
 
     @Test
     public void Test_distributeCards_inRunning() {
-        //give a game in running state and 2 players with player1 as winner
+        // given 2 players
         User testUser = new User();
+        testUser.setId(10L);
         testUser.setUsername("testUserName");
         Player player1 = new Player(testUser);
+        testUser.setStatistics(new Statistics());
+        testUser.getStatistics().setEncounteredPokemon(new ArrayList<>());
+        User secondUser = new User();
+        secondUser.setId(20L);
+        secondUser.setUsername("testUserName2");
+        Player player2 = new Player(secondUser);
+        secondUser.setStatistics(new Statistics());
+        secondUser.getStatistics().setEncounteredPokemon(new ArrayList<>());
+
+
+        // given 1 card each player
         Deck deck1 = new Deck();
         deck1.addCard(new Card("ivysaur"));
         player1.setDeck(deck1);
-
-        User secondUser = new User();
-        Player player2 = new Player(secondUser);
         Deck deck2 = new Deck();
         deck2.addCard(new Card("bulbasaur"));
         player2.setDeck(deck2);
-        List<Player> winners = new ArrayList<>();
-        winners.add(player1);
 
+        // given a game with the two players and player1 as winner
         Game game = new Game(player1);
-        game.setWinners(winners);
         game.setState(GameStateEnum.RUNNING);
         game.addPlayer(player2);
+        List<Player> winners = new ArrayList<>();
+        winners.add(player1);
+        game.setWinners(winners);
 
         // initiate a running state
         Running running = new Running();
 
-        // then check if player1 received a card
+        // then distribute the played/peak cards to the winner (player1)
         running.distributeCards(game);
+
+        //check if ivysaur (pokemonId 2) is on top of player1 deck again
+        // and bulbasaur (pokemonId 1) is below ivysaur
         assertEquals(player1.getDeck().getCards().get(0).getPokemonId(),2);
         assertEquals(player1.getDeck().getCards().get(1).getPokemonId(),1);
+        assertTrue(player2.getDeck().isEmpty());
     }
 
     @Test

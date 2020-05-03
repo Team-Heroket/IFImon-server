@@ -4,6 +4,7 @@ public class GameTokenPutDTO {
 
 
     private int npc;
+    private int card;
 
 
     public int getNpc() {
@@ -13,5 +14,11 @@ public class GameTokenPutDTO {
         this.npc = npc;
     }
 
+    public int getCard() {
+        return card;
+    }
 
+    public void setCard(int card) {
+        this.card = card;
+    }
 }

@@ -55,14 +55,9 @@ public class Lobby implements GameState {
     }
 
     @Override
-    public void startGame(Game game, Integer npc) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer) {
 
         log.info(String.format("Start game request was called on %s. Amount of NPCs: %s.", game.getToken(), npc));
-
-
-        //for testing here are some parameters we can change
-        Integer deckSize= 5;
-        Long buffer=15000L; // in milliseconds
 
         //add npcs
         UniqueTrainerNameGenerator trainerNameGenerator = new UniqueTrainerNameGenerator();

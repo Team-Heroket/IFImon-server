@@ -218,69 +218,6 @@ public class UserControllerTest {
                 .andExpect(status().isOk());
     }
 
-// SPRINT 3
-
-
-/**    @Test
-    public void Test_berryUpgrade() throws Exception {
-        //given
-        int amount = 3;
-        String userName = "userName";
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/games/1234/berries")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test")
-                .content(String.valueOf(amount))
-                .content(userName);
-
-        // then
-        mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void Test_getCards() throws Exception {
-
-        //given
-        Map<Long,String> testMap = new HashMap<Long,String>();
-        testMap.put(101L,"testMon");
-
-        // this mocks the UserService -> we define above what the gameService should return when getUsers() is called
-        given(cardService.getCards()).willReturn(testMap);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder getRequest = get("/cards")
-                .header("Token", "Test");
-
-        // then
-        mockMvc.perform(getRequest)
-                .andExpect(status().isOk());
-        //how to test returned HashMap
-    }
-
-    @Test
-    public void Test_getCard() throws Exception {
-
-        //given
-        Card card = new Card();
-        card.setName("firstCard");
-
-        // this mocks the UserService -> we define above what the gameService should return when getUsers() is called
-        given(cardService.getCard(1)).willReturn(card);
-
-        // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder getRequest = get("/cards/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Token", "Test");
-
-        // then
-        mockMvc.perform(getRequest)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("firstCard"));
-    }
-**/
-
 
     /**
      * Helper Method to convert userPostDTO into a JSON string such that the input can be processed
