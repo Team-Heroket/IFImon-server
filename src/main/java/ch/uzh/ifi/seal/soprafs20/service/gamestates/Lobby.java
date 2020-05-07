@@ -55,7 +55,7 @@ public class Lobby implements GameState {
     }
 
     @Override
-    public void startGame(Game game, Integer npc, int deckSize, long buffer) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation) {
 
         log.info(String.format("Start game request was called on %s. Amount of NPCs: %s.", game.getToken(), npc));
 
@@ -69,7 +69,7 @@ public class Lobby implements GameState {
         //give each player a deck and set turn player = game.creator if not done already
         game.setTurnPlayer(game.getCreator());
 
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(generation);
         for (Player player: game.getPlayers()) {
             // # players = # berries
             player.setBerries(game.getPlayers().size());

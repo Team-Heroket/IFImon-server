@@ -5,6 +5,7 @@ public class GameTokenPutDTO {
 
     private int npc;
     private int card;
+    private int generation;
 
 
     public int getNpc() {
@@ -20,5 +21,13 @@ public class GameTokenPutDTO {
 
     public void setCard(int card) {
         this.card = card;
+    }
+
+    public int getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(int generation) {
+        this.generation = generation;
     }
 }

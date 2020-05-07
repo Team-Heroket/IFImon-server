@@ -57,12 +57,12 @@ public class Finished implements GameState {
     }
 
     @Override
-    public void startGame(Game game, Integer npc, int deckSize, long buffer) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation) {
 
         log.debug("Rematch requested.");
 
         // create new decks
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(generation);
         for (Player player: game.getPlayers()) {
             player.setBerries(game.getPlayers().size());
             player.setDeck(new Deck(uniquePkmId, deckSize));
