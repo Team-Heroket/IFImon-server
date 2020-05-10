@@ -71,7 +71,7 @@ public class CardControllerTest {
     @MockBean
     private PokeAPICacheService pokeAPICacheService;
 
-/** sprint 5
+
     @Test
     public void Test_getCard() throws Exception {
         // given
@@ -80,7 +80,7 @@ public class CardControllerTest {
 
 
         // this mocks the cardservice
-        given(cardService.getCard(Mockito.any())).willReturn(card);
+        given(cardService.getCard(Mockito.anyInt())).willReturn(card);
         given(userRepository.findByToken(Mockito.any())).willReturn(testUser);
 
 
@@ -94,6 +94,6 @@ public class CardControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(card.getName())));
     }
-**/
+
 
 }
