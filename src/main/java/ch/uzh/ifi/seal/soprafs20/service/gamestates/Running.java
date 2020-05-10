@@ -76,7 +76,7 @@ public class Running implements GameState {
 
     }
     @Override
-    public void startGame(Game game, Integer npc, int deckSize, long buffer) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation) {
         throw new GameBadRequestException("Game already started");
     }
     @Override
@@ -321,13 +321,22 @@ public class Running implements GameState {
 
 
 
-    public boolean isFinished(Game game){ // TODO: finish game when only bots left.
+    public boolean isFinished(Game game){
+
+        boolean onlyBot = true;
+        boolean onlyOnePlayerHasCards = true;
+
         for (Player player : game.getPlayers()){
             if((!player.getDeck().isEmpty() && !isWinner(game,player)) || game.getWinners().size()>1){
-                return false;
+                onlyOnePlayerHasCards = false;
+            }
+            if (!(player instanceof Npc) && !player.getDeck().isEmpty()) {
+                onlyBot = false;
             }
         }
-        return true;
+
+        return onlyOnePlayerHasCards || onlyBot;
+
     }
 
     public boolean isWinner(Game game, Player player){
