@@ -142,7 +142,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.LOBBY);
 
         // then check if game is in running after the call
-        gameService.startGame(0,testGame,3);
+        gameService.startGame(0,testGame,3,1);
         assertEquals(testGame.getState(),GameStateEnum.RUNNING);
     }
 
@@ -155,7 +155,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.RUNNING);
 
         // then if exception if game is already running
-        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame,3));
+        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame,3,1));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.FINISHED);
 
         // then if exception if game is already finished
-        gameService.startGame(0,testGame,3);
+        gameService.startGame(0,testGame,3,1);
         assertEquals(testGame.getState(),GameStateEnum.RUNNING);
     }
 
@@ -360,14 +360,14 @@ public class GameServiceTest {
         testUser.setUsername("turnplayer");
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(1);
         player1.setDeck(new Deck(uniquePkmId,2));
 
         User secondUser = new User();
         secondUser.setId(200L);
         secondUser.setUsername("hansundheiri");
         Player player2 = new Player(secondUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator(1);
         player2.setDeck(new Deck(uniquePkmId2,2));
 
         Game game = new Game(player1);
@@ -392,14 +392,14 @@ public class GameServiceTest {
         Player player1 = new Player(testUser);
         List<Player> winners = new ArrayList<>();
         winners.add(player1);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(1);
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
         secondUser.setId(20L);
         secondUser.setStatistics(new Statistics());
         Player player2 = new Player(secondUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator(1);
         player2.setDeck(new Deck(uniquePkmId2,1));
 
         Game game = new Game(player1);
@@ -419,12 +419,12 @@ public class GameServiceTest {
     public void Test_getWinner_whileRunningState() {
         //give a game in running state and two users with 1 cards each
         Player player1 = new Player(testUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(1);
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
         Player player2 = new Player(secondUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator(1);
         player2.setDeck(new Deck(uniquePkmId2,1));
 
         Game game = new Game(player1);
@@ -444,12 +444,12 @@ public class GameServiceTest {
     public void Test_selectCategory_whileRunningState() {
         //give a game in running state and two users with 1 cards each
         Player player1 = new Player(testUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(1);
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
         Player player2 = new Player(secondUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator(1);
         player2.setDeck(new Deck(uniquePkmId2,1));
 
         Game game = new Game(player1);
@@ -469,12 +469,12 @@ public class GameServiceTest {
     public void Test_selectCategory_invalidStateLobby() {
         //give a game in lobby state and two users with 1 cards each
         Player player1 = new Player(testUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(1);
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
         Player player2 = new Player(secondUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator(1);
         player2.setDeck(new Deck(uniquePkmId2,1));
 
         Game game = new Game(player1);
@@ -490,12 +490,12 @@ public class GameServiceTest {
     public void Test_selectCategory_invalidStateFinished() {
         //give a game in running state and two users with 1 cards each
         Player player1 = new Player(testUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(1);
         player1.setDeck(new Deck(uniquePkmId,1));
 
         User secondUser = new User();
         Player player2 = new Player(secondUser);
-        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator();
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator(1);
         player2.setDeck(new Deck(uniquePkmId2,1));
 
         Game game = new Game(player1);
