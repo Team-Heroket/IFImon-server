@@ -169,7 +169,9 @@ public class Card implements Serializable, ICard {
             j+=1;
         }
         for (int i = 0; i <j ; i++) {
-            this.evolutionNames.remove(0);
+            if (this.evolutionNames.size() > 0) {
+                this.evolutionNames.remove(0);
+            }
         }
 
 

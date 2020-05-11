@@ -18,7 +18,7 @@ public class Statistics implements Serializable {
     private Long id;
 
     @Column(nullable = false)
-    @ElementCollection(targetClass=Integer.class)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass=Integer.class)
     private List<Integer> encounteredPokemon;
 
     @Column(nullable = false)

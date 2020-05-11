@@ -6,6 +6,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
+import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.service.StatisticsHelper;
 import org.hibernate.cfg.NotYetImplementedException;
 import org.slf4j.Logger;
@@ -76,7 +77,7 @@ public class Running implements GameState {
 
     }
     @Override
-    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation, GameRepository gameRepository) {
         throw new GameBadRequestException("Game already started");
     }
     @Override

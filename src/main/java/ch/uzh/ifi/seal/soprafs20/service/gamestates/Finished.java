@@ -8,6 +8,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
+import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.service.StatisticsHelper;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.GameState;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
@@ -57,7 +58,7 @@ public class Finished implements GameState {
     }
 
     @Override
-    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation, GameRepository gameRepository) {
 
         log.debug("Rematch requested.");
 

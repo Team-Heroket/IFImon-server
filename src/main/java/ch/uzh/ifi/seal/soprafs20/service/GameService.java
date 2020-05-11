@@ -122,7 +122,7 @@ public class GameService {
     public void startGame(Integer npc, Game game, int deckSize, int generation){
 
         GameState state = this.getState(game);
-        state.startGame(game, npc, deckSize, 15000L, generation);
+        state.startGame(game, npc, deckSize, 15000L, generation, this.gameRepository);
         // save changes
         this.gameRepository.save(game);
     }
