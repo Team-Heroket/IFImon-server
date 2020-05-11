@@ -1,12 +1,10 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.entity.Card;
-import ch.uzh.ifi.seal.soprafs20.entity.Deck;
-import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.repository.CardRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
+import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.CardGetDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.swing.text.html.Option;
@@ -31,6 +30,13 @@ public class CardServiceTest {
     private CardService cardService;
 
     private Card card;
+
+    @Mock
+    private PokeAPICacheRepository pokeAPICacheRepository;
+
+    @MockBean
+    private PokeAPICacheService pokeAPICacheService;
+
 
     // the cardservicetest tests most methods from the deck class
 
@@ -74,4 +80,32 @@ public class CardServiceTest {
         assertEquals(2,deck.peekCard().getPokemonId());
     }
 
+/** cant mock static methods
+    @Test
+    public void Test_evolveTopPeekCard() {
+        // create a deck with a bulbasaur
+        Deck deck = new Deck();
+        deck.addCard(new Card(1));
+        assertEquals(1,deck.peekCard().getPokemonId());
+
+        // evolve to ivysaur
+        deck.evolveCard(1);
+        assertEquals(2,deck.peekCard().getPokemonId());
+
+        // evolve to bisaflor
+        deck.evolveCard(1);
+        assertEquals(3,deck.peekCard().getPokemonId());
+    }
+    **/
+
+    @Test
+    public void Test_isEmptyDeck() {
+        // create an empty deck
+        Deck deck = new Deck();
+        assertEquals(true, deck.isEmpty());
+
+        // add a card and deck should not be empty
+        deck.addCard(new Card(1));
+        assertEquals(false, deck.isEmpty());
+    }
 }
