@@ -206,19 +206,6 @@ public class GameServiceTest {
     }
 
     @Test
-    public void startGame() {
-        // given a game in lobby state
-        User testUser = new User();
-        testUser.setId(100L);
-        testGame = new Game();
-        testGame.setState(GameStateEnum.LOBBY);
-
-        // then check if game is in running after the call
-        gameService.startGame(0,testGame,1,1);
-        assertEquals(GameStateEnum.RUNNING,testGame.getState());
-    }
-
-    @Test
     public void startGame_invalidStateRunning() {
         // given a game in runningState
         User testUser = new User();
@@ -227,7 +214,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.RUNNING);
 
         // then if exception if game is already running
-        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame,1,1));
+        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame,2,1));
     }
 
     @Test

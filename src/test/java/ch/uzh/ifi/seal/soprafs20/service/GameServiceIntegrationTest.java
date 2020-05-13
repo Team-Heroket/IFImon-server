@@ -6,6 +6,7 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.user.UserUnauthorizedException;
 import ch.uzh.ifi.seal.soprafs20.repository.*;
 import ch.uzh.ifi.seal.soprafs20.constant.*;
 
+import ch.uzh.ifi.seal.soprafs20.service.gamestates.Lobby;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -86,4 +87,41 @@ public class GameServiceIntegrationTest {
 
     }
 
+    @Test
+    public void startGame() {
+        // a testuser with essential parameteres assigned
+        User testUser = new User();
+        testUser.setUsername("testUser");
+        testUser.setAvatarId(5);
+        testUser.setPassword("passWordTest");
+        testUser.setCreationDate("tday");
+        // and a testgame
+        Game testGame = new Game();
+        testGame.setGameName("testGameName");
+        testGame.setState(GameStateEnum.LOBBY);
+        testGame.setCreationTime("tday");
+
+        // save game in repository
+        gameService.createLobby(testGame,testUser);
+
+        // then start game in lobby state
+        Lobby lobby = new Lobby();
+        lobby.startGame(testGame, 0, 2, 15000L, 1, this.gameRepository);
+        int i=0;
+        while(i<65){
+            // check if thread is done
+            if(testGame.getState()==GameStateEnum.RUNNING){
+                break;
+            }
+            else{
+                try{
+                    Thread.sleep(1000L);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+            i += 1;
+        }
+        assertEquals(GameStateEnum.RUNNING,testGame.getState());
+    }
 }
