@@ -101,7 +101,7 @@ public class UniqueBaseEvolutionPokemonGenerator {
 
     private final ArrayList<Integer> sixthGenPokemons = new ArrayList<>(Arrays.asList(
             650, 653, 656, 659, 661, 664, 667, 669, 672, 674, 676, 677, 679, 682, 684, 686, 688, 690, 692, 694, 696,
-            698, 700, 701, 702, 703, 704, 708, 710, 712, 714, 716, 717, 718, 719, 720, 721
+            698, 700, 701, 702, 703, 704, 708/*, 710*/, 712, 714, 716, 717, 718, 719, 720, 721
     ));
 
     private final ArrayList<Integer> seventhGenPokemons = new ArrayList<>(Arrays.asList(

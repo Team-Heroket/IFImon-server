@@ -4,6 +4,9 @@ package ch.uzh.ifi.seal.soprafs20.entity;
 import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.Element;
 import ch.uzh.ifi.seal.soprafs20.rest.PokeAPI;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -13,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
 
 @Entity
 @Table(name = "CACHED_CARD")
@@ -27,7 +31,7 @@ public class CachedCard implements Serializable, ICard {
     private int pokemonId;
 
     @Column(nullable = false)
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Map<Category,Integer> categories;
 
     @Column(nullable = false)
@@ -40,11 +44,12 @@ public class CachedCard implements Serializable, ICard {
     private String cryURL;
 
     @Column(nullable = false)
-    @ElementCollection(targetClass=Element.class)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass=Element.class)
     private List<Element> elements;
 
     @Column(nullable = false)
     @ElementCollection(targetClass=String.class)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> evolutionNames;
 
     // For the DTOs

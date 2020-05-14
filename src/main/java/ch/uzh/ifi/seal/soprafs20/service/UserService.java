@@ -99,21 +99,10 @@ public class UserService {
             changingUser.setAvatarId(user.getAvatarId());
         }
 
-        /*
-        // Changing ranting on user
-        changingUser = userRepository.save(changingUser);
+        //change seenTutorial
+        changingUser.setSeenTutorial(user.getSeenTutorial());
 
-        Optional<Statistics> optionalStatistics = this.statisticRepository.findById(changingUser.getId());
-        if (optionalStatistics.isEmpty()) {
-            throw new SopraServiceException("Could not load statistics from user");
-        }
-
-        Statistics changingStatistics = optionalStatistics.get();
-
-        changingStatistics.setRating(changingStatistics.getRating()+10);
-
-        this.statisticRepository.save(changingStatistics);
-         */
+        log.debug("User settings updated.");
 
         userRepository.save(changingUser);
     }

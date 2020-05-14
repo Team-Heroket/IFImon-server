@@ -122,7 +122,7 @@ public class GameService {
     public void startGame(Integer npc, Game game, int deckSize, int generation){
 
         GameState state = this.getState(game);
-        state.startGame(game, npc, deckSize, 15000L, generation);
+        state.startGame(game, npc, deckSize, 15000L, generation, this.gameRepository);
         // save changes
         this.gameRepository.save(game);
     }
@@ -135,19 +135,6 @@ public class GameService {
 
         this.gameRepository.save(game);
     }
-
-    /*
-    public void calculateWinner(Game game){
-        GameState state = this.getState(game);
-
-        game.resetWinners();
-        this.gameRepository.save(game);
-
-        // selects category and calculates winner
-        game.setWinners(state.getWinner(game));
-        this.gameRepository.save(game);
-    }
-     */
 
     public void useBerries(Game game, Player player, Integer amount){
 
@@ -162,6 +149,15 @@ public class GameService {
     public void nextTurn(Game game){
         GameState state = this.getState(game);
         state.nextTurn(game);
+        this.gameRepository.save(game);
+
+    }
+
+    public void putEmote(Game game, User user, Integer emote){
+        GameState state = this.getState(game);
+
+        state.putEmote(getPlayerFromUser(game,user), emote);
+
         this.gameRepository.save(game);
 
     }

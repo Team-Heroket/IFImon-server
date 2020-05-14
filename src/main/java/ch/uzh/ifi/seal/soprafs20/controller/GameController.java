@@ -258,8 +258,33 @@ public class GameController {
         gameService.validateCreator(gameToken,user);
 
         gameService.nextTurn(game);
+    }
 
+    /** This request lets a card evolve **/
+    @PutMapping("/games/{gameToken}/emotes")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void nextTurn(@PathVariable String gameToken, @RequestHeader("Token") String token, @RequestBody EmoteDTO emoteDTO) {
+        //validate gameToken and get object
+        gameService.validateGame(gameToken);
+        Game game=gameService.getGame(gameToken);
 
+        //authorize user and get object
+        userService.validateUser(token);
+        User user=userService.getUserByToken(token);
+
+        //check if user is part of game
+        gameService.validatePlayer(gameToken,user);
+
+        Integer emote=emoteDTO.getEmote();
+
+        if (emote < 1) {
+            emote = 0;
+        }
+        if (emote > 5) {
+            emote = 5;
+        }
+        gameService.putEmote(game, user, emote);
     }
 
 

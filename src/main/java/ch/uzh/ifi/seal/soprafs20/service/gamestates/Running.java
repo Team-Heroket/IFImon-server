@@ -6,6 +6,7 @@ import ch.uzh.ifi.seal.soprafs20.entity.*;
 import ch.uzh.ifi.seal.soprafs20.exceptions.SopraServiceException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameBadRequestException;
 import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameForbiddenException;
+import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.service.StatisticsHelper;
 import org.hibernate.cfg.NotYetImplementedException;
 import org.slf4j.Logger;
@@ -76,7 +77,7 @@ public class Running implements GameState {
 
     }
     @Override
-    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation) {
+    public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation, GameRepository gameRepository) {
         throw new GameBadRequestException("Game already started");
     }
     @Override
@@ -127,6 +128,7 @@ public class Running implements GameState {
             game.setState(GameStateEnum.FINISHED);
             StatisticsHelper.doPostStatistics(game);
             log.debug("Game finished.");
+            npcSelectEmote(game);
             return;
         }
 
@@ -317,9 +319,16 @@ public class Running implements GameState {
         this.selectCategory(game, randomEnum(Category.class));
     }
 
+    private void npcSelectEmote(Game game) {
 
+        Random random = new Random();
 
-
+        for (Player player: game.getPlayers()) {
+            if (player instanceof Npc) {
+                player.setEmote(random.nextInt(5)+1);
+            }
+        }
+    }
 
     public boolean isFinished(Game game){
 
@@ -381,6 +390,9 @@ public class Running implements GameState {
 
         return true;
     }
+
+    @Override
+    public void putEmote(Player player, Integer emote){throw new GameBadRequestException("Can't put Emotes during running Game");}
 
 
 }

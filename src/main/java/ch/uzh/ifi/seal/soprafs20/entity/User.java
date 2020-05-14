@@ -59,6 +59,9 @@ public class User implements Serializable, Comparable {
     @Column(nullable=false)
     private boolean npc=false;
 
+    @Column(nullable = false)
+    private boolean seenTutorial = false;
+
 
 
     public Long getId() {
@@ -136,5 +139,13 @@ public class User implements Serializable, Comparable {
 
     public void setNpc(boolean npc) {
         this.npc = npc;
+    }
+
+    public boolean getSeenTutorial() {
+        return seenTutorial;
+    }
+
+    public void setSeenTutorial(boolean seenTutorial) {
+        this.seenTutorial = seenTutorial;
     }
 }

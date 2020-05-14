@@ -24,6 +24,9 @@ public class Player {
     @Column
     private Integer berries;
 
+    @Column
+    private Integer emote=0;
+
     public Player() {};
 
     public Player(User user) {
@@ -59,4 +62,12 @@ public class Player {
     }
 
     public void resetUser(){ this.user=null;}
+
+    public Integer getEmote() {
+        return emote;
+    }
+
+    public void setEmote(Integer emote) {
+        this.emote = emote;
+    }
 }

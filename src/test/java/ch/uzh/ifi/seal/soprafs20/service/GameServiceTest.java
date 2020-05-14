@@ -110,7 +110,51 @@ public class GameServiceTest {
     }
 
     @Test
-    public void Test_removeUser() {
+    public void Test_addUser_invalidStateRunning() {
+        // given a game and a creator
+        User testUser = new User();
+        testUser.setId(100L);
+        testGame = new Game(new Player(testUser));
+        testGame.setToken("testGameToken");
+        testGame.setState(GameStateEnum.RUNNING);
+        testGame.setGameName("helloGame");
+        testGame.setMode(Mode.SOCIAL);
+
+        // ... and a second user to add
+        User secondTestUser = new User();
+        secondTestUser.setId(200L);
+
+        // when findByToken
+        Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(testGame);
+
+        // then check if correct exception is thrown in running state
+        assertThrows(GameBadRequestException.class, () -> gameService.addPlayer("testToken",secondTestUser));
+    }
+
+    @Test
+    public void Test_addUser_invalidStateFinished() {
+        // given a game and a creator
+        User testUser = new User();
+        testUser.setId(100L);
+        testGame = new Game(new Player(testUser));
+        testGame.setToken("testGameToken");
+        testGame.setState(GameStateEnum.FINISHED);
+        testGame.setGameName("helloGame");
+        testGame.setMode(Mode.SOCIAL);
+
+        // ... and a second user to add
+        User secondTestUser = new User();
+        secondTestUser.setId(200L);
+
+        // when findByToken
+        Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(testGame);
+
+        // then check if correct exception is thrown in finished state
+        assertThrows(GameBadRequestException.class, () -> gameService.addPlayer("testToken",secondTestUser));
+    }
+
+    @Test
+    public void Test_removeUser_LobbyState() {
         // given a game and a creator
         User testUser = new User();
         testUser.setId(100L);
@@ -134,16 +178,31 @@ public class GameServiceTest {
     }
 
     @Test
-    public void startGame() {
-        // given a game in lobby state
+    public void Test_removeUser_whileRunningState() {
+        // given a game and a creator
         User testUser = new User();
         testUser.setId(100L);
-        testGame = new Game();
+        Player player1 = new Player(testUser);
+        testGame = new Game(player1);
+        testGame.setToken("testGameToken");
         testGame.setState(GameStateEnum.LOBBY);
+        testGame.setGameName("helloGame");
+        testGame.setMode(Mode.SOCIAL);
+        testGame.setTurnPlayer(player1);
 
-        // then check if game is in running after the call
-        gameService.startGame(0,testGame,3,1);
-        assertEquals(testGame.getState(),GameStateEnum.RUNNING);
+        // ... and a second user to add and remove
+        User secondTestUser = new User();
+        secondTestUser.setUsername("leaver");
+        secondTestUser.setId(200L);
+
+        // when findByToken
+        Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(testGame);
+
+        // now set game to running state and then remove a player
+        gameService.addPlayer("testToken",secondTestUser);
+        testGame.setState(GameStateEnum.RUNNING);
+        gameService.removePlayer("testToken",secondTestUser);
+        assertThrows(java.lang.IndexOutOfBoundsException.class, () -> testGame.getPlayers().get(1));
     }
 
     @Test
@@ -155,20 +214,7 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.RUNNING);
 
         // then if exception if game is already running
-        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame,3,1));
-    }
-
-    @Test
-    public void startGame_rematchInFinishedState() {
-        // given a game in finishedstate
-        User testUser = new User();
-        testUser.setId(100L);
-        testGame = new Game();
-        testGame.setState(GameStateEnum.FINISHED);
-
-        // then if exception if game is already finished
-        gameService.startGame(0,testGame,3,1);
-        assertEquals(testGame.getState(),GameStateEnum.RUNNING);
+        assertThrows(GameBadRequestException.class, () -> gameService.startGame(0,testGame,2,1));
     }
 
     @Test
@@ -438,6 +484,31 @@ public class GameServiceTest {
         // then check if parameters changed correctly
         ArrayList<Player> winners = running.getWinner(game);
         assertTrue(winners.size()>0);
+    }
+
+    @Test
+    public void Test_getWinner_whileFinishedState() {
+        //give a game in running state and two users with 1 cards each
+        Player player1 = new Player(testUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(1);
+        player1.setDeck(new Deck(uniquePkmId,1));
+
+        User secondUser = new User();
+        Player player2 = new Player(secondUser);
+        UniqueBaseEvolutionPokemonGenerator uniquePkmId2 = new UniqueBaseEvolutionPokemonGenerator(1);
+        player2.setDeck(new Deck(uniquePkmId2,1));
+
+        Game game = new Game(player1);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+        game.setCategory(Category.ATK);
+
+        // initiate a running state
+        Finished finished = new Finished();
+
+        // then check if parameters changed correctly
+        ArrayList<Player> winners = finished.getWinner(game);
+        assertNull(winners);
     }
 
     @Test
@@ -765,3 +836,34 @@ public class GameServiceTest {
         assertTrue(running.isFinished(game));
     }
 }
+
+                                                                                                                                                                                                                                                                                                                                                /*░░░░░░░░░░░░░░░█████████░░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░░██░░░░█░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░██░░░░░░░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░█░░░░░░░░░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░█░░░░░░░░░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░██████████████░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░█░░░░░░░░░░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░█░░░░░░░░░░░██░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░█░░░░░░░░░░░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░█░░░░░░░░░░░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░█░░░░░░░░░░░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░█░░░░░░░█░░░░░█░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░██░░░░░░░░░░░░█░░██████░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░█░░░░░░░░░░░█████░░░░██░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░█░░░░░░░░░░██░░░░░░░░░█░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░██████░░░░░░░░░░██░░░░░░░░░██░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░███░░░░██░░░░░░░░░░░░░░█░░░░░░█░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░█░░░░░░░░░░░░░░░░░░░░░░░░░░░░██░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░█░░░░░░░░░░░█░░░░░█░░░░░░░░░░░█░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░██░█░░░░░░░░░░░░░░░░░░░░█░░░░██░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░██░░░░░█░░░░░░░░░░░░░░░░░░██░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░███░░░░░░░░█░░░░█░░░█████░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░██░░░░░░░░░░░░░░███░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░░░██░░░░█░░░░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░░░░██████░░░░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+                                                                                                                                                                                                                                                                                                                                                ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░*/

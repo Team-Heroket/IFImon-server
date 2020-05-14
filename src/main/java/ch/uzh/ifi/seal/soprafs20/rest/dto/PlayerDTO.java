@@ -12,6 +12,7 @@ public class PlayerDTO {
     private Long id;
     private Integer berries;
     private Deck deck;
+    private Integer emote;
 
 
     public UserGetDTO getUser() { return user; }
@@ -34,5 +35,13 @@ public class PlayerDTO {
 
     public void setDeck(Deck deck) {
         this.deck = deck;
+    }
+
+    public Integer getEmote() {
+        return emote;
+    }
+
+    public void setEmote(Integer emote) {
+        this.emote = emote;
     }
 }
