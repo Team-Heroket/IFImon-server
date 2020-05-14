@@ -218,21 +218,6 @@ public class GameServiceTest {
     }
 
     @Test
-    public void startGame_rematchInFinishedState() {
-        // given a game in finishedstate
-        User testUser = new User();
-        testUser.setId(100L);
-        testGame = new Game();
-        testGame.setState(GameStateEnum.FINISHED);
-        testGame.setGeneration(1);
-
-        // then if exception if game is already finished
-        gameService.startGame(0,testGame,1,0); // this generation integer is a dummy value
-        assertEquals(testGame.getState(),GameStateEnum.RUNNING);
-        // TODO: Update regarding to threads
-    }
-
-    @Test
     public void Test_getGame() {
         // given a game
         User testUser = new User();
