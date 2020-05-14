@@ -22,6 +22,8 @@ public class UserGetDTO {
 
     private boolean npc;
 
+    private boolean seenTutorial;
+
 
 
 
@@ -62,5 +64,13 @@ public class UserGetDTO {
 
     public void setNpc(boolean npc) {
         this.npc = npc;
+    }
+
+    public boolean getSeenTutorial() {
+        return seenTutorial;
+    }
+
+    public void setSeenTutorial(boolean seenTutorial) {
+        this.seenTutorial = seenTutorial;
     }
 }

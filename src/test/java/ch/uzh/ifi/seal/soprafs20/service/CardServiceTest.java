@@ -108,4 +108,14 @@ public class CardServiceTest {
         deck.addCard(new Card(1));
         assertEquals(false, deck.isEmpty());
     }
+
+    @Test
+    public void Test_initializeCard() {
+        // create a bulbasaur
+        Card testCard = new Card(1);
+
+        assertEquals("Bulbasaur",testCard.getName());
+        assertEquals(1,testCard.getPokemonId());
+        assertNotEquals(0, testCard.getEvolutionNames().size());
+    }
 }

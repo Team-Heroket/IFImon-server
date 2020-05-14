@@ -10,6 +10,8 @@ public class UserPutDTO {
 
     private Integer avatarId;
 
+    private boolean seenTutorial;
+
     public Integer getAvatarId() {
         return avatarId;
     }
@@ -40,5 +42,13 @@ public class UserPutDTO {
 
     public void setToken(String input) {
         this.token = input;
+    }
+
+    public boolean getSeenTutorial() {
+        return seenTutorial;
+    }
+
+    public void setSeenTutorial(boolean seenTutorial) {
+        this.seenTutorial = seenTutorial;
     }
 }
