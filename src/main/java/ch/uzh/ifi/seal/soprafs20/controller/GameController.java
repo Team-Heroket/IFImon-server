@@ -264,7 +264,7 @@ public class GameController {
     @PutMapping("/games/{gameToken}/emotes")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void nextTurn(@PathVariable String gameToken, @RequestHeader("Token") String token, @RequestBody EmoteDTO emoteDTO) {
+    public void emote(@PathVariable String gameToken, @RequestHeader("Token") String token, @RequestBody EmoteDTO emoteDTO) {
         //validate gameToken and get object
         gameService.validateGame(gameToken);
         Game game=gameService.getGame(gameToken);
