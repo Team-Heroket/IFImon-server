@@ -8,6 +8,7 @@ import ch.uzh.ifi.seal.soprafs20.rest.mapper.DTOMapper;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
 
 /**
  * The temporary values of a player in a game
@@ -38,7 +39,9 @@ public class Npc extends Player{
         UserPostDTO userPostDTO = new UserPostDTO();
         userPostDTO.setPassword("none");
         userPostDTO.setUsername(name + "_BOT");
-        userPostDTO.setAvatarId(1);
+        //set random avatar
+        Random random=new Random();
+        userPostDTO.setAvatarId(random.nextInt(59)+1);
         User npcUser = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
         //set user object online

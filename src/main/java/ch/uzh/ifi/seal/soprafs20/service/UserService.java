@@ -100,7 +100,7 @@ public class UserService {
         }
 
         //change seenTutorial
-        changingUser.setSeenTutorial(user.getSeenTutorial());
+        changingUser.setSeenTutorial(true);
 
         log.debug("User settings updated.");
 
