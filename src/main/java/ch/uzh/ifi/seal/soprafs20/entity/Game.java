@@ -28,6 +28,9 @@ public class Game implements Serializable {
     @Column(nullable = false)
     private String token;
 
+    @Column()
+    private Integer generation;
+
     // Should only be readable!
     @OneToOne(cascade = CascadeType.ALL)
     private Player creator;
@@ -231,5 +234,13 @@ public class Game implements Serializable {
 
     public void setWinners(List<Player> winner) {
         this.winners = winner;
+    }
+
+    public Integer getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(Integer generation) {
+        this.generation = generation;
     }
 }
