@@ -278,6 +278,12 @@ public class GameController {
 
         Integer emote=emoteDTO.getEmote();
 
+        if (emote < 1) {
+            emote = 0;
+        }
+        if (emote > 5) {
+            emote = 5;
+        }
         gameService.putEmote(game, user, emote);
     }
 

@@ -128,6 +128,7 @@ public class Running implements GameState {
             game.setState(GameStateEnum.FINISHED);
             StatisticsHelper.doPostStatistics(game);
             log.debug("Game finished.");
+            npcSelectEmote(game);
             return;
         }
 
@@ -318,9 +319,16 @@ public class Running implements GameState {
         this.selectCategory(game, randomEnum(Category.class));
     }
 
+    private void npcSelectEmote(Game game) {
 
+        Random random = new Random();
 
-
+        for (Player player: game.getPlayers()) {
+            if (player instanceof Npc) {
+                player.setEmote(random.nextInt(5)+1);
+            }
+        }
+    }
 
     public boolean isFinished(Game game){
 

@@ -136,19 +136,6 @@ public class GameService {
         this.gameRepository.save(game);
     }
 
-    /*
-    public void calculateWinner(Game game){
-        GameState state = this.getState(game);
-
-        game.resetWinners();
-        this.gameRepository.save(game);
-
-        // selects category and calculates winner
-        game.setWinners(state.getWinner(game));
-        this.gameRepository.save(game);
-    }
-     */
-
     public void useBerries(Game game, Player player, Integer amount){
 
         GameState state = this.getState(game);
@@ -169,8 +156,7 @@ public class GameService {
     public void putEmote(Game game, User user, Integer emote){
         GameState state = this.getState(game);
 
-        state.putEmote(game, getPlayerFromUser(game,user), emote);
-
+        state.putEmote(getPlayerFromUser(game,user), emote);
 
         this.gameRepository.save(game);
 
