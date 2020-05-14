@@ -150,4 +150,7 @@ public class Lobby implements GameState {
     public ArrayList<Player> getWinner(Game game) {
         return null;
     }
+
+    @Override
+    public void putEmote(Player player, Integer emote){throw new GameBadRequestException("Can't put Emotes in Lobby");}
 }

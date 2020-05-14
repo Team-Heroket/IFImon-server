@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public interface GameState {
     public void addPlayer(Game game, User user);
+    public void putEmote(Player player, Integer emote);
     public void removePlayer(Game game, User user);
     public void selectCategory(Game game, Category category);
     public void useBerries(Game game, Integer usedBerries, Player player);

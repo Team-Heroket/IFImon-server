@@ -166,6 +166,16 @@ public class GameService {
 
     }
 
+    public void putEmote(Game game, User user, Integer emote){
+        GameState state = this.getState(game);
+
+        state.putEmote(game, getPlayerFromUser(game,user), emote);
+
+
+        this.gameRepository.save(game);
+
+    }
+
     public Game getGame(String gameToken){
         return this.gameRepository.findByToken(gameToken);
     }

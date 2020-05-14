@@ -70,6 +70,7 @@ public class Finished implements GameState {
         UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(game.getGeneration());
         for (Player player: game.getPlayers()) {
             player.setBerries(game.getPlayers().size());
+            player.setEmote(0);
         }
 
 
@@ -127,6 +128,12 @@ public class Finished implements GameState {
         log.debug("Reset category");
 
 
+
+    }
+
+    @Override
+    public void putEmote(Player player, Integer emote){
+        player.setEmote(emote);
     }
 
     @Override

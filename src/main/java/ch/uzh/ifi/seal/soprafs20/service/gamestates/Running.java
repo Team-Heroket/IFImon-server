@@ -383,5 +383,8 @@ public class Running implements GameState {
         return true;
     }
 
+    @Override
+    public void putEmote(Player player, Integer emote){throw new GameBadRequestException("Can't put Emotes during running Game");}
+
 
 }
