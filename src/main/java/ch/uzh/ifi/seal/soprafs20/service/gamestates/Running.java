@@ -252,8 +252,8 @@ public class Running implements GameState {
             // If winner left game, assign a new turn-player
             for (Player player: game.getPlayers()) {
                 if (!(player instanceof Npc)) {
-                    log.debug(String.format("Winner left, setting %s as turn-player", winner.getUser().getUsername()));
-                    game.setTurnPlayer(winner);
+                    log.debug(String.format("Winner left, setting %s as turn-player", player.getUser().getUsername()));
+                    game.setTurnPlayer(player);
                     return;
                 }
             }
