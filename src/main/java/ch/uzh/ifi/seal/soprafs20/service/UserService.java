@@ -88,6 +88,7 @@ public class UserService {
 
         //change username
         if (user.getUsername() != null){
+            checkIfUserExists(user);
             changingUser.setUsername(user.getUsername());
         }
         //change password
