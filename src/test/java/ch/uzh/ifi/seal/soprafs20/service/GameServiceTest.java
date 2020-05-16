@@ -740,7 +740,7 @@ public class GameServiceTest {
         player2.setDeck(deck2);
 
         // given a game with the two players and player1 as winner
-        Game game = new Game(player1);
+        Game game = new Game(player2);
         game.setState(GameStateEnum.RUNNING);
         game.addPlayer(player2);
         List<Player> winners = new ArrayList<>();
@@ -751,6 +751,7 @@ public class GameServiceTest {
         Running running = new Running();
 
         // then distribute the played/peak cards to the winner (player1)
+        running.distributeCards(game);
         running.distributeCards(game);
 
         //check if ivysaur (pokemonId 2) is on top of player1 deck again
@@ -765,6 +766,7 @@ public class GameServiceTest {
         //give a game in running state and 2 players with player2 as winner and player1 as turnplayer
         User testUser = new User();
         testUser.setId(20L);
+        testUser.setUsername("testUsername");
         Player player1 = new Player(testUser);
 
         User secondUser = new User();
@@ -775,11 +777,14 @@ public class GameServiceTest {
         List<Player> winners = new ArrayList<>();
         winners.add(player2);
 
-        Game game = new Game(player1);
+        Game game = new Game(player2);
+        game.setToken("testGametoken");
         game.setWinners(winners);
         game.setTurnPlayer(player1);
         game.setState(GameStateEnum.RUNNING);
         game.addPlayer(player2);
+        game.setCategory(Category.ATK);
+
 
         // initiate a running state
         Running running = new Running();
@@ -787,6 +792,73 @@ public class GameServiceTest {
         // then check if player2 (=winner) is now the turnplayer
         running.setNewTurnPlayer(game);
         assertTrue(game.getTurnPlayer().getUser().getId()==secondUser.getId());
+
+        // now check that turnplayer gets passes on while winner leaves the game before getting his turn again
+        game.setTurnPlayer(player1);
+        Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(game);
+        gameService.removePlayer(game.getToken(),player1.getUser());
+        running.setNewTurnPlayer(game);
+        assertEquals(game.getTurnPlayer().getUser().getId(),secondUser.getId());
+    }
+
+    @Test
+    public void Test_newTurnPlayer_inRunning_butTwoWinners() {
+        //give a game in running state and 2 players with player2 as winner and player1 as turnplayer
+        User testUser = new User();
+        testUser.setId(20L);
+        testUser.setUsername("testUsername");
+        Player player1 = new Player(testUser);
+        player1.setDeck(new Deck());
+
+        User secondUser = new User();
+        secondUser.setId(1000L);
+        secondUser.setUsername("secondUserTest");
+        Player player2 = new Player(secondUser);
+        Deck deck = new Deck();
+        deck.addCard(new Card(1));
+        player2.setDeck(deck);
+
+
+        List<Player> winners = new ArrayList<>();
+        winners.add(player1);
+        winners.add(player2);
+
+        Game game = new Game(player1);
+        game.setToken("testGametoken");
+        game.setWinners(winners);
+        game.setTurnPlayer(player1);
+        game.setState(GameStateEnum.RUNNING);
+        game.addPlayer(player2);
+        game.setCategory(Category.ATK);
+
+        // initiate a running state
+        Running running = new Running();
+
+        // then check if player2 (=winner) is now the turnplayer
+        running.setNewTurnPlayer(game);
+        assertTrue(game.getTurnPlayer().getUser().getId()==testUser.getId());
+
+        // reset
+
+        // set turnplyaer to player1 and kick player1
+        game.setTurnPlayer(player1);
+        Mockito.when(gameRepository.findByToken(Mockito.anyString())).thenReturn(game);
+        Mockito.when(gameRepository.deleteByToken(Mockito.anyString())).thenReturn(1L);
+        gameService.removePlayer(game.getToken(),player1.getUser());
+        running.setNewTurnPlayer(game);
+        assertEquals(game.getTurnPlayer().getUser().getId(),secondUser.getId());
+
+        User testUser3 = new User();
+        testUser3.setId(30L);
+        testUser3.setUsername("testUsername3");
+        Player player3 = new Player(testUser3);
+        Deck deck2 = new Deck();
+        deck2.addCard(new Card(2));
+        player3.setDeck(deck2);
+        game.addPlayer(player3);
+        gameService.removePlayer(game.getToken(),player2.getUser());
+        running.setNewTurnPlayer(game);
+        assertEquals(game.getTurnPlayer().getUser().getId(),testUser3.getId());
     }
 
     @Test

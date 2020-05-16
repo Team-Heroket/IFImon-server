@@ -312,7 +312,7 @@ public class GameControllerTest {
         game.setCreationTime("testDay");
 
         // when/then -> do the request + validate the result
-        MockHttpServletRequestBuilder putRequest = put("/games/1234/categories")
+        MockHttpServletRequestBuilder putRequest = put("/games/1234/berries")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Token", "Test")
                 .content(asJsonString(berryAmount));
@@ -355,6 +355,37 @@ public class GameControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void Test_emote() throws Exception {
+        //given
+        EmoteDTO emoteDTO = new EmoteDTO();
+        emoteDTO.setEmote(3);
+
+        User testUser = new User();
+        testUser.setUsername("testUser");
+        Game game = new Game(new Player(testUser));
+        game.setState(GameStateEnum.FINISHED);
+        game.setMode(Mode.SOCIAL);
+        game.setGameName("testGameName");
+        game.setToken("1234");
+        game.setId(100L);
+        game.setCreationTime("testDay");
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder putRequest = put("/games/1234/emotes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(emoteDTO))
+                .header("Token", "Test");
+
+        // when
+        given(userRepository.findByToken(Mockito.anyString())).willReturn(testUser);
+        given(gameRepository.findByToken(Mockito.anyString())).willReturn(game);
+        given(gameService.getGame(Mockito.anyString())).willReturn(game);
+
+        // then
+        mockMvc.perform(putRequest)
+                .andExpect(status().isOk());
+    }
 
 
  private String asJsonString(final Object object) {
