@@ -323,9 +323,15 @@ public class Running implements GameState {
 
         Random random = new Random();
 
+        // Winner sends emotes from 1 to 4.
+        for (Player winner: game.getWinners()) {
+            winner.setEmote(1+random.nextInt(4)); // e.g. 1 + 3 = 4 (bound is exclusive)
+        }
+
+        // Looser sends emotes from 2 to 5
         for (Player player: game.getPlayers()) {
-            if (player instanceof Npc) {
-                player.setEmote(random.nextInt(5)+1);
+            if (player instanceof Npc && 0 == player.getEmote()) {
+                player.setEmote(2+random.nextInt(4)); // e.g. 2 + 3 = 5 (bound is exclusive)
             }
         }
     }
