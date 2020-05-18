@@ -129,4 +129,4 @@ Future features could be:
 
 ## License
 
-This project is licensed under [Apache License 2.0](./blob/master/LICENSE).
+This project is licensed under [Apache License 2.0](./LICENSE).
