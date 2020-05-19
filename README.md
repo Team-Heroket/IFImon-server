@@ -10,23 +10,23 @@ Play here: https://sopra-fs20-group-20-client.herokuapp.com/
 
 We want to provide an online experience for playing a [Pokémon](https://en.wikipedia.org/wiki/Pok%C3%A9mon) themed [Top-Trumps](https://en.wikipedia.org/wiki/Top_Trumps) game.
 
-This project was made as a University exercise and is not intendet for commercial use. Since we don't own the rights to any media used in this game.
+This project was made in the scope of a University exercise and is not intended for commercial use, since we don't own the rights to any media used in this game.
 
 ## Technologies
 
 - Spring Boot as Server.
 
-- [PokéAPI ](https://pokeapi.co/) to retrieve the Pokémon informations.
+- [PokéAPI ](https://pokeapi.co/) to retrieve the Pokémon information.
 
 - We use [pokemonshowdown](https://play.pokemonshowdown.com/audio/cries) for our sfx.
 
 - Gradle for dependency management.
 
-- To comunicate with the client we use the REST-pattern.
+- To communicate with the client we use the REST-pattern.
 
 #### Postman
 
-We highly recommend to use [Postman](https://www.getpostman.com) in order to test our API Endpoints. You can download our Postman-dump from [here](./postman_dump.json).
+We highly recommend to use [Postman](https://www.getpostman.com) in order to test our API Endpoints and get a feel for them. You can use our Postman-dump from [here](./postman_dump.json).
 
 ## High-level components
 
@@ -55,6 +55,8 @@ Constants are used by all classes. Controller calls the Service and Service uses
 Our tests imitate this structure.
 
 ## Launch & Deployment
+
+The launch and deployment routine does not differ from the SoPra template, as we stuck to those tools and frameworks. We added some extra libraries to the gradle dependencies though.
 
 Download your IDE of choice: (e.g., [Eclipse](http://www.eclipse.org/downloads/), [IntelliJ](https://www.jetbrains.com/idea/download/)) and make sure **Java 13** is installed on your system.
 
@@ -108,6 +110,15 @@ and in the other one:
 If you want to avoid running all tests with every change, use the following command instead:
 
 `./gradlew build --continuous -xtest`
+
+## Usage
+When using the application there are a Few things to keep in mind
+### API Ratelimits
+- Heroku Rate Limit: 4800 Requests/h/IP
+- PokéAPI Rate Limit: 100 Requests/h/IP
+
+Since we generate our cards with information from the PokéAPI, we have a security measure that delays the requests when getting close to the limit.
+So when starting a game with a lot of cards that are not cached yet, be aware of that timeout and stay patient.
 
 ## Roadmap
 
