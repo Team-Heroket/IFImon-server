@@ -18,7 +18,7 @@ This project was made in the scope of a University exercise and is not intended 
 
 - [PokéAPI ](https://pokeapi.co/) to retrieve the Pokémon information.
 
-- We use [pokemonshowdown](https://play.pokemonshowdown.com/audio/cries) for our sfx.
+- We use [pokemonshowdown](https://play.pokemonshowdown.com/audio/cries) for our SFX.
 
 - Gradle for dependency management.
 
