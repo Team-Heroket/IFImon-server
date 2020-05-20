@@ -384,7 +384,7 @@ public class GameControllerTest {
 
         // then
         mockMvc.perform(putRequest)
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
 
