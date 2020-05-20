@@ -112,7 +112,16 @@ public class Card implements Serializable, ICard {
         this.spriteURL = sprites.getString("front_default");
 
         //check for valid?
-        this.cryURL = String.format("https://play.pokemonshowdown.com/audio/cries/%s.mp3",this.name.toLowerCase());
+        String lowerCaseName=this.name.toLowerCase();
+
+        String purge[] = {" ", "-"};
+        String purgedString = lowerCaseName;
+        for (int i = 0; i < purge.length; ++i)
+        {
+            purgedString = purgedString.replace(purge[i], "");
+        }
+
+        this.cryURL = String.format("https://play.pokemonshowdown.com/audio/cries/%s.mp3",purgedString);
 
         // Element converts to ENUM
         JSONArray types = pokemon.getJSONArray("types");

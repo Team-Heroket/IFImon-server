@@ -262,7 +262,7 @@ public class GameController {
 
     /** This request lets a card evolve **/
     @PutMapping("/games/{gameToken}/emotes")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void emote(@PathVariable String gameToken, @RequestHeader("Token") String token, @RequestBody EmoteDTO emoteDTO) {
         //validate gameToken and get object

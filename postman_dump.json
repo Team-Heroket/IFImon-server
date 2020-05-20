@@ -1,0 +1,869 @@
+{
+	"version": 1,
+	"collections": [
+		{
+			"id": "e00346a8-a48f-4db8-88df-4128cba2b200",
+			"name": "Unregistered",
+			"description": "",
+			"auth": null,
+			"events": null,
+			"variables": [],
+			"order": [
+				"ba5c1e0d-ebe1-4d8c-9937-aa28bf176dc1",
+				"e1924cff-847b-4260-b45b-d64d19c0a469",
+				"aa4acef8-386a-4b47-9a99-06cc828bd77b",
+				"4918ac29-7525-40dd-90e0-0106cbbb6e67"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"folders": [],
+			"requests": [
+				{
+					"id": "4918ac29-7525-40dd-90e0-0106cbbb6e67",
+					"name": "Log user 2 in",
+					"url": "{{base_url}}/login",
+					"description": "logs User in and returns token of session",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7b37094b-fd6a-4d8f-8391-840e3e14d3e6",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check for id response\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");",
+									"    ",
+									"    // Sets userId",
+									"    pm.environment.set(\"user_id\", jsonData.id);",
+									"});",
+									"",
+									"pm.test(\"Check for token response\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.token).to.be.a(\"string\");",
+									"    ",
+									"    // Sets token",
+									"    pm.environment.set(\"token\", jsonData.token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Check for id response\", function () {\n    let jsonData = pm.response.json();\n    pm.expect(jsonData.id).to.be.a(\"number\");\n    \n    // Sets userId\n    pm.environment.set(\"user_id\", jsonData.id);\n});\n\npm.test(\"Check for token response\", function () {\n    let jsonData = pm.response.json();\n    pm.expect(jsonData.token).to.be.a(\"string\");\n    \n    // Sets token\n    pm.environment.set(\"token\", jsonData.token);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "e00346a8-a48f-4db8-88df-4128cba2b200",
+					"rawModeData": "{\n\t\"username\": \"muster2\",\n\t\"password\": \"pass\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "aa4acef8-386a-4b47-9a99-06cc828bd77b",
+					"name": "Register new user 2",
+					"url": "{{base_url}}/users",
+					"description": "add User\r\n",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "812ace5d-2fd7-45c4-b6db-ba185350ced2",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.be.status(201);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.be.status(201);\n})",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "e00346a8-a48f-4db8-88df-4128cba2b200",
+					"rawModeData": "{\n\t\"username\": \"muster2\",\n\t\"password\": \"pass\",\n\t\"avatar\": 2\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "ba5c1e0d-ebe1-4d8c-9937-aa28bf176dc1",
+					"name": "Register new user 1",
+					"url": "{{base_url}}/users",
+					"description": "add User\r\n",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "812ace5d-2fd7-45c4-b6db-ba185350ced2",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.be.status(201);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.be.status(201);\n})",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "e00346a8-a48f-4db8-88df-4128cba2b200",
+					"rawModeData": "{\n\t\"username\": \"muster\",\n\t\"password\": \"pass\",\n\t\"avatar\": 1\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "e1924cff-847b-4260-b45b-d64d19c0a469",
+					"name": "Log user 1 in",
+					"url": "{{base_url}}/login",
+					"description": "logs User in and returns token of session",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7b37094b-fd6a-4d8f-8391-840e3e14d3e6",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check for id response\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.be.a(\"number\");",
+									"    ",
+									"    // Sets userId",
+									"    pm.environment.set(\"user_id\", jsonData.id);",
+									"});",
+									"",
+									"pm.test(\"Check for token response\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.token).to.be.a(\"string\");",
+									"    ",
+									"    // Sets token",
+									"    pm.environment.set(\"token\", jsonData.token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Check for id response\", function () {\n    let jsonData = pm.response.json();\n    pm.expect(jsonData.id).to.be.a(\"number\");\n    \n    // Sets userId\n    pm.environment.set(\"user_id\", jsonData.id);\n});\n\npm.test(\"Check for token response\", function () {\n    let jsonData = pm.response.json();\n    pm.expect(jsonData.token).to.be.a(\"string\");\n    \n    // Sets token\n    pm.environment.set(\"token\", jsonData.token);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "e00346a8-a48f-4db8-88df-4128cba2b200",
+					"rawModeData": "{\n\t\"username\": \"muster\",\n\t\"password\": \"pass\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				}
+			]
+		},
+		{
+			"id": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+			"name": "Registered",
+			"description": "",
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "{{token}}"
+					},
+					{
+						"key": "key",
+						"value": "Token"
+					}
+				]
+			},
+			"events": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c91d4467-b840-4b4e-8249-3298b4312c36",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "c2b0df49-0433-4314-9762-45d02d41a582",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"variables": [],
+			"order": [
+				"08720073-f0be-41da-8683-671a1d5a71e0",
+				"678700b8-d2c3-4977-b88b-2883447494fc",
+				"45066f2e-9fe9-401b-a18d-17c2c5d693ef",
+				"11738db5-c2fb-4299-9479-fd7c5b791480",
+				"cfc2ba91-cb26-40ea-a193-592d023515e3",
+				"c6c1dfe7-fa22-4309-8334-ef806d5aee79",
+				"cfb4f992-569b-4e80-860d-16c65b6aef7a",
+				"c9330c1f-2f08-4fc3-b401-964d44859bf3",
+				"e8754e5d-b38e-42fa-b65d-3f19c646bafa",
+				"487e0f78-23aa-41e0-91d8-4ecde856575e",
+				"16c75bd7-280d-4639-b988-191f10a33d4a",
+				"ac606c01-558c-4714-9886-b760872ced5a",
+				"d7161fca-1e33-4810-8c48-ddaf03cbb7f1",
+				"8936f2f8-ad46-4d9e-9350-304025e5d831"
+			],
+			"folders_order": [],
+			"protocolProfileBehavior": {},
+			"folders": [],
+			"requests": [
+				{
+					"id": "08720073-f0be-41da-8683-671a1d5a71e0",
+					"name": "Log user out",
+					"url": "{{base_url}}/logout",
+					"description": "Logs User out. Front end should clear token storage.",
+					"data": null,
+					"dataOptions": null,
+					"dataMode": null,
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2819a373-302b-42d6-a0f1-d8eb85667549",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.be.status(200);",
+									"    pm.environment.unset(\"token\");",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.be.status(200);\n    pm.environment.unset(\"token\");\n})",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "11738db5-c2fb-4299-9479-fd7c5b791480",
+					"name": "Update user",
+					"url": "{{base_url}}/users/{{user_id}}",
+					"description": "update user profile",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "235db39e-0a5a-456b-bd6d-bc17177c3f0f",
+								"exec": [
+									"pm.test(\"Check correct status code\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Check correct status code\", function () {\n    pm.response.to.have.status(204);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "{\n\t\"username\": \"muster_changed\",\n\t\"password\": \"pass2\",\n\t\"avatarId\": 1,\n\t\"seenTutorial\" : true\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "16c75bd7-280d-4639-b988-191f10a33d4a",
+					"name": "Game: select Category",
+					"url": "{{base_url}}/games/{{game-token}}/categories",
+					"description": "Creates a new game, it will be in the lobby state",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee825881-73e0-45d2-a639-50d076e89581",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.be.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.be.status(200);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "{\n\t\"category\": \"CAPTURE_RATING\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "45066f2e-9fe9-401b-a18d-17c2c5d693ef",
+					"name": "Get user",
+					"url": "{{base_url}}/users/{{user_id}}",
+					"description": "update user profile",
+					"data": null,
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": null,
+					"headerData": [],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "235db39e-0a5a-456b-bd6d-bc17177c3f0f",
+								"exec": [
+									"pm.test(\"Correct status code\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct status code\", function () {\n    pm.response.to.have.status(200);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "487e0f78-23aa-41e0-91d8-4ecde856575e",
+					"name": "Start game",
+					"url": "{{base_url}}/games/{{game-token}}",
+					"description": "Creates a new game, it will be in the lobby state",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee825881-73e0-45d2-a639-50d076e89581",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.be.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.be.status(201);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "{\n\t\"npc\": 1,\n\t\"card\": 4,\n\t\"generation\": 7\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "678700b8-d2c3-4977-b88b-2883447494fc",
+					"name": "List all users",
+					"url": "{{base_url}}/users",
+					"description": "",
+					"data": null,
+					"dataOptions": null,
+					"dataMode": null,
+					"headerData": [],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [],
+					"folder": null,
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "8936f2f8-ad46-4d9e-9350-304025e5d831",
+					"name": "Get card bulbasaur",
+					"url": "{{base_url}}/cards/1",
+					"description": "",
+					"data": null,
+					"dataOptions": null,
+					"dataMode": null,
+					"headerData": [],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [],
+					"folder": null,
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "ac606c01-558c-4714-9886-b760872ced5a",
+					"name": "Game: use Berry",
+					"url": "{{base_url}}/games/{{game-token}}/berries",
+					"description": "Creates a new game, it will be in the lobby state",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee825881-73e0-45d2-a639-50d076e89581",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "{\n\t\"id\": 1,\n\t\"amount\": 1\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "c6c1dfe7-fa22-4309-8334-ef806d5aee79",
+					"name": "Create singleplayer game",
+					"url": "{{base_url}}/games",
+					"description": "Creates a new game, it will be in the lobby state",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee825881-73e0-45d2-a639-50d076e89581",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.be.status(201);",
+									"});",
+									"",
+									"pm.test(\"Check for game-token response\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.token).to.be.a(\"string\");",
+									"    ",
+									"    // Sets token",
+									"    pm.environment.set(\"game-token\", jsonData.token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.be.status(201);\n});\n\npm.test(\"Check for game-token response\", function () {\n    let jsonData = pm.response.json();\n    pm.expect(jsonData.token).to.be.a(\"string\");\n    \n    // Sets token\n    pm.environment.set(\"game-token\", jsonData.token);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "{\n\t\"gameName\": \"test\",\n\t\"mode\": \"SINGLE_PLAYER\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "c9330c1f-2f08-4fc3-b401-964d44859bf3",
+					"name": "Leave player from game",
+					"url": "{{base_url}}/games/{{game-token}}/players",
+					"description": null,
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ac5de10e-d7e5-4207-a93a-04ba0ba4964d",
+								"exec": [
+									"pm.test(\"Check correct status code\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Check correct status code\", function () {\n    pm.response.to.have.status(204);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "{\n\t\"action\": \"LEAVE\",\n\t\"id\": \"1\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "cfb4f992-569b-4e80-860d-16c65b6aef7a",
+					"name": "Join player to game",
+					"url": "{{base_url}}/games/{{game-token}}/players",
+					"description": "",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b01281e3-1165-469d-a43e-a0a862e00ea2",
+								"exec": [
+									"pm.test(\"Check correct status code\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Check correct status code\", function () {\n    pm.response.to.have.status(204);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "{\n\t\"action\": \"JOIN\",\n\t\"id\": \"2\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "cfc2ba91-cb26-40ea-a193-592d023515e3",
+					"name": "Create new game (lobby)",
+					"url": "{{base_url}}/games",
+					"description": "Creates a new game, it will be in the lobby state",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "POST",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee825881-73e0-45d2-a639-50d076e89581",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.be.status(201);",
+									"});",
+									"",
+									"pm.test(\"Check for game-token response\", function () {",
+									"    let jsonData = pm.response.json();",
+									"    pm.expect(jsonData.token).to.be.a(\"string\");",
+									"    ",
+									"    // Sets token",
+									"    pm.environment.set(\"game-token\", jsonData.token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.be.status(201);\n});\n\npm.test(\"Check for game-token response\", function () {\n    let jsonData = pm.response.json();\n    pm.expect(jsonData.token).to.be.a(\"string\");\n    \n    // Sets token\n    pm.environment.set(\"game-token\", jsonData.token);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "{\n\t\"gameName\": \"test\",\n\t\"mode\": \"SOCIAL\"\n}",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "d7161fca-1e33-4810-8c48-ddaf03cbb7f1",
+					"name": "Game next Turn",
+					"url": "{{base_url}}/games/{{game-token}}/next",
+					"description": "Creates a new game, it will be in the lobby state",
+					"data": [],
+					"dataOptions": {
+						"raw": {
+							"language": "json"
+						}
+					},
+					"dataMode": "raw",
+					"headerData": [],
+					"method": "PUT",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ee825881-73e0-45d2-a639-50d076e89581",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": null,
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"rawModeData": "",
+					"headers": "",
+					"pathVariables": {}
+				},
+				{
+					"id": "e8754e5d-b38e-42fa-b65d-3f19c646bafa",
+					"name": "Get game",
+					"url": "{{base_url}}/games/{{game-token}}",
+					"description": "",
+					"data": null,
+					"dataOptions": null,
+					"dataMode": null,
+					"headerData": [],
+					"method": "GET",
+					"pathVariableData": [],
+					"queryParams": [],
+					"auth": null,
+					"events": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "43e0cc19-0070-42e2-9e44-7d092f51dd9e",
+								"exec": [
+									"pm.test(\"Correct Status Code\", function () {",
+									"    pm.response.to.be.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"folder": null,
+					"preRequestScript": null,
+					"tests": "pm.test(\"Correct Status Code\", function () {\n    pm.response.to.be.status(200);\n});",
+					"currentHelper": null,
+					"helperAttributes": null,
+					"collectionId": "ffae9a37-eb60-4ec7-b1d3-922ce5fb580a",
+					"headers": "",
+					"pathVariables": {}
+				}
+			]
+		}
+	],
+	"environments": [
+		{
+			"id": "192e4bd9-d67e-481a-b2cc-f87a66df2472",
+			"name": "DEV",
+			"values": [
+				{
+					"key": "base_url",
+					"value": "http://localhost:8080",
+					"enabled": true
+				},
+				{
+					"key": "user_id",
+					"value": 1,
+					"enabled": true
+				},
+				{
+					"key": "token",
+					"value": "d7b6bd85-1311-4661-b246-ccfe1ed78755",
+					"enabled": true
+				},
+				{
+					"key": "game-token",
+					"value": "Panpour",
+					"enabled": true
+				}
+			]
+		},
+		{
+			"id": "8748168a-51a7-41f6-a19d-35b10112c0da",
+			"name": "Prod",
+			"values": [
+				{
+					"key": "base_url",
+					"value": "https://sopra-fs20-group-20-server.herokuapp.com",
+					"enabled": true
+				}
+			]
+		},
+		{
+			"id": "bb939bbf-bdc1-4f51-afc5-a1fee1c4ac92",
+			"name": "Team Workspace - globals",
+			"values": []
+		},
+		{
+			"id": "0b837d48-e303-4f45-93c4-387917420e43",
+			"name": "My Workspace - globals",
+			"values": []
+		}
+	],
+	"headerPresets": [],
+	"globals": []
+}
