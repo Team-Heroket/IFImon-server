@@ -1,20 +1,20 @@
 package ch.uzh.ifi.seal.soprafs20.controller;
 
+import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
-import ch.uzh.ifi.seal.soprafs20.constant.*;
+import ch.uzh.ifi.seal.soprafs20.constant.LobbyAction;
+import ch.uzh.ifi.seal.soprafs20.constant.Mode;
 import ch.uzh.ifi.seal.soprafs20.entity.Game;
-import ch.uzh.ifi.seal.soprafs20.entity.*;
+import ch.uzh.ifi.seal.soprafs20.entity.Player;
 import ch.uzh.ifi.seal.soprafs20.entity.User;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.*;
+import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
-import ch.uzh.ifi.seal.soprafs20.service.*;
-
-import ch.uzh.ifi.seal.soprafs20.service.gamestates.GameState;
-import ch.uzh.ifi.seal.soprafs20.service.gamestates.Lobby;
+import ch.uzh.ifi.seal.soprafs20.service.CardService;
+import ch.uzh.ifi.seal.soprafs20.service.GameService;
+import ch.uzh.ifi.seal.soprafs20.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,16 +27,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

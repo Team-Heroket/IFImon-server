@@ -1,22 +1,20 @@
 package ch.uzh.ifi.seal.soprafs20.service;
 
-import ch.uzh.ifi.seal.soprafs20.entity.*;
-import ch.uzh.ifi.seal.soprafs20.exceptions.game.*;
-import ch.uzh.ifi.seal.soprafs20.exceptions.user.UserUnauthorizedException;
-import ch.uzh.ifi.seal.soprafs20.repository.*;
-import ch.uzh.ifi.seal.soprafs20.constant.*;
-
+import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
+import ch.uzh.ifi.seal.soprafs20.constant.Mode;
+import ch.uzh.ifi.seal.soprafs20.entity.Game;
+import ch.uzh.ifi.seal.soprafs20.entity.Statistics;
+import ch.uzh.ifi.seal.soprafs20.entity.User;
+import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameConflictException;
+import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Finished;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Lobby;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
