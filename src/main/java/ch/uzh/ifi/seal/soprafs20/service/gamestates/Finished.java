@@ -73,7 +73,7 @@ public class Finished implements GameState {
             player.setEmote(0);
         }
 
-
+        // create a new thread to generate decks while returning a response to the client
         Runnable generateDeck = () -> {
 
             log.debug("Start creating cards.");

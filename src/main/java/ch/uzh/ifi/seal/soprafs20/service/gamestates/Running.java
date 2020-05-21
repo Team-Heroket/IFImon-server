@@ -195,15 +195,18 @@ public class Running implements GameState {
     }
 
     public void distributeCards(Game game){
+        // get winners
         List<Player> winners=game.getWinners();
 
+        // if we have one winner
         if (winners.size()==1){
             Player winner=winners.get(0);
             for(Player player:game.getPlayers()){
+                // give the top card of all players to winner
                 if (!player.getDeck().isEmpty()) {
                     Card temp = new Card(player.getDeck().removeCard());
                     winner.getDeck().addCard(temp);
-                    // The card the winner gets is most likely new from him, so he has to encounter it
+                    // The card the winner gets is most likely new to him, so he has to encounter it
                     StatisticsHelper.encounter(winner, temp);
 
                     if (player.getUser().getId().equals(game.getCreator().getUser().getId()) && player.getDeck().isEmpty()) {
@@ -221,6 +224,8 @@ public class Running implements GameState {
                 }
             }
         }
+        // if we have a draw we set the top card of each player to the bottom of their deck
+        // turnplayer does not change
         else{
             for (Player player : game.getPlayers()){
                 if (!player.getDeck().isEmpty()) {
@@ -231,10 +236,12 @@ public class Running implements GameState {
         }
     }
     public void setNewTurnPlayer(Game game){
+        // get winners
         List<Player> winners=game.getWinners();
 
         log.debug("Setting new turn-player.");
 
+        // if we have one winner, we would set him turnplayer
         if (winners.size()==1){
             Player winner = winners.get(0);
 
@@ -258,7 +265,9 @@ public class Running implements GameState {
                 }
             }
 
-        } else {
+        }
+        // if the turnplayer is a winner of many, then the turnplayer stays
+        else {
 
             log.debug("Multiple winners (which means draw).");
 
@@ -294,7 +303,6 @@ public class Running implements GameState {
             }
 
         }
-        //TODO: different draw mechanics?
     }
 
     private void npcUseBerry(Game game, Player npc){

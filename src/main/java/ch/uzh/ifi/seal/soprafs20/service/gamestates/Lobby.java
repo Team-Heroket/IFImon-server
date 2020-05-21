@@ -44,9 +44,11 @@ public class Lobby implements GameState {
     @Override
     public void removePlayer(Game game, User user) {
         log.debug(String.format("%s will be removed from lobby.", user.getUsername()));
+
+        // get all players of the game
         List<Player> players = game.getPlayers();
 
-        
+        // now remove the given user from the player list
         for (Player player: players) {
             if (player.getUser().getId().equals(user.getId())) {
                 players.remove(player);
@@ -61,9 +63,8 @@ public class Lobby implements GameState {
 
     @Override
     public void startGame(Game game, Integer npc, int deckSize, long buffer, int generation, GameRepository gameRepository) {
-
+        // set generation
         game.setGeneration(generation);
-
 
         log.info(String.format("Start game request was called on %s. Amount of NPCs: %s.", game.getToken(), npc));
 
@@ -73,21 +74,21 @@ public class Lobby implements GameState {
             game.getPlayers().add(new Npc(trainerNameGenerator.get()));
         }
 
-
         //give each player a deck and set turn player = game.creator if not done already
         game.setTurnPlayer(game.getCreator());
 
         UniqueBaseEvolutionPokemonGenerator uniquePkmId = new UniqueBaseEvolutionPokemonGenerator(game.getGeneration());
+
+        // set berries
         for (Player player: game.getPlayers()) {
             // # players = # berries
             player.setBerries(game.getPlayers().size());
 
         }
 
-        // TODO: update game entity accordingly
-
         log.debug(String.format("Game created. Token %s", game.getToken()));
 
+        // create a new thread to generate decks while returning a response to the client
         Runnable generateDeck = () -> {
 
             log.debug("Start creating cards.");
