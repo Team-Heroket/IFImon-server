@@ -181,7 +181,6 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.LOBBY);
         testGame.setGameName("helloGame");
         testGame.setMode(Mode.SOCIAL);
-        testGame.setTurnPlayer(player1);
 
         // ... and a second user to add and remove
         User secondTestUser = new User();
@@ -193,6 +192,7 @@ public class GameServiceTest {
 
         // now set game to running state and then remove a player
         gameService.addPlayer("testToken",secondTestUser);
+        testGame.setTurnPlayer(player1);
         testGame.setState(GameStateEnum.RUNNING);
         gameService.removePlayer("testToken",secondTestUser);
         assertThrows(java.lang.IndexOutOfBoundsException.class, () -> testGame.getPlayers().get(1));

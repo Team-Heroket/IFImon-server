@@ -26,19 +26,26 @@ public class Lobby implements GameState {
 
     @Override
     public void addPlayer(Game game, User user) {
-        log.debug(String.format("%s wants to join.", user.getUsername()));
-        List<Player> players = game.getPlayers();
 
-        // Check if the user is already added
-        for (Player player: players) {
-            if (user.getId().equals(player.getUser().getId())) {
-                throw new GameConflictException("This player is already in the game.");
+        // to prevent players joining while game is being generated
+        if (null == game.getTurnPlayer()) {
+            log.debug(String.format("%s wants to join.", user.getUsername()));
+            List<Player> players = game.getPlayers();
+
+            // Check if the user is already added
+            for (Player player: players) {
+                if (user.getId().equals(player.getUser().getId())) {
+                    throw new GameConflictException("This player is already in the game.");
+                }
             }
+
+            //init player based on this user and append player
+            game.addPlayer(new Player(user));
+            log.debug("User joined.");
+        } else {
+            throw new GameBadRequestException("You can't add new players to a game being generated.");
         }
 
-        //init player based on this user and append player
-        game.addPlayer(new Player(user));
-        log.debug("User joined.");
     }
 
     @Override
@@ -94,7 +101,12 @@ public class Lobby implements GameState {
             log.debug("Start creating cards.");
 
             for (int i = 0; i < game.getPlayers().size() ; i++) {
-                game.getPlayers().get(i).setDeck(new Deck(uniquePkmId, deckSize));
+                try {
+                    game.getPlayers().get(i).setDeck(new Deck(uniquePkmId, deckSize));
+                } catch (IndexOutOfBoundsException ex) {
+                    // If player leaves game, while game is being created.
+                    log.debug("Caught removed player.");
+                }
             }
 
             log.debug("Start creating statistics.");
