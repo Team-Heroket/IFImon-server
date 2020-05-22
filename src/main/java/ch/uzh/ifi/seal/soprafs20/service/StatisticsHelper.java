@@ -14,10 +14,16 @@ public class StatisticsHelper {
     private final static Logger log = LoggerFactory.getLogger(StatisticsHelper.class);
 
     public static void doPreStatistics(Game game) {
-        // This exists (for now) only for the encountered pokémons, since the initial deck is important
+        List<Player> players = game.getPlayers();
+
+        // *** games played
+        for (Player player: players) {
+            Statistics stat = player.getUser().getStatistics();
+            stat.setGamesPlayed(stat.getGamesPlayed()+1);
+        }
 
         // The player only encounters his the pokémons from his own deck
-        for (Player player: game.getPlayers()) {
+        for (Player player: players) {
             if (!(player instanceof Npc)) {
                 TreeSet<Integer> encountered = new TreeSet<>(player.getUser().getStatistics().getEncounteredPokemon());
                 for (Card card: player.getDeck().getCards()) {
@@ -59,12 +65,6 @@ public class StatisticsHelper {
         }
 
         // *** TODO: story progress
-
-        // *** games played
-        for (Player player: players) {
-            Statistics stat = player.getUser().getStatistics();
-            stat.setGamesPlayed(stat.getGamesPlayed()+1);
-        }
 
         // These only change, if there is one winner
         if (1 == winners.size()) {

@@ -11,13 +11,9 @@ import ch.uzh.ifi.seal.soprafs20.exceptions.game.GameNotFoundException;
 import ch.uzh.ifi.seal.soprafs20.objects.UniqueBaseEvolutionPokemonGenerator;
 import ch.uzh.ifi.seal.soprafs20.repository.GameRepository;
 import ch.uzh.ifi.seal.soprafs20.repository.PokeAPICacheRepository;
-import ch.uzh.ifi.seal.soprafs20.repository.UserRepository;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Finished;
-import ch.uzh.ifi.seal.soprafs20.service.gamestates.GameState;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Lobby;
 import ch.uzh.ifi.seal.soprafs20.service.gamestates.Running;
-import junit.framework.AssertionFailedError;
-import org.hibernate.cfg.NotYetImplementedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,12 +21,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -188,7 +181,6 @@ public class GameServiceTest {
         testGame.setState(GameStateEnum.LOBBY);
         testGame.setGameName("helloGame");
         testGame.setMode(Mode.SOCIAL);
-        testGame.setTurnPlayer(player1);
 
         // ... and a second user to add and remove
         User secondTestUser = new User();
@@ -200,6 +192,7 @@ public class GameServiceTest {
 
         // now set game to running state and then remove a player
         gameService.addPlayer("testToken",secondTestUser);
+        testGame.setTurnPlayer(player1);
         testGame.setState(GameStateEnum.RUNNING);
         gameService.removePlayer("testToken",secondTestUser);
         assertThrows(java.lang.IndexOutOfBoundsException.class, () -> testGame.getPlayers().get(1));

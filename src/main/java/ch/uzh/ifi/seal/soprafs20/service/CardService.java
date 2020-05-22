@@ -41,9 +41,10 @@ public class CardService {
         // Danger! Evolutions Array contains previous evolutions too.
 
         log.debug("Card requested");
-
+        // first check if card was already pulled from poke api
         CachedCard cachedCard = PokeAPICacheService.getCachedCard(id);
 
+        // if not, then pull card data and cache it
         if (null == cachedCard) {
             Card newCard = new Card(id);
             PokeAPICacheService.cacheCard(newCard);

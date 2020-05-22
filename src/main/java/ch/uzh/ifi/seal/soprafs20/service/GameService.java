@@ -63,6 +63,7 @@ public class GameService {
 
         log.debug(String.format("Create Lobby request send by %s.", creatingUser.getUsername()));
 
+        // throw exception if a game with same token already exists
         if (null != this.gameRepository.findByToken(game.getToken())) {
             throw new GameConflictException("This Game-Token already exists!");
         }
@@ -120,48 +121,63 @@ public class GameService {
 
 
     public void startGame(Integer npc, Game game, int deckSize, int generation){
-
+        // get the current state of the game
         GameState state = this.getState(game);
+
+        // try to start the game in the current state
         state.startGame(game, npc, deckSize, 15000L, generation, this.gameRepository);
+
         // save changes
         this.gameRepository.save(game);
     }
 
     public void selectCategory(Category category, Game game){
+        // get the current state of the game
         GameState state = this.getState(game);
 
         // selects category and calculates winner
         state.selectCategory(game, category);
 
+        // save changes
         this.gameRepository.save(game);
     }
 
     public void useBerries(Game game, Player player, Integer amount){
-
+        // get the current state of the game
         GameState state = this.getState(game);
 
         // uses berries if possible
         state.useBerries(game, amount, player);
 
+        // save changes
         this.gameRepository.save(game);
     }
 
     public void nextTurn(Game game){
+        // get the current state of the game
         GameState state = this.getState(game);
+
+        // changes turn of game to next turn in the current state
         state.nextTurn(game);
+
+        // save changes
         this.gameRepository.save(game);
 
     }
 
     public void putEmote(Game game, User user, Integer emote){
+        // get the current state of the game
         GameState state = this.getState(game);
 
+        // puts emote in the current state of the game
         state.putEmote(getPlayerFromUser(game,user), emote);
 
+        // save changes
         this.gameRepository.save(game);
 
     }
 
+    // getter from repository
     public Game getGame(String gameToken){
         return this.gameRepository.findByToken(gameToken);
     }
@@ -175,7 +191,9 @@ public class GameService {
      * @throws GameNotFoundException
      */
     public void validateGame(String gameToken) {
+        // checks if a game with given token exists
         Game game = this.gameRepository.findByToken(gameToken);
+
         if (null == game) {
             throw new GameNotFoundException("This game token doesn't exist (anymore)");
         }
@@ -189,7 +207,9 @@ public class GameService {
      * @throws GameForbiddenException
      */
     public void validateCreator(String gameToken, User user) {
+        // checks whether given user is the creator of the game with given gametoken
         Game game = this.gameRepository.findByToken(gameToken);
+
         if (!game.getCreator().getUser().getToken().equals(user.getToken())) {
             throw new GameForbiddenException("This user is not the game-creator.");
         }
@@ -203,6 +223,8 @@ public class GameService {
      * @throws GameForbiddenException
      */
     public void validateTurnPlayer(String gameToken, User user) {
+        // checks whether given user is the turnplayer of the game with given gametoken
+
         Game game = this.gameRepository.findByToken(gameToken);
         if (!game.getTurnPlayer().getUser().getToken().equals(user.getToken())) {
             throw new GameForbiddenException("This user is not the turn player.");
@@ -217,8 +239,10 @@ public class GameService {
      * @throws GameForbiddenException
      */
     public void validatePlayer(String gameToken, User user) {
+        // get game by token
         Game game = this.gameRepository.findByToken(gameToken);
 
+        // check if given user is involved in the given game
         for (Player validPlayer : game.getPlayers()){
             if (validPlayer.getUser().getId().equals(user.getId())){
                 return;
@@ -232,7 +256,7 @@ public class GameService {
 
      */
     public Player getPlayerFromUser(Game game, User user) {
-
+        // returns the player corresponding to a given user and a given game
         for(Player player : game.getPlayers()){
             if(user.getId().equals(player.getUser().getId())){
                 return player;

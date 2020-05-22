@@ -1,13 +1,9 @@
 package ch.uzh.ifi.seal.soprafs20.rest.mapper;
 
-import ch.uzh.ifi.seal.soprafs20.constant.Category;
 import ch.uzh.ifi.seal.soprafs20.constant.GameStateEnum;
 import ch.uzh.ifi.seal.soprafs20.constant.Mode;
 import ch.uzh.ifi.seal.soprafs20.entity.*;
-import ch.uzh.ifi.seal.soprafs20.objects.*;
-
 import ch.uzh.ifi.seal.soprafs20.rest.dto.*;
-import com.sun.xml.bind.v2.model.annotation.Quick;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
