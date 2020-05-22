@@ -88,6 +88,36 @@ public class Card implements Serializable, ICard {
 
     // Initialises the card
     private void initialise(JSONObject pokemon, JSONObject species) {
+
+        if (null == pokemon || null == species) {
+            // create missigno
+
+            this.pokemonId = 0;
+
+            this.categories = new HashMap<>();
+            this.categories.put(Category.SPEED, 0);
+            this.categories.put(Category.DEF, 0);
+            this.categories.put(Category.ATK, 0);
+            this.categories.put(Category.HP, 0);
+
+            this.categories.put(Category.WEIGHT, 0);
+            this.categories.put(Category.CAPTURE_RATING, 0);
+
+            this.name = "Missingno";
+
+            this.spriteURL = "http://play.pokemonshowdown.com/sprites/gen1/missingno.png";
+
+            this.cryURL = "http://play.pokemonshowdown.com/audio/cries/unown.mp3";
+
+            this.elements = new ArrayList<>();
+            this.elements.add(Element.GHOST);
+
+            this.evolutionNames = new ArrayList<>();
+
+            return;
+        }
+
+
         JSONObject evolutionChain = PokeAPI.getFromURL(species.getJSONObject("evolution_chain").getString("url"));
 
         // Set ID
