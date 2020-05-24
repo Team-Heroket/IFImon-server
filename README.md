@@ -6,6 +6,8 @@ Client-repository: https://github.com/Team-Heroket/IFImon-webclient
 
 Play here: https://sopra-fs20-group-20-client.herokuapp.com/
 
+RestAPI-Documentation: https://team-heroket.github.io/IFImon-server/
+
 ## Introduction
 
 We want to provide an online experience for playing a [Pokémon](https://en.wikipedia.org/wiki/Pok%C3%A9mon) themed [Top-Trumps](https://en.wikipedia.org/wiki/Top_Trumps) game.
